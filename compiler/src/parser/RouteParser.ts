@@ -11,7 +11,7 @@ export class RouteParser {
   }
 
   parse(): rpt.Route[] {
-    return this.parseAllRoutes(0);
+    return this.parseAllRoutes(1);
   }
 
   private parseAllRoutes(depth: number): rpt.Route[] {

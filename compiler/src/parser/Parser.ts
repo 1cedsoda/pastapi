@@ -1,4 +1,4 @@
-import * as ct from "./../collector/types";
+import * as ct from "../collector/types";
 import { RouteParser } from "./RouteParser";
 import { SchemaParser } from "./SchemaParser";
 import * as pt from "./p_types";
@@ -14,6 +14,7 @@ export class Parser {
   }
 
   parse(): pt.SyntaxTree {
+    console.log(`parse`);
     const schemaParser = new SchemaParser(this.collectorResult);
     const routeParser = new RouteParser(this.collectorResult);
     const syntaxTree: pt.SyntaxTree = {

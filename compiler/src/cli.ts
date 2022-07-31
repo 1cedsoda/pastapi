@@ -1,7 +1,5 @@
 import path from "path";
-import { Collector } from "./collector/Collector";
-import { SyntaxTree } from "./parser/p_types";
-import { Parser } from "./parser/Parser";
+import { Airflow } from "./airflow";
 
 async function exec() {
   // init
@@ -13,19 +11,12 @@ async function exec() {
   // Get current time
   const startTime = new Date();
 
-  // 1. Collect
-  const collector = new Collector(airflowFolder);
-  const collectorResult = await collector.collect();
-
-  // 2. Parse
-  const parser = new Parser(collectorResult, airflowFolder);
-  const syntaxTree = await parser.parse();
+  const airflow = new Airflow(airflowFolder, ["typescript"]);
+  await airflow.build();
 
   // Done
   const stopTime = new Date();
   console.log(`Compiled in ${stopTime.getTime() - startTime.getTime()}ms`);
-
-  console.log("\n", JSON.stringify(syntaxTree, null, 2));
 }
 
 exec();

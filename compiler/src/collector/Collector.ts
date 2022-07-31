@@ -11,16 +11,21 @@ export class Collector {
   }
 
   async collect(): Promise<CollectorResult> {
-    const files = await this.getFiles(this.folder);
-    const schemas = await this.getSchemas(files.schemaPaths);
-    const routes = await this.getSchemas(files.routePaths);
+    console.log("collect");
+    const files = await this.getFiles(this.folder, 1);
+    const schemas = await this.getSchemas(files.schemaPaths, 1);
+    const routes = await this.getRoutes(files.routePaths, 1);
     return {
       schemas: schemas,
       routes: routes,
     };
   }
 
-  private async getFiles(folder: string): Promise<CollectedPaths> {
+  private async getFiles(
+    folder: string,
+    depth: number
+  ): Promise<CollectedPaths> {
+    console.log("  ".repeat(depth) + `getFiles: ${folder}`);
     // init result
     const result: CollectedPaths = {
       routePaths: [],
@@ -40,7 +45,11 @@ export class Collector {
     return result;
   }
 
-  private async getSchemas(files: string[]): Promise<Record<string, Schema>> {
+  private async getSchemas(
+    files: string[],
+    depth: number
+  ): Promise<Record<string, Schema>> {
+    console.log("  ".repeat(depth) + `getSchemas`);
     const schemas: Record<string, object> = {};
 
     // open every file in airflowFiles.schemaFiles
@@ -62,7 +71,11 @@ export class Collector {
     return schemas;
   }
 
-  private async getRoutes(files: string[]): Promise<Record<string, Route>> {
+  private async getRoutes(
+    files: string[],
+    depth: number
+  ): Promise<Record<string, Route>> {
+    console.log("  ".repeat(depth) + `getRoutes`);
     const routes: Record<string, Route> = {};
 
     // open every file in airflowFiles.schemaFiles

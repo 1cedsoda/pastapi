@@ -11,7 +11,7 @@ export class SchemaParser {
   }
 
   parse(): spt.Schema[] {
-    return this.parseAllSchemas(0);
+    return this.parseAllSchemas(1);
   }
 
   private parseAllSchemas(depth: number): spt.Schema[] {
@@ -44,7 +44,7 @@ export class SchemaParser {
   }
 
   private parseInherit(inherit: any, depth: number): spt.SchemaInheritance {
-    console.log("  ".repeat(depth) + `parseInherit`);
+    console.log("  ".repeat(depth) + `parseInherit: ${inherit.parent}`);
 
     if (!inherit.parent) throw new Error("parent must be defined");
     if (!inherit.include) inherit.include = [{ key: "*" }];
@@ -65,6 +65,8 @@ export class SchemaParser {
       if (typeof exclude.key !== "string")
         throw new Error("exclude.key must be a string");
     }
+
+    //TODO: validate types in includes excludes
 
     return {
       parent: inherit.parent,
