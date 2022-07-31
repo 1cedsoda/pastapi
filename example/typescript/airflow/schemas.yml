@@ -1,0 +1,26 @@
+"UserBody":
+  fields:
+    - key: id
+      type: string
+      rules:
+        - required
+    - key: zip
+      type: string
+      rules:
+        - required
+    - key: age
+      type: float
+      rules:
+        - required
+
+"UserGetBody":
+  inherit:
+    parent: "UserBody"
+    exclude:
+      - key: id
+
+"UserPostBody":
+  inherit:
+    parent: "UserBody"
+    exclude:
+      - key: id
