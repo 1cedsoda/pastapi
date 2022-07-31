@@ -1,0 +1,70 @@
+{
+  "routes": [
+    {
+      "name": "Users",
+      "route": "/users",
+      "get": {
+        "headers": "*"
+      },
+      "post": {
+        "headers": "*"
+      },
+      "put": {
+        "headers": "*"
+      },
+      "delete": {
+        "headers": "*"
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "name": "UserBody",
+      "fields": [
+        {
+          "key": "id",
+          "type": "string",
+          "rules": [
+            "required"
+          ]
+        },
+        {
+          "key": "zip",
+          "type": "string",
+          "rules": [
+            "required"
+          ]
+        },
+        {
+          "key": "age",
+          "type": "float",
+          "rules": [
+            "required"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "UserGetBody",
+      "inherit": {
+        "parent": "UserBody",
+        "include": [
+          "*"
+        ],
+        "exclude": []
+      },
+      "fields": []
+    },
+    {
+      "name": "UserPostBody",
+      "inherit": {
+        "parent": "UserBody",
+        "include": [
+          "*"
+        ],
+        "exclude": []
+      },
+      "fields": []
+    }
+  ]
+}

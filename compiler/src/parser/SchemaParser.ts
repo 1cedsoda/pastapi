@@ -10,11 +10,8 @@ export class SchemaParser {
     this.collectedSchemas = collectorResult.schemas;
   }
 
-  async parse(): Promise<spt.SchemaParserResult> {
-    let schemas = this.parseAllSchemas(0);
-    return {
-      schemas: schemas,
-    };
+  parse(): spt.Schema[] {
+    return this.parseAllSchemas(0);
   }
 
   private parseAllSchemas(depth: number): spt.Schema[] {
@@ -40,6 +37,7 @@ export class SchemaParser {
     }
 
     return {
+      name: key,
       inherit: object.inherit,
       fields: object.fields,
     };

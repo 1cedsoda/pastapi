@@ -1,9 +1,4 @@
 Users:
   route: "/users"
   get:
-    path: "*"
-  post:
-    body: "UsersPostBody"
-  put:
-    body: "UsersPutBody"
-  delete:
+    path: undefined

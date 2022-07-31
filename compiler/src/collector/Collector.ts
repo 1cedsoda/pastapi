@@ -16,7 +16,7 @@ export class Collector {
     const routes = await this.getSchemas(files.routePaths);
     return {
       schemas: schemas,
-      routes: [],
+      routes: routes,
     };
   }
 

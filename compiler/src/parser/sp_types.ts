@@ -5,6 +5,7 @@ export interface SchemaInheritance {
 }
 
 export interface Schema {
+  name: string;
   inherit: SchemaInheritance | undefined;
   fields: Field[];
 }
@@ -17,8 +18,4 @@ export interface Field {
   key: string;
   type: string;
   rules: string[];
-}
-
-export interface SchemaParserResult {
-  schemas: Schema[];
 }
