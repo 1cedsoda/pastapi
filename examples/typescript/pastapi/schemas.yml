@@ -2,25 +2,19 @@
   fields:
     - key: id
       type: string
-      rules:
-        - required
     - key: zip
       type: string
-      rules:
-        - required
     - key: age
-      type: float
-      rules:
-        - required
+      type: +float?
 
 "UserGetBody":
   inherit:
-    parent: "UserBody"
+    parent: +UserBody
     exclude:
       - key: id
 
 "UserPostBody":
   inherit:
-    parent: "UserBody"
+    parent: UserBody
     exclude:
       - key: id

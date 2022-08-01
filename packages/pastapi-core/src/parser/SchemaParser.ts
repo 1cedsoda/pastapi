@@ -68,10 +68,14 @@ export class SchemaParser {
 
     //TODO: validate types in includes excludes
 
+    const { newType, typeModifiers, rules } = this.parseType(inherit.parent);
+
     return {
-      parent: inherit.parent,
+      type: newType,
       include: inherit.includes !== undefined ? inherit.includes : ["*"],
       exclude: inherit.includes !== undefined ? inherit.includes : [],
+      typeModifiers: typeModifiers,
+      rules: [...rules],
     };
   }
 
@@ -98,10 +102,34 @@ export class SchemaParser {
       throw new Error("type must be a string");
     if (!Array.isArray(field.rules)) throw new Error("rules must be an array");
 
+    const { newType, typeModifiers, rules } = this.parseType(field.type);
+
     return {
       key: field.key,
-      type: field.type,
-      rules: field.rules,
+      type: newType,
+      rules: [...rules, ...field.rules],
+      typeModifiers: typeModifiers,
+    };
+  }
+
+  private parseType(type: string): {
+    newType: string;
+    typeModifiers: spt.TypeModifiers;
+    rules: string[];
+  } {
+    const newType = type
+      .replaceAll("!", "")
+      .replaceAll("[", "")
+      .replaceAll("]", "")
+      .replaceAll("?", "");
+    return {
+      newType: newType,
+      typeModifiers: {
+        nullable: type.endsWith("?"),
+        list: type.includes("[]"),
+        listElementNullable: type.includes("?[]"),
+      },
+      rules: type.startsWith("+") ? ["required"] : [],
     };
   }
 }

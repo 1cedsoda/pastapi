@@ -24,45 +24,70 @@
         {
           "key": "id",
           "type": "string",
-          "rules": [
-            "required"
-          ]
+          "rules": [],
+          "typeModifiers": {
+            "nullable": false,
+            "list": false,
+            "listElementNullable": false
+          }
         },
         {
           "key": "zip",
           "type": "string",
-          "rules": [
-            "required"
-          ]
+          "rules": [],
+          "typeModifiers": {
+            "nullable": false,
+            "list": false,
+            "listElementNullable": false
+          }
         },
         {
           "key": "age",
-          "type": "float",
+          "type": "+float",
           "rules": [
             "required"
-          ]
+          ],
+          "typeModifiers": {
+            "nullable": true,
+            "list": false,
+            "listElementNullable": false
+          }
         }
       ]
     },
     {
       "name": "UserGetBody",
       "inherit": {
-        "parent": "UserBody",
+        "type": "+UserBody",
         "include": [
           "*"
         ],
-        "exclude": []
+        "exclude": [],
+        "typeModifiers": {
+          "nullable": false,
+          "list": false,
+          "listElementNullable": false
+        },
+        "rules": [
+          "required"
+        ]
       },
       "fields": []
     },
     {
       "name": "UserPostBody",
       "inherit": {
-        "parent": "UserBody",
+        "type": "UserBody",
         "include": [
           "*"
         ],
-        "exclude": []
+        "exclude": [],
+        "typeModifiers": {
+          "nullable": false,
+          "list": false,
+          "listElementNullable": false
+        },
+        "rules": []
       },
       "fields": []
     }
