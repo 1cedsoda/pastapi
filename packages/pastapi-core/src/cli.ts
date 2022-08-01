@@ -1,18 +1,18 @@
 import path from "path";
-import { Airflow } from "./airflow";
+import { Pastapi } from "./pastapi";
 
 async function exec() {
   // init
-  console.log("Building Airflow API");
+  console.log("Building Pastapi API");
   const cwd = process.cwd();
   // TODO: add support for other folders
-  const airflowFolder = path.join(cwd, "airflow");
+  const pastapiFolder = path.join(cwd, "pastapi");
 
   // Get current time
   const startTime = new Date();
 
-  const airflow = new Airflow(airflowFolder, ["typescript"]);
-  await airflow.build();
+  const pastapi = new Pastapi(pastapiFolder, ["typescript"]);
+  await pastapi.build();
 
   // Done
   const stopTime = new Date();

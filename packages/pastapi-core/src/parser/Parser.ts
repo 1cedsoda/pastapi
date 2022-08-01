@@ -7,10 +7,10 @@ import fs from "fs";
 
 export class Parser {
   collectorResult: ct.CollectorResult;
-  airflowFolder: string;
-  constructor(collectorResult: ct.CollectorResult, airflowFolder: string) {
+  pastapiFolder: string;
+  constructor(collectorResult: ct.CollectorResult, pastapiFolder: string) {
     this.collectorResult = collectorResult;
-    this.airflowFolder = airflowFolder;
+    this.pastapiFolder = pastapiFolder;
   }
 
   parse(): pt.SyntaxTree {
@@ -27,7 +27,7 @@ export class Parser {
 
   async saveSyntaxTree(syntaxTree: pt.SyntaxTree) {
     // ensure folder dist exists
-    const distFolder = path.join(this.airflowFolder, "dist");
+    const distFolder = path.join(this.pastapiFolder, "dist");
     if (!fs.existsSync(distFolder)) {
       fs.mkdirSync(distFolder);
     }

@@ -52,7 +52,7 @@ export class Collector {
     console.log("  ".repeat(depth) + `getSchemas`);
     const schemas: Record<string, object> = {};
 
-    // open every file in airflowFiles.schemaFiles
+    // open every file in pastapiFiles.schemaFiles
     for (const path of files) {
       const schemaFile = await fs.promises.readFile(
         `${this.folder}/${path}`,
@@ -78,7 +78,7 @@ export class Collector {
     console.log("  ".repeat(depth) + `getRoutes`);
     const routes: Record<string, Route> = {};
 
-    // open every file in airflowFiles.schemaFiles
+    // open every file in pastapiFiles.schemaFiles
     for (const path of files) {
       const schemaFile = await fs.promises.readFile(
         `${this.folder}/${path}`,

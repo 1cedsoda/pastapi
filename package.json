@@ -1,22 +1,26 @@
 {
-  "name": "airflow",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "example": "example"
-  },
+  "name": "pastapi",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/1cedsoda/airflow.git"
+  "devDependencies": {
+    "eslint-config-custom": "workspace:*",
+    "prettier": "latest",
+    "turbo": "latest"
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/1cedsoda/airflow/issues"
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=14.0.0"
   },
-  "homepage": "https://github.com/1cedsoda/airflow#readme"
+  "dependencies": {},
+  "packageManager": "npm@7.8.0"
 }
