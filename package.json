@@ -7,15 +7,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
+    "build": "npm run build -ws",
+    "dev": "npm run dev -ws",
+    "lint": "npm run lin -ws",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
-  },
-  "devDependencies": {
-    "eslint-config-custom": "workspace:*",
-    "prettier": "latest",
-    "turbo": "latest"
   },
   "engines": {
     "npm": ">=7.0.0",
