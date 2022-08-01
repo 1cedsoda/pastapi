@@ -74,10 +74,13 @@ Variables:
 ### Method
 a method declares the schemas used for each part of the request and response
 
-Variables
-  - `params` is undefined or a schema name (undefined blocks every content, "*" allows everything)
-  - `query` is undefined or a schema name (undefined blocks every content, "*" allows everything)
-  - `body` is undefined or a schema name (undefined blocks every content, "*" allows everything)
-  - `headers` is undefined or a schma name (undefined blocks every content, "*" allows everything, default is "\*")
-  - `res-body` is undefined or a schema name (undefined blocks every content, "*" allows everything)
-  - `res-headers` is undefined or a schma name (undefined blocks every content, "*" allows everything, default is "\*")
+Variables:
+"\*" allows every content
+if content does not match content type an exception is thrown
+
+  - `params` is undefined or a schema name or "*" (undefined blocks every content)
+  - `query` is undefined or a schema name or "*" (undefined blocks every content)
+  - `body` is undefined or a schema name or filetype or nativetype, or "*" (undefined blocks every content)
+  - `headers` is undefined or a schma name or "\*" (undefined blocks every content, default is "\*")
+  - `res-body` is undefined or a schema name or filetype or nativetype, or "\*" (undefined blocks every content)
+  - `res-headers` is undefined or a schma name or "\*" (undefined blocks every content, default is "\*")
