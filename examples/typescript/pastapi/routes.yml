@@ -1,4 +1,0 @@
-Users:
-  route: "/users"
-  get:
-    path: undefined

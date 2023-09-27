@@ -1,21 +1,23 @@
 {
-  "name": "pastapi",
-  "version": "0.0.0",
+  "name": "ts-monorepo",
+  "description": "Template for setting up a TypeScript monorepo",
   "private": true,
   "workspaces": [
-    "./examples/*",
-    "./packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
-    "build": "npm run build -ws",
-    "dev": "npm run dev -ws",
-    "lint": "npm run lin -ws",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "docs": "doctoc --title '**Table of content**' README.md",
+    "clean": "pnpm run -r clean",
+    "build": "pnpm run -r build",
+    "test": "pnpm run -r test",
+    "lint": "eslint --ext js,ts,tsx ."
   },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=14.0.0"
-  },
-  "dependencies": {},
-  "packageManager": "npm@7.8.0"
+  "devDependencies": {
+    "@pastapi/eslint-config-tsx": "~12.0.0-alpha.2",
+    "doctoc": "~2.2.0",
+    "eslint": "~8.50.0",
+    "eslint-plugin-import": "~2.28.0",
+    "typescript": "~4.9.0"
+  }
 }

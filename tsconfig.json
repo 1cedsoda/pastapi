@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@pastapi/components/*": ["packages/components/src/*"],
+      "@pastapi/*": ["packages/*/src"]
+    },
+    "noEmit": true
+  }
+}
