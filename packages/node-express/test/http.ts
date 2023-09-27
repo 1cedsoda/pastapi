@@ -1,8 +1,8 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosRequestConfig } from "axios";
 
 export const get = async (
   url: string,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.get(url, {
     validateStatus: () => true,
@@ -13,7 +13,7 @@ export const get = async (
 export const post = async (
   url: string,
   data?: any,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.post(url, data, {
     validateStatus: () => true,
@@ -24,7 +24,7 @@ export const post = async (
 export const put = async (
   url: string,
   data?: any,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.put(url, data, {
     validateStatus: () => true,
@@ -34,7 +34,7 @@ export const put = async (
 
 export const del = async (
   url: string,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.delete(url, {
     validateStatus: () => true,
@@ -45,7 +45,7 @@ export const del = async (
 export const patch = async (
   url: string,
   data?: any,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.patch(url, data, {
     validateStatus: () => true,
@@ -55,7 +55,7 @@ export const patch = async (
 
 export const head = async (
   url: string,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.head(url, {
     validateStatus: () => true,
@@ -65,7 +65,7 @@ export const head = async (
 
 export const options = async (
   url: string,
-  config?: any
+  config?: AxiosRequestConfig
 ): Promise<AxiosResponse> => {
   return await axios.options(url, {
     validateStatus: () => true,

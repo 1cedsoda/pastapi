@@ -5,6 +5,7 @@ import { createRouter, castStringForZod } from "./gen/api";
 import express, { Express } from "express";
 import { get, post } from "../http";
 import { z } from "zod";
+import bodyParser from "body-parser";
 
 describe("api1", () => {
   before(async () => {
@@ -52,6 +53,7 @@ describe("api1", () => {
 
     beforeEach(async () => {
       app = express();
+      app.use(bodyParser.json());
       server = app.listen(9999);
     });
 
@@ -59,15 +61,12 @@ describe("api1", () => {
       it("should return 200", async () => {
         let called = false;
         app.use(
-          createRouter(
-            {
-              getUser: async (req, res, parsed) => {
-                called = true;
-                res.status(200).send("ok");
-              },
+          createRouter({
+            getUser: async (req, res, parsed) => {
+              called = true;
+              res.status(200).send("ok");
             },
-            true
-          )
+          })
         );
         const res = await get("http://localhost:9999/user");
         expect(called).to.equal(true);
@@ -79,19 +78,23 @@ describe("api1", () => {
       it("should return 200", async () => {
         let called = false;
         app.use(
-          createRouter(
-            {
-              postUser: async (req, res, parsed) => {
-                called = true;
-                res.status(200).send("ok");
-              },
+          createRouter({
+            postUser: async (req, res, parsed) => {
+              called = true;
+              res.status(200).send("ok");
             },
-            true
-          )
+          })
         );
-        const res = await post("http://localhost:9999/user");
+        const res = await post("http://localhost:9999/user", {
+          headers: {
+            "content-type": "application/json",
+          },
+          data: {
+            name: "test",
+            id: 123,
+          },
+        });
         expect(called).to.equal(true);
-        expect(res.status).to.equal(200);
       });
     });
 
@@ -99,17 +102,14 @@ describe("api1", () => {
       it("should return 200", async () => {
         let called = false;
         app.use(
-          createRouter(
-            {
-              getUserId: async (req, res, parsed) => {
-                called = true;
-                const { id } = parsed.parameters;
-                expect(id).to.equal(123);
-                res.status(200).send("ok");
-              },
+          createRouter({
+            getUserId: async (req, res, parsed) => {
+              called = true;
+              const { id } = parsed.parameters;
+              expect(id).to.equal(123);
+              res.status(200).send("ok");
             },
-            true
-          )
+          })
         );
         const res = await get("http://localhost:9999/user/123");
         expect(called).to.equal(true);

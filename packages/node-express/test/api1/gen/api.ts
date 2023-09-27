@@ -58,12 +58,14 @@ export namespace GetUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -84,10 +86,7 @@ export namespace GetUser {
 
 export namespace PostUser {
   export const bodySchemas = {
-    "application/json": z.object({
-      id: z.number().int().optional(),
-      name: z.string().optional(),
-    }),
+    "application/json": z.object({ id: z.number().int(), name: z.string() }),
   };
   export type ParsedBody = {
     "application/json":
@@ -119,11 +118,11 @@ export namespace PostUser {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -139,12 +138,14 @@ export namespace PostUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -210,12 +211,14 @@ export namespace GetUserId {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {

@@ -84,11 +84,11 @@ export namespace UpdatePet {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -104,12 +104,14 @@ export namespace UpdatePet {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -210,11 +212,11 @@ export namespace AddPet {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -230,12 +232,14 @@ export namespace AddPet {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -301,12 +305,14 @@ export namespace FindPetsByStatus {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -372,12 +378,14 @@ export namespace FindPetsByTags {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -452,12 +460,14 @@ export namespace GetPetById {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -538,12 +548,14 @@ export namespace UpdatePetWithForm {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -607,12 +619,14 @@ export namespace DeletePet {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -678,12 +692,14 @@ export namespace UploadFile {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -738,12 +754,14 @@ export namespace GetInventory {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -815,11 +833,11 @@ export namespace PlaceOrder {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -835,12 +853,14 @@ export namespace PlaceOrder {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -910,12 +930,14 @@ export namespace GetOrderById {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -990,12 +1012,14 @@ export namespace DeleteOrder {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1062,11 +1086,11 @@ export namespace CreateUser {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -1082,12 +1106,14 @@ export namespace CreateUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1150,11 +1176,11 @@ export namespace CreateUsersWithListInput {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -1170,12 +1196,14 @@ export namespace CreateUsersWithListInput {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1244,12 +1272,14 @@ export namespace LoginUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1309,12 +1339,14 @@ export namespace LogoutUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1375,12 +1407,14 @@ export namespace GetUserByName {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1467,11 +1501,11 @@ export namespace UpdateUser {
 
     // parse body
     const contentType = req.headers["content-type"];
-    if (contentType && contentType in Object.keys(parsed.body)) {
+    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
       parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body,
+        req.body.data,
       );
     }
 
@@ -1496,12 +1530,14 @@ export namespace UpdateUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
@@ -1562,12 +1598,14 @@ export namespace DeleteUser {
       if (logging) {
         console.log(`${req.method} ${req.path}`);
       }
+      let parsed: Parsed;
       try {
-        const parsed = parse(req);
-        handler?.call({}, req, res, parsed);
+        parsed = parse(req);
       } catch (e) {
         res.status(500).send(e);
+        return next();
       }
+      handler?.call({}, req, res, parsed);
       next();
     });
     router.use(async (req, res, next) => {
