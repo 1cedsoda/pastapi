@@ -1,18 +1,17 @@
 import { expect } from "chai";
-import { describe, it } from "mocha";
+import { before, describe, it } from "mocha";
 import { generate } from "../generate";
-import * as api from "./gen/api";
+import { createRouter } from "./gen/api";
 
-describe("api1", async () => {
-  await generate("test/api1");
-
-  it("test test", () => {
-    expect(1).to.equal(1);
+describe("api1", () => {
+  before(async () => {
+    await generate("test/api1");
   });
 
-  // describe("generated code", () => {
-  //   it("createPastapiRouter should be a function", () => {
-  //     expect(api.createPastapiRouter).to.be.a("function");
-  //   });
-  // });
+  describe("generated code", () => {
+    it("createRouter should be a function", async () => {
+      expect(createRouter).to.be.a("function");
+      expect(typeof createRouter).to.equal("function");
+    });
+  });
 });

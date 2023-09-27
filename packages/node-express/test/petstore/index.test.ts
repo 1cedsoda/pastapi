@@ -1,7 +1,11 @@
-import { describe, it } from "mocha";
+import { expect } from "chai";
 import { generate } from "../generate";
-import * as api from "./gen/api";
 
-describe("petstore", async () => {
-  await generate("test/petstore");
+describe("petstore", () => {
+  before(async () => {
+    await generate("test/petstore");
+  });
+  it("should generate", () => {
+    expect(true).to.equal(true);
+  });
 });

@@ -4,20 +4,29 @@ import { generatePaths } from "../src/generate";
 import { join } from "path";
 
 export async function generate(basePath: string) {
-  console.log("Generating api.ts");
   try {
+    // read spec
     const content = fs.readFileSync(join(basePath, "api.yml"), "utf8");
     const spec = await loadYaml(content);
 
+    // ensure gen folder exists
+    if (!fs.existsSync(join(basePath, "gen"))) {
+      fs.mkdirSync(join(basePath, "gen"));
+    }
+
+    // parse
     const operations = parseOperations(spec);
     fs.writeFileSync(
       join(basePath, "gen/api-operations.json"),
       JSON.stringify(operations, null, 2)
     );
 
-    const ts = await format(generatePaths(operations));
+    // generate
+    const ts = generatePaths(operations);
 
-    fs.writeFileSync(join(basePath, "gen/api.ts"), ts);
+    // save
+    const formatted = await format(ts);
+    fs.writeFileSync(join(basePath, "gen/api.ts"), formatted);
   } catch (e) {
     console.error(e);
   }
