@@ -94,7 +94,7 @@ export const parse = (req: Request): Parsed => {
       requestBodies.length > 0
         ? `
         // parse body
-        const contentType = req.headers["content-type"];
+        const contentType = req.headers["Content-Type"];
         if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
           const parsedContentType = contentType as ParsedContentType
           parsed.bodyContentType = parsedContentType;
@@ -141,7 +141,7 @@ export const createRouter = (handler: Handler | undefined, logging?: boolean | u
             r.statusCode !== "default"
               ? `res.statusCode == ${r.statusCode} &&`
               : ``
-          } res.getHeader("content-type") === "${r.applicationType}") {
+          } res.getHeader("Content-Type") === "${r.applicationType}") {
                 // TODO validate ${r.applicationType} ${r.statusCode} response
               }`
         ),

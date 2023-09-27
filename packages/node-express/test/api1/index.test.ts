@@ -87,7 +87,7 @@ describe("api1", () => {
         );
         const res = await post("http://localhost:9999/user", {
           headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
           },
           data: {
             name: "test",
