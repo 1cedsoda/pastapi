@@ -433,7 +433,12 @@ export namespace GetPetById {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
+    const petIdParamCasted = tryCastStringForZod(
+      parameterSchemas["petId"],
+      petIdParam,
+    );
+    parsed.parameters["petId"] =
+      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
@@ -514,7 +519,12 @@ export namespace UpdatePetWithForm {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
+    const petIdParamCasted = tryCastStringForZod(
+      parameterSchemas["petId"],
+      petIdParam,
+    );
+    parsed.parameters["petId"] =
+      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
@@ -578,7 +588,12 @@ export namespace DeletePet {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
+    const petIdParamCasted = tryCastStringForZod(
+      parameterSchemas["petId"],
+      petIdParam,
+    );
+    parsed.parameters["petId"] =
+      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
@@ -644,7 +659,12 @@ export namespace UploadFile {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
+    const petIdParamCasted = tryCastStringForZod(
+      parameterSchemas["petId"],
+      petIdParam,
+    );
+    parsed.parameters["petId"] =
+      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
@@ -871,8 +891,12 @@ export namespace GetOrderById {
 
     // parse orderId
     const orderIdParam = req.params["orderId"];
+    const orderIdParamCasted = tryCastStringForZod(
+      parameterSchemas["orderId"],
+      orderIdParam,
+    );
     parsed.parameters["orderId"] =
-      parameterSchemas["orderId"]?.parse(orderIdParam);
+      parameterSchemas["orderId"]?.parse(orderIdParamCasted);
 
     return parsed;
   };
@@ -947,8 +971,12 @@ export namespace DeleteOrder {
 
     // parse orderId
     const orderIdParam = req.params["orderId"];
+    const orderIdParamCasted = tryCastStringForZod(
+      parameterSchemas["orderId"],
+      orderIdParam,
+    );
     parsed.parameters["orderId"] =
-      parameterSchemas["orderId"]?.parse(orderIdParam);
+      parameterSchemas["orderId"]?.parse(orderIdParamCasted);
 
     return parsed;
   };
@@ -1328,8 +1356,12 @@ export namespace GetUserByName {
 
     // parse username
     const usernameParam = req.params["username"];
+    const usernameParamCasted = tryCastStringForZod(
+      parameterSchemas["username"],
+      usernameParam,
+    );
     parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParam);
+      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
@@ -1445,8 +1477,12 @@ export namespace UpdateUser {
 
     // parse username
     const usernameParam = req.params["username"];
+    const usernameParamCasted = tryCastStringForZod(
+      parameterSchemas["username"],
+      usernameParam,
+    );
     parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParam);
+      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
@@ -1507,8 +1543,12 @@ export namespace DeleteUser {
 
     // parse username
     const usernameParam = req.params["username"];
+    const usernameParamCasted = tryCastStringForZod(
+      parameterSchemas["username"],
+      usernameParam,
+    );
     parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParam);
+      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
@@ -1655,4 +1695,31 @@ export function createRouter(
   );
 
   return router;
+}
+
+export function castStringForZod(
+  schema: z.ZodTypeAny,
+  value: string,
+): any | undefined {
+  if (schema instanceof z.ZodNumber) {
+    if (schema._def.checks.map((c) => c.kind).includes("int")) {
+      const casted = parseInt(value);
+      return !isNaN(casted) ? casted : undefined;
+    } else {
+      const casted = parseFloat(value);
+      return !isNaN(casted) ? casted : undefined;
+    }
+  } else if ((schema as any) instanceof z.ZodBoolean) {
+    if (value === "true") {
+      return true;
+    } else if (value === "false") {
+      return false;
+    } else {
+      return undefined;
+    }
+  }
+}
+
+export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
+  return castStringForZod(schema, value) ?? value;
 }

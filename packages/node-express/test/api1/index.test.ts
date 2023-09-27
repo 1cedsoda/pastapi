@@ -1,10 +1,10 @@
 import { expect } from "chai";
 import { before, describe, it } from "mocha";
 import { generate } from "../generate";
-import { createRouter } from "./gen/api";
+import { createRouter, castStringForZod } from "./gen/api";
 import express, { Express } from "express";
 import { get, post } from "../http";
-import exp from "constants";
+import { z } from "zod";
 
 describe("api1", () => {
   before(async () => {
@@ -15,6 +15,34 @@ describe("api1", () => {
     it("createRouter should be a function", async () => {
       expect(createRouter).to.be.a("function");
       expect(typeof createRouter).to.equal("function");
+    });
+
+    describe("castStringForZod", () => {
+      it("should cast a int", async () => {
+        const schema = z.number().int();
+        const casted = castStringForZod(schema, "123");
+        expect(casted).to.be.a("number");
+      });
+      it("should cast a float", async () => {
+        const schema = z.number();
+        const casted = castStringForZod(schema, "123.456");
+        expect(casted).to.be.a("number");
+      });
+      it("should cast a float without decimal", async () => {
+        const schema = z.number();
+        const casted = castStringForZod(schema, "123");
+        expect(casted).to.be.a("number");
+      });
+      it("should cast a boolean", async () => {
+        const schema = z.boolean();
+        const casted = castStringForZod(schema, "true");
+        expect(casted).to.be.a("boolean");
+      });
+      it("should not cast a string", async () => {
+        const schema = z.string();
+        const casted = castStringForZod(schema, "123");
+        expect(casted).to.be.undefined;
+      });
     });
   });
 
@@ -75,6 +103,8 @@ describe("api1", () => {
             {
               getUserId: async (req, res, parsed) => {
                 called = true;
+                const { id } = parsed.parameters;
+                expect(id).to.equal(123);
                 res.status(200).send("ok");
               },
             },

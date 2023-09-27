@@ -19,7 +19,9 @@ import { Request, Response, Router } from "express";
 import { z } from "zod";
 ${operationNamespaces(ops)}
 ${handlerType(ops)}
-${router(ops)}`;
+${router(ops)}
+${zodStringPreprocessor()}
+`;
 
 const buildHeader = () => `
 /*  ╔══════════════════════════════╗
@@ -104,7 +106,8 @@ export const parse = (req: Request): Parsed => {
       .map(
         (p) => `// parse ${p.name}
         const ${p.name}Param = req.params["${p.name}"];
-        parsed.parameters["${p.name}"] = parameterSchemas["${p.name}"]?.parse(${p.name}Param);`
+        const ${p.name}ParamCasted = tryCastStringForZod(parameterSchemas["${p.name}"], ${p.name}Param);
+        parsed.parameters["${p.name}"] = parameterSchemas["${p.name}"]?.parse(${p.name}ParamCasted);`
       )
       .join("\n")}
     
@@ -168,3 +171,32 @@ const route = (o: Operation) => `
       o.operationId
     )}.createRouter(handlers.${o.operationId}, logging));
   `;
+const zodStringPreprocessor = () => `
+export function castStringForZod(
+  schema: z.ZodTypeAny,
+  value: string
+): any | undefined {
+  if (schema instanceof z.ZodNumber) {
+    if (schema._def.checks.map((c) => c.kind).includes("int")) {
+      const casted = parseInt(value);
+      return !isNaN(casted) ? casted : undefined;
+    } else {
+      const casted = parseFloat(value);
+      return !isNaN(casted) ? casted : undefined;
+    }
+  } else if ((schema as any) instanceof z.ZodBoolean) {
+    if (value === "true") {
+      return true;
+    } else if (value === "false") {
+      return false;
+    } else {
+      return undefined;
+    }
+  }
+}
+
+export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
+  return castStringForZod(schema, value) ?? value;
+}
+
+`;

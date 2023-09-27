@@ -195,7 +195,8 @@ export namespace GetUserId {
 
     // parse id
     const idParam = req.params["id"];
-    parsed.parameters["id"] = parameterSchemas["id"]?.parse(idParam);
+    const idParamCasted = tryCastStringForZod(parameterSchemas["id"], idParam);
+    parsed.parameters["id"] = parameterSchemas["id"]?.parse(idParamCasted);
 
     return parsed;
   };
@@ -252,4 +253,31 @@ export function createRouter(
   router.get("/user/:id", GetUserId.createRouter(handlers.getUserId, logging));
 
   return router;
+}
+
+export function castStringForZod(
+  schema: z.ZodTypeAny,
+  value: string,
+): any | undefined {
+  if (schema instanceof z.ZodNumber) {
+    if (schema._def.checks.map((c) => c.kind).includes("int")) {
+      const casted = parseInt(value);
+      return !isNaN(casted) ? casted : undefined;
+    } else {
+      const casted = parseFloat(value);
+      return !isNaN(casted) ? casted : undefined;
+    }
+  } else if ((schema as any) instanceof z.ZodBoolean) {
+    if (value === "true") {
+      return true;
+    } else if (value === "false") {
+      return false;
+    } else {
+      return undefined;
+    }
+  }
+}
+
+export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
+  return castStringForZod(schema, value) ?? value;
 }
