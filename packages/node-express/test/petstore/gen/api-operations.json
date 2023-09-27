@@ -1,0 +1,2607 @@
+[
+  {
+    "path": "/pet",
+    "method": "put",
+    "operationId": "updatePet",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "applicationType": "application/x-www-form-urlencoded",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/pet",
+    "method": "post",
+    "operationId": "addPet",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "applicationType": "application/x-www-form-urlencoded",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/pet/findByStatus",
+    "method": "get",
+    "operationId": "findPetsByStatus",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "array",
+          "items": {
+            "required": [
+              "name",
+              "photoUrls"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "doggie"
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Dogs"
+                  }
+                },
+                "xml": {
+                  "name": "category"
+                }
+              },
+              "photoUrls": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "xml": {
+                    "name": "photoUrl"
+                  }
+                }
+              },
+              "tags": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "xml": {
+                    "name": "tag"
+                  }
+                }
+              },
+              "status": {
+                "type": "string",
+                "description": "pet status in the store",
+                "enum": [
+                  "available",
+                  "pending",
+                  "sold"
+                ]
+              }
+            },
+            "xml": {
+              "name": "pet"
+            }
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "array",
+          "items": {
+            "required": [
+              "name",
+              "photoUrls"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "doggie"
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Dogs"
+                  }
+                },
+                "xml": {
+                  "name": "category"
+                }
+              },
+              "photoUrls": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "xml": {
+                    "name": "photoUrl"
+                  }
+                }
+              },
+              "tags": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "xml": {
+                    "name": "tag"
+                  }
+                }
+              },
+              "status": {
+                "type": "string",
+                "description": "pet status in the store",
+                "enum": [
+                  "available",
+                  "pending",
+                  "sold"
+                ]
+              }
+            },
+            "xml": {
+              "name": "pet"
+            }
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "status",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "default": "available",
+          "enum": [
+            "available",
+            "pending",
+            "sold"
+          ]
+        },
+        "required": false
+      }
+    ]
+  },
+  {
+    "path": "/pet/findByTags",
+    "method": "get",
+    "operationId": "findPetsByTags",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "array",
+          "items": {
+            "required": [
+              "name",
+              "photoUrls"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "doggie"
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Dogs"
+                  }
+                },
+                "xml": {
+                  "name": "category"
+                }
+              },
+              "photoUrls": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "xml": {
+                    "name": "photoUrl"
+                  }
+                }
+              },
+              "tags": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "xml": {
+                    "name": "tag"
+                  }
+                }
+              },
+              "status": {
+                "type": "string",
+                "description": "pet status in the store",
+                "enum": [
+                  "available",
+                  "pending",
+                  "sold"
+                ]
+              }
+            },
+            "xml": {
+              "name": "pet"
+            }
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "array",
+          "items": {
+            "required": [
+              "name",
+              "photoUrls"
+            ],
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "name": {
+                "type": "string",
+                "example": "doggie"
+              },
+              "category": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Dogs"
+                  }
+                },
+                "xml": {
+                  "name": "category"
+                }
+              },
+              "photoUrls": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "string",
+                  "xml": {
+                    "name": "photoUrl"
+                  }
+                }
+              },
+              "tags": {
+                "type": "array",
+                "xml": {
+                  "wrapped": true
+                },
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "format": "int64"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "xml": {
+                    "name": "tag"
+                  }
+                }
+              },
+              "status": {
+                "type": "string",
+                "description": "pet status in the store",
+                "enum": [
+                  "available",
+                  "pending",
+                  "sold"
+                ]
+              }
+            },
+            "xml": {
+              "name": "pet"
+            }
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "tags",
+        "in": "query",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "required": false
+      }
+    ]
+  },
+  {
+    "path": "/pet/{petId}",
+    "method": "get",
+    "operationId": "getPetById",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "required": [
+            "name",
+            "photoUrls"
+          ],
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "name": {
+              "type": "string",
+              "example": "doggie"
+            },
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "format": "int64",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Dogs"
+                }
+              },
+              "xml": {
+                "name": "category"
+              }
+            },
+            "photoUrls": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "string",
+                "xml": {
+                  "name": "photoUrl"
+                }
+              }
+            },
+            "tags": {
+              "type": "array",
+              "xml": {
+                "wrapped": true
+              },
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "xml": {
+                  "name": "tag"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "description": "pet status in the store",
+              "enum": [
+                "available",
+                "pending",
+                "sold"
+              ]
+            }
+          },
+          "xml": {
+            "name": "pet"
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "petId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/pet/{petId}",
+    "method": "post",
+    "operationId": "updatePetWithForm",
+    "responses": [],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "petId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      },
+      {
+        "name": "name",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "status",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/pet/{petId}",
+    "method": "delete",
+    "operationId": "deletePet",
+    "responses": [],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "api_key",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        },
+        "required": false
+      },
+      {
+        "name": "petId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/pet/{petId}/uploadImage",
+    "method": "post",
+    "operationId": "uploadFile",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "type": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "xml": {
+            "name": "##default"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/octet-stream",
+        "bodySchema": {
+          "type": "string",
+          "format": "binary"
+        }
+      }
+    ],
+    "requestParameters": [
+      {
+        "name": "petId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      },
+      {
+        "name": "additionalMetadata",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "required": false
+      }
+    ]
+  },
+  {
+    "path": "/store/inventory",
+    "method": "get",
+    "operationId": "getInventory",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": []
+  },
+  {
+    "path": "/store/order",
+    "method": "post",
+    "operationId": "placeOrder",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      },
+      {
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      },
+      {
+        "applicationType": "application/x-www-form-urlencoded",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/store/order/{orderId}",
+    "method": "get",
+    "operationId": "getOrderById",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "petId": {
+              "type": "integer",
+              "format": "int64",
+              "example": 198772
+            },
+            "quantity": {
+              "type": "integer",
+              "format": "int32",
+              "example": 7
+            },
+            "shipDate": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "status": {
+              "type": "string",
+              "description": "Order Status",
+              "example": "approved",
+              "enum": [
+                "placed",
+                "approved",
+                "delivered"
+              ]
+            },
+            "complete": {
+              "type": "boolean"
+            }
+          },
+          "xml": {
+            "name": "order"
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "orderId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/store/order/{orderId}",
+    "method": "delete",
+    "operationId": "deleteOrder",
+    "responses": [],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "orderId",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/user",
+    "method": "post",
+    "operationId": "createUser",
+    "responses": [
+      {
+        "statusCode": "default",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "statusCode": "default",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "applicationType": "application/x-www-form-urlencoded",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/user/createWithList",
+    "method": "post",
+    "operationId": "createUsersWithListInput",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "format": "int64",
+                "example": 10
+              },
+              "username": {
+                "type": "string",
+                "example": "theUser"
+              },
+              "firstName": {
+                "type": "string",
+                "example": "John"
+              },
+              "lastName": {
+                "type": "string",
+                "example": "James"
+              },
+              "email": {
+                "type": "string",
+                "example": "john@email.com"
+              },
+              "password": {
+                "type": "string",
+                "example": "12345"
+              },
+              "phone": {
+                "type": "string",
+                "example": "12345"
+              },
+              "userStatus": {
+                "type": "integer",
+                "description": "User Status",
+                "format": "int32",
+                "example": 1
+              }
+            },
+            "xml": {
+              "name": "user"
+            }
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/user/login",
+    "method": "get",
+    "operationId": "loginUser",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "string"
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "username",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "required": false
+      },
+      {
+        "name": "password",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "required": false
+      }
+    ]
+  },
+  {
+    "path": "/user/logout",
+    "method": "get",
+    "operationId": "logoutUser",
+    "responses": [],
+    "requestBodies": [],
+    "requestParameters": []
+  },
+  {
+    "path": "/user/{username}",
+    "method": "get",
+    "operationId": "getUserByName",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "statusCode": "200",
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "username",
+        "in": "path",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/user/{username}",
+    "method": "put",
+    "operationId": "updateUser",
+    "responses": [],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "applicationType": "application/xml",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      },
+      {
+        "applicationType": "application/x-www-form-urlencoded",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 10
+            },
+            "username": {
+              "type": "string",
+              "example": "theUser"
+            },
+            "firstName": {
+              "type": "string",
+              "example": "John"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "James"
+            },
+            "email": {
+              "type": "string",
+              "example": "john@email.com"
+            },
+            "password": {
+              "type": "string",
+              "example": "12345"
+            },
+            "phone": {
+              "type": "string",
+              "example": "12345"
+            },
+            "userStatus": {
+              "type": "integer",
+              "description": "User Status",
+              "format": "int32",
+              "example": 1
+            }
+          },
+          "xml": {
+            "name": "user"
+          }
+        }
+      }
+    ],
+    "requestParameters": [
+      {
+        "name": "username",
+        "in": "path",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    ]
+  },
+  {
+    "path": "/user/{username}",
+    "method": "delete",
+    "operationId": "deleteUser",
+    "responses": [],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "username",
+        "in": "path",
+        "schema": {
+          "type": "string"
+        },
+        "required": true
+      }
+    ]
+  }
+]
