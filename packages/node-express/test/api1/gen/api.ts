@@ -48,6 +48,38 @@ export namespace GetUser {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace PostUser {
@@ -97,6 +129,38 @@ export namespace PostUser {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "text/plain"
+      ) {
+        // TODO validate text/plain 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace GetUserId {
@@ -131,10 +195,41 @@ export namespace GetUserId {
 
     // parse id
     const idParam = req.params["id"];
-    if (idParam === undefined) throw new Error("missing id");
     parsed.parameters["id"] = parameterSchemas["id"]?.parse(idParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -149,69 +244,12 @@ export function createRouter(
   logging?: boolean | undefined,
 ): Router {
   const router = Router();
-  router.use((req, res, next) => {
-    if (logging) {
-      console.log(`${req.method} ${req.path}`);
-    }
-    next();
-  });
 
-  const getUserRouter = Router();
-  getUserRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetUser.parse(req);
-    handlers.getUser?.call({}, req, res, parsed);
-  });
-  getUserRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
+  router.get("/user", GetUser.createRouter(handlers.getUser, logging));
 
-    next();
-  });
-  router.use("/user", getUserRouter);
+  router.post("/user", PostUser.createRouter(handlers.postUser, logging));
 
-  const postUserRouter = Router();
-  postUserRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = PostUser.parse(req);
-    handlers.postUser?.call({}, req, res, parsed);
-  });
-  postUserRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "text/plain"
-    ) {
-      // TODO validate text/plain 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/user", postUserRouter);
-
-  const getUserIdRouter = Router();
-  getUserIdRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetUserId.parse(req);
-    handlers.getUserId?.call({}, req, res, parsed);
-  });
-  getUserIdRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/user/:id", getUserIdRouter);
+  router.get("/user/:id", GetUserId.createRouter(handlers.getUserId, logging));
 
   return router;
 }

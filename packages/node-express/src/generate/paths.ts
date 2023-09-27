@@ -66,6 +66,7 @@ export namespace ${fuc(o.operationId)} {
   export type Handler = (req: Request, res: Response, parsed: Parsed) => Promise<void>
 
   ${parseFunction(o, requestBodies)}
+  ${createRouter(o)}
 }`;
 };
 
@@ -90,10 +91,10 @@ export const parse = (req: Request): Parsed => {
         // parse body
         const contentType = req.headers["content-type"];
         if (contentType && contentType in Object.keys(parsed.body)) {
-        const parsedContentType = contentType as ParsedContentType
-        parsed.bodyContentType = parsedContentType;
-        parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(req.body);
-      }
+          const parsedContentType = contentType as ParsedContentType
+          parsed.bodyContentType = parsedContentType;
+          parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(req.body);
+        }
     `
         : ""
     }
@@ -103,49 +104,29 @@ export const parse = (req: Request): Parsed => {
       .map(
         (p) => `// parse ${p.name}
         const ${p.name}Param = req.params["${p.name}"];
-        ${
-          p.required
-            ? `if (${p.name}Param === undefined) throw new Error("missing ${p.name}");`
-            : ""
-        }
-        parsed.parameters["${p.name}"] = parameterSchemas["${p.name}"]?.parse(${
-          p.name
-        }Param);`
+        parsed.parameters["${p.name}"] = parameterSchemas["${p.name}"]?.parse(${p.name}Param);`
       )
       .join("\n")}
     
       return parsed;
   }`;
 
-const handlerType = (ast: Operation[]) => `
-export type PastapiHandlers = {
-${ast.map(handlerTypeHandler).join("\n")}
-}`;
-
-const handlerTypeHandler = (o: Operation) =>
-  `  ${o.operationId}?: ${fuc(o.operationId)}.Handler | undefined`;
-
-const router = (ast: Operation[]) => `
-export function createRouter(handlers: PastapiHandlers, logging?: boolean | undefined): Router {
-  const router = Router();
-  router.use((req, res, next) => {
-    if (logging) {
-      console.log(\`\${req.method} \${req.path}\`);
-    }
-    next();
-  });
-  ${ast.map(route).join("\n")}
-  return router;
-}`;
-
-const route = (o: Operation) => `
-    const ${o.operationId}Router = Router();
-    ${o.operationId}Router.${o.method}
-    ("*", async (req: Request, res: Response) => {
-      const parsed = ${fuc(o.operationId)}.parse(req);
-      handlers.${o.operationId}?.call({}, req, res, parsed);
+const createRouter = (o: Operation) => `
+export const createRouter = (handler: Handler | undefined, logging?: boolean | undefined): Router => {
+const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(\`\${req.method} \${req.path}\`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
     });
-    ${o.operationId}Router.use("*", async (req, res, next) => {
+    router.use(async (req, res, next) => {
       ${concatIfNotEmpty(
         o.responses.map(
           (r) => `if (${
@@ -163,5 +144,27 @@ const route = (o: Operation) => `
 
       next();
     });
-    router.use("${expressPath(o.path)}", ${o.operationId}Router);
+    return router;
+}
+`;
+
+const handlerType = (ast: Operation[]) => `
+export type PastapiHandlers = {
+${ast.map(handlerTypeHandler).join("\n")}
+}`;
+
+const handlerTypeHandler = (o: Operation) =>
+  `  ${o.operationId}?: ${fuc(o.operationId)}.Handler | undefined`;
+
+const router = (ast: Operation[]) => `
+export function createRouter(handlers: PastapiHandlers, logging?: boolean | undefined): Router {
+  const router = Router();
+  ${ast.map(route).join("\n")}
+  return router;
+}`;
+
+const route = (o: Operation) => `
+    router.${o.method}("${expressPath(o.path)}", ${fuc(
+      o.operationId
+    )}.createRouter(handlers.${o.operationId}, logging));
   `;

@@ -94,6 +94,43 @@ export namespace UpdatePet {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace AddPet {
@@ -183,6 +220,43 @@ export namespace AddPet {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace FindPetsByStatus {
@@ -216,6 +290,43 @@ export namespace FindPetsByStatus {
     };
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -251,6 +362,43 @@ export namespace FindPetsByTags {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace GetPetById {
@@ -285,10 +433,46 @@ export namespace GetPetById {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    if (petIdParam === undefined) throw new Error("missing petId");
     parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -330,10 +514,32 @@ export namespace UpdatePetWithForm {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    if (petIdParam === undefined) throw new Error("missing petId");
     parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -372,10 +578,32 @@ export namespace DeletePet {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    if (petIdParam === undefined) throw new Error("missing petId");
     parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -416,10 +644,41 @@ export namespace UploadFile {
 
     // parse petId
     const petIdParam = req.params["petId"];
-    if (petIdParam === undefined) throw new Error("missing petId");
     parsed.parameters["petId"] = parameterSchemas["petId"]?.parse(petIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -448,6 +707,38 @@ export namespace GetInventory {
     };
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -514,6 +805,38 @@ export namespace PlaceOrder {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace GetOrderById {
@@ -548,11 +871,47 @@ export namespace GetOrderById {
 
     // parse orderId
     const orderIdParam = req.params["orderId"];
-    if (orderIdParam === undefined) throw new Error("missing orderId");
     parsed.parameters["orderId"] =
       parameterSchemas["orderId"]?.parse(orderIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -588,11 +947,33 @@ export namespace DeleteOrder {
 
     // parse orderId
     const orderIdParam = req.params["orderId"];
-    if (orderIdParam === undefined) throw new Error("missing orderId");
     parsed.parameters["orderId"] =
       parameterSchemas["orderId"]?.parse(orderIdParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -663,6 +1044,37 @@ export namespace CreateUser {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (res.getHeader("content-type") === "application/json") {
+        // TODO validate application/json default response
+      } else if (res.getHeader("content-type") === "application/xml") {
+        // TODO validate application/xml default response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace CreateUsersWithListInput {
@@ -720,6 +1132,43 @@ export namespace CreateUsersWithListInput {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace LoginUser {
@@ -757,6 +1206,43 @@ export namespace LoginUser {
 
     return parsed;
   };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
+  };
 }
 
 export namespace LogoutUser {
@@ -784,6 +1270,29 @@ export namespace LogoutUser {
     };
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -819,11 +1328,47 @@ export namespace GetUserByName {
 
     // parse username
     const usernameParam = req.params["username"];
-    if (usernameParam === undefined) throw new Error("missing username");
     parsed.parameters["username"] =
       parameterSchemas["username"]?.parse(usernameParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/json"
+      ) {
+        // TODO validate application/json 200 response
+      } else if (
+        res.statusCode == 200 &&
+        res.getHeader("content-type") === "application/xml"
+      ) {
+        // TODO validate application/xml 200 response
+      } else {
+        // response not handled
+      }
+
+      next();
+    });
+    return router;
   };
 }
 
@@ -900,11 +1445,33 @@ export namespace UpdateUser {
 
     // parse username
     const usernameParam = req.params["username"];
-    if (usernameParam === undefined) throw new Error("missing username");
     parsed.parameters["username"] =
       parameterSchemas["username"]?.parse(usernameParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -940,11 +1507,33 @@ export namespace DeleteUser {
 
     // parse username
     const usernameParam = req.params["username"];
-    if (usernameParam === undefined) throw new Error("missing username");
     parsed.parameters["username"] =
       parameterSchemas["username"]?.parse(usernameParam);
 
     return parsed;
+  };
+
+  export const createRouter = (
+    handler: Handler | undefined,
+    logging?: boolean | undefined,
+  ): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      if (logging) {
+        console.log(`${req.method} ${req.path}`);
+      }
+      try {
+        const parsed = parse(req);
+        handler?.call({}, req, res, parsed);
+      } catch (e) {
+        res.status(500).send(e);
+      }
+      next();
+    });
+    router.use(async (req, res, next) => {
+      next();
+    });
+    return router;
   };
 }
 
@@ -975,366 +1564,95 @@ export function createRouter(
   logging?: boolean | undefined,
 ): Router {
   const router = Router();
-  router.use((req, res, next) => {
-    if (logging) {
-      console.log(`${req.method} ${req.path}`);
-    }
-    next();
-  });
 
-  const updatePetRouter = Router();
-  updatePetRouter.put("*", async (req: Request, res: Response) => {
-    const parsed = UpdatePet.parse(req);
-    handlers.updatePet?.call({}, req, res, parsed);
-  });
-  updatePetRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
+  router.put("/pet", UpdatePet.createRouter(handlers.updatePet, logging));
 
-    next();
-  });
-  router.use("/pet", updatePetRouter);
+  router.post("/pet", AddPet.createRouter(handlers.addPet, logging));
 
-  const addPetRouter = Router();
-  addPetRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = AddPet.parse(req);
-    handlers.addPet?.call({}, req, res, parsed);
-  });
-  addPetRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/pet", addPetRouter);
-
-  const findPetsByStatusRouter = Router();
-  findPetsByStatusRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = FindPetsByStatus.parse(req);
-    handlers.findPetsByStatus?.call({}, req, res, parsed);
-  });
-  findPetsByStatusRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/pet/findByStatus", findPetsByStatusRouter);
-
-  const findPetsByTagsRouter = Router();
-  findPetsByTagsRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = FindPetsByTags.parse(req);
-    handlers.findPetsByTags?.call({}, req, res, parsed);
-  });
-  findPetsByTagsRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/pet/findByTags", findPetsByTagsRouter);
-
-  const getPetByIdRouter = Router();
-  getPetByIdRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetPetById.parse(req);
-    handlers.getPetById?.call({}, req, res, parsed);
-  });
-  getPetByIdRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/pet/:petId", getPetByIdRouter);
-
-  const updatePetWithFormRouter = Router();
-  updatePetWithFormRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = UpdatePetWithForm.parse(req);
-    handlers.updatePetWithForm?.call({}, req, res, parsed);
-  });
-  updatePetWithFormRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/pet/:petId", updatePetWithFormRouter);
-
-  const deletePetRouter = Router();
-  deletePetRouter.delete("*", async (req: Request, res: Response) => {
-    const parsed = DeletePet.parse(req);
-    handlers.deletePet?.call({}, req, res, parsed);
-  });
-  deletePetRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/pet/:petId", deletePetRouter);
-
-  const uploadFileRouter = Router();
-  uploadFileRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = UploadFile.parse(req);
-    handlers.uploadFile?.call({}, req, res, parsed);
-  });
-  uploadFileRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/pet/:petId/uploadImage", uploadFileRouter);
-
-  const getInventoryRouter = Router();
-  getInventoryRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetInventory.parse(req);
-    handlers.getInventory?.call({}, req, res, parsed);
-  });
-  getInventoryRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/store/inventory", getInventoryRouter);
-
-  const placeOrderRouter = Router();
-  placeOrderRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = PlaceOrder.parse(req);
-    handlers.placeOrder?.call({}, req, res, parsed);
-  });
-  placeOrderRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/store/order", placeOrderRouter);
-
-  const getOrderByIdRouter = Router();
-  getOrderByIdRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetOrderById.parse(req);
-    handlers.getOrderById?.call({}, req, res, parsed);
-  });
-  getOrderByIdRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/store/order/:orderId", getOrderByIdRouter);
-
-  const deleteOrderRouter = Router();
-  deleteOrderRouter.delete("*", async (req: Request, res: Response) => {
-    const parsed = DeleteOrder.parse(req);
-    handlers.deleteOrder?.call({}, req, res, parsed);
-  });
-  deleteOrderRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/store/order/:orderId", deleteOrderRouter);
-
-  const createUserRouter = Router();
-  createUserRouter.post("*", async (req: Request, res: Response) => {
-    const parsed = CreateUser.parse(req);
-    handlers.createUser?.call({}, req, res, parsed);
-  });
-  createUserRouter.use("*", async (req, res, next) => {
-    if (res.getHeader("content-type") === "application/json") {
-      // TODO validate application/json default response
-    } else if (res.getHeader("content-type") === "application/xml") {
-      // TODO validate application/xml default response
-    } else {
-      // response not handled
-    }
-
-    next();
-  });
-  router.use("/user", createUserRouter);
-
-  const createUsersWithListInputRouter = Router();
-  createUsersWithListInputRouter.post(
-    "*",
-    async (req: Request, res: Response) => {
-      const parsed = CreateUsersWithListInput.parse(req);
-      handlers.createUsersWithListInput?.call({}, req, res, parsed);
-    },
+  router.get(
+    "/pet/findByStatus",
+    FindPetsByStatus.createRouter(handlers.findPetsByStatus, logging),
   );
-  createUsersWithListInputRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
 
-    next();
-  });
-  router.use("/user/createWithList", createUsersWithListInputRouter);
+  router.get(
+    "/pet/findByTags",
+    FindPetsByTags.createRouter(handlers.findPetsByTags, logging),
+  );
 
-  const loginUserRouter = Router();
-  loginUserRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = LoginUser.parse(req);
-    handlers.loginUser?.call({}, req, res, parsed);
-  });
-  loginUserRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else {
-      // response not handled
-    }
+  router.get(
+    "/pet/:petId",
+    GetPetById.createRouter(handlers.getPetById, logging),
+  );
 
-    next();
-  });
-  router.use("/user/login", loginUserRouter);
+  router.post(
+    "/pet/:petId",
+    UpdatePetWithForm.createRouter(handlers.updatePetWithForm, logging),
+  );
 
-  const logoutUserRouter = Router();
-  logoutUserRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = LogoutUser.parse(req);
-    handlers.logoutUser?.call({}, req, res, parsed);
-  });
-  logoutUserRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/user/logout", logoutUserRouter);
+  router.delete(
+    "/pet/:petId",
+    DeletePet.createRouter(handlers.deletePet, logging),
+  );
 
-  const getUserByNameRouter = Router();
-  getUserByNameRouter.get("*", async (req: Request, res: Response) => {
-    const parsed = GetUserByName.parse(req);
-    handlers.getUserByName?.call({}, req, res, parsed);
-  });
-  getUserByNameRouter.use("*", async (req, res, next) => {
-    if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/json"
-    ) {
-      // TODO validate application/json 200 response
-    } else if (
-      res.statusCode == 200 &&
-      res.getHeader("content-type") === "application/xml"
-    ) {
-      // TODO validate application/xml 200 response
-    } else {
-      // response not handled
-    }
+  router.post(
+    "/pet/:petId/uploadImage",
+    UploadFile.createRouter(handlers.uploadFile, logging),
+  );
 
-    next();
-  });
-  router.use("/user/:username", getUserByNameRouter);
+  router.get(
+    "/store/inventory",
+    GetInventory.createRouter(handlers.getInventory, logging),
+  );
 
-  const updateUserRouter = Router();
-  updateUserRouter.put("*", async (req: Request, res: Response) => {
-    const parsed = UpdateUser.parse(req);
-    handlers.updateUser?.call({}, req, res, parsed);
-  });
-  updateUserRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/user/:username", updateUserRouter);
+  router.post(
+    "/store/order",
+    PlaceOrder.createRouter(handlers.placeOrder, logging),
+  );
 
-  const deleteUserRouter = Router();
-  deleteUserRouter.delete("*", async (req: Request, res: Response) => {
-    const parsed = DeleteUser.parse(req);
-    handlers.deleteUser?.call({}, req, res, parsed);
-  });
-  deleteUserRouter.use("*", async (req, res, next) => {
-    next();
-  });
-  router.use("/user/:username", deleteUserRouter);
+  router.get(
+    "/store/order/:orderId",
+    GetOrderById.createRouter(handlers.getOrderById, logging),
+  );
+
+  router.delete(
+    "/store/order/:orderId",
+    DeleteOrder.createRouter(handlers.deleteOrder, logging),
+  );
+
+  router.post("/user", CreateUser.createRouter(handlers.createUser, logging));
+
+  router.post(
+    "/user/createWithList",
+    CreateUsersWithListInput.createRouter(
+      handlers.createUsersWithListInput,
+      logging,
+    ),
+  );
+
+  router.get(
+    "/user/login",
+    LoginUser.createRouter(handlers.loginUser, logging),
+  );
+
+  router.get(
+    "/user/logout",
+    LogoutUser.createRouter(handlers.logoutUser, logging),
+  );
+
+  router.get(
+    "/user/:username",
+    GetUserByName.createRouter(handlers.getUserByName, logging),
+  );
+
+  router.put(
+    "/user/:username",
+    UpdateUser.createRouter(handlers.updateUser, logging),
+  );
+
+  router.delete(
+    "/user/:username",
+    DeleteUser.createRouter(handlers.deleteUser, logging),
+  );
 
   return router;
 }
