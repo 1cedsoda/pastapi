@@ -1,0 +1,129 @@
+[
+  {
+    "path": "/user",
+    "method": "get",
+    "operationId": "getUser",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "age",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      {
+        "name": "name",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        }
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      },
+      {
+        "name": "offset",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/user",
+    "method": "post",
+    "operationId": "postUser",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "text/plain",
+        "bodySchema": {
+          "type": "enum",
+          "enum": [
+            "OK"
+          ]
+        }
+      }
+    ],
+    "requestBodies": [
+      {
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "requestParameters": []
+  },
+  {
+    "path": "/user/{id}",
+    "method": "get",
+    "operationId": "getUserId",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "application/json",
+        "bodySchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "id",
+        "in": "path",
+        "schema": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "required": true
+      }
+    ]
+  }
+]

@@ -26,7 +26,7 @@ const buildMethod = (o: Operation) =>
   `  ${o.operationId}: ${fuc(o.operationId)}.Handler | undefined`;
 
 const buildMiddleware = (ast: Operation[]) => `
-export function createPastapiRouter(handlers: PastapiHandlers): Router {
+export function createRouter(handlers: PastapiHandlers): Router {
   const router = Router();
   ${ast.map(buildRoute).join("\n")}
   return router;

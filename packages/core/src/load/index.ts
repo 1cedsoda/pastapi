@@ -12,5 +12,5 @@ export async function loadYaml(content: string) {
 
 async function normalize(json: object): Promise<OpenAPI.Document<{}>> {
   const oas = new OASNormalize(json);
-  return oas.bundle();
+  return oas.deref();
 }
