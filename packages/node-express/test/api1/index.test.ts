@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { before, describe, it } from "mocha";
 import { generate } from "../generate";
-import { createRouter, castStringForZod } from "./gen/api";
+import { createRouter, castStringForZod, single } from "./gen/api";
 import express, { Express } from "express";
 import { get, post } from "../http";
 import { z } from "zod";
@@ -43,6 +43,14 @@ describe("api1", () => {
         const schema = z.string();
         const casted = castStringForZod(schema, "123");
         expect(casted).to.be.undefined;
+      });
+    });
+
+    describe("single", () => {
+      it("should give the first", async () => {
+        const maybeMultiple: string[] | string = ["a", "b", "c"];
+        const result = single(maybeMultiple);
+        expect(result).to.equal("a");
       });
     });
   });

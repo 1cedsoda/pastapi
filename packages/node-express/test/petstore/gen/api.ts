@@ -86,7 +86,7 @@ export namespace UpdatePet {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -214,7 +214,7 @@ export namespace AddPet {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -835,7 +835,7 @@ export namespace PlaceOrder {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -1088,7 +1088,7 @@ export namespace CreateUser {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -1178,7 +1178,7 @@ export namespace CreateUsersWithListInput {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -1503,7 +1503,7 @@ export namespace UpdateUser {
     };
 
     // parse body
-    const contentType = req.headers["Content-Type"];
+    const contentType = single(req.headers["Content-Type"]);
     if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
       const parsedContentType = contentType as ParsedContentType;
       parsed.bodyContentType = parsedContentType;
@@ -1763,4 +1763,8 @@ export function castStringForZod(
 
 export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
   return castStringForZod(schema, value) ?? value;
+}
+
+export function single<T>(input: T | T[]): T {
+  return Array.isArray(input) ? input[0] : input;
 }

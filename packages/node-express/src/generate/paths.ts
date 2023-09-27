@@ -21,6 +21,7 @@ ${operationNamespaces(ops)}
 ${handlerType(ops)}
 ${router(ops)}
 ${zodStringPreprocessor()}
+${singleFunction()}
 `;
 
 const buildHeader = () => `
@@ -94,7 +95,7 @@ export const parse = (req: Request): Parsed => {
       requestBodies.length > 0
         ? `
         // parse body
-        const contentType = req.headers["Content-Type"];
+        const contentType = single(req.headers["Content-Type"]);
         if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
           const parsedContentType = contentType as ParsedContentType
           parsed.bodyContentType = parsedContentType;
@@ -204,4 +205,10 @@ export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
   return castStringForZod(schema, value) ?? value;
 }
 
+`;
+
+const singleFunction = () => `
+export function single<T>(input: T | T[]): T {
+  return Array.isArray(input) ? input[0] : input;
+}
 `;
