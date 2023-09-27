@@ -78,10 +78,13 @@ function parseResponses(operation: any): OperationResponse[] {
         statusCode,
         applicationType,
         bodySchema,
-        headerSchema: undefined,
+        headerSchema: undefined, // TODO
       });
     }
   }
+
+  // sort statusCode "default" to the end
+  responses.sort(sortStatusCode);
 
   return responses;
 }
@@ -129,4 +132,15 @@ function generateOperationId(mehtod: string, path: string): string {
   return `${mehtod}${splitPath
     .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
     .join("")}`;
+}
+
+// sort statusCode "default" to the end
+function sortStatusCode(a: any, b: any) {
+  if (a.statusCode === "default") {
+    return 1;
+  }
+  if (b.statusCode === "default") {
+    return -1;
+  }
+  return parseInt(a.statusCode) - parseInt(b.statusCode);
 }

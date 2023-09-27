@@ -144,29 +144,74 @@ export type PastapiHandlers = {
   getUserId?: GetUserId.Handler | undefined;
 };
 
-export function createRouter(handlers: PastapiHandlers): Router {
+export function createRouter(
+  handlers: PastapiHandlers,
+  logging?: boolean | undefined,
+): Router {
   const router = Router();
+  router.use((req, res, next) => {
+    if (logging) {
+      console.log(`${req.method} ${req.path}`);
+    }
+    next();
+  });
 
-  if (handlers?.getUser) {
-    router.get("/user", async (req: Request, res: Response) => {
-      const parsed = GetUser.parse(req);
-      handlers.getUser!(req, res, parsed);
-    });
-  }
+  const getUserRouter = Router();
+  getUserRouter.get("*", async (req: Request, res: Response) => {
+    const parsed = GetUser.parse(req);
+    handlers.getUser?.call({}, req, res, parsed);
+  });
+  getUserRouter.use("*", async (req, res, next) => {
+    if (
+      res.statusCode == 200 &&
+      res.getHeader("content-type") === "application/json"
+    ) {
+      // TODO validate application/json 200 response
+    } else {
+      // response not handled
+    }
 
-  if (handlers?.postUser) {
-    router.post("/user", async (req: Request, res: Response) => {
-      const parsed = PostUser.parse(req);
-      handlers.postUser!(req, res, parsed);
-    });
-  }
+    next();
+  });
+  router.use("/user", getUserRouter);
 
-  if (handlers?.getUserId) {
-    router.get("/user/{id}", async (req: Request, res: Response) => {
-      const parsed = GetUserId.parse(req);
-      handlers.getUserId!(req, res, parsed);
-    });
-  }
+  const postUserRouter = Router();
+  postUserRouter.post("*", async (req: Request, res: Response) => {
+    const parsed = PostUser.parse(req);
+    handlers.postUser?.call({}, req, res, parsed);
+  });
+  postUserRouter.use("*", async (req, res, next) => {
+    if (
+      res.statusCode == 200 &&
+      res.getHeader("content-type") === "text/plain"
+    ) {
+      // TODO validate text/plain 200 response
+    } else {
+      // response not handled
+    }
+
+    next();
+  });
+  router.use("/user", postUserRouter);
+
+  const getUserIdRouter = Router();
+  getUserIdRouter.get("*", async (req: Request, res: Response) => {
+    const parsed = GetUserId.parse(req);
+    handlers.getUserId?.call({}, req, res, parsed);
+  });
+  getUserIdRouter.use("*", async (req, res, next) => {
+    if (
+      res.statusCode == 200 &&
+      res.getHeader("content-type") === "application/json"
+    ) {
+      // TODO validate application/json 200 response
+    } else {
+      // response not handled
+    }
+
+    next();
+  });
+  router.use("/user/:id", getUserIdRouter);
 
   return router;
 }

@@ -1,6 +1,6 @@
 import { format, loadYaml, parseOperations } from "@pastapi/core";
 import * as fs from "fs";
-import { generatePaths } from "../src/generate";
+import { generate as _generate } from "../src/generate";
 import { join } from "path";
 
 export async function generate(basePath: string) {
@@ -22,7 +22,7 @@ export async function generate(basePath: string) {
     );
 
     // generate
-    const ts = generatePaths(operations);
+    const ts = _generate(operations);
 
     // save
     const formatted = await format(ts);
