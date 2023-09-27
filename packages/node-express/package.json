@@ -1,5 +1,5 @@
 {
-  "name": "@pastapi/core",
+  "name": "@pastapi/node-express",
   "version": "0.1.0",
   "main": "dist/index",
   "types": "dist/index",
@@ -10,18 +10,17 @@
     "build": "pnpm run clean && pnpm run compile",
     "clean": "rimraf ./dist",
     "compile": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "pnpm run build"
+    "prepublishOnly": "pnpm run build",
+    "test": "ts-mocha test/**/*.ts"
   },
   "devDependencies": {
     "rimraf": "~5.0.0",
     "typescript": "~4.9.0"
   },
   "dependencies": {
+    "@pastapi/core": "workspace:*",
     "@types/node": "~18.18.0",
-    "node-fetch": "^3.3.2",
-    "oas-normalize": "^11.0.0",
-    "openapi-types": "^12.1.3",
-    "prettier": "^3.0.3",
-    "yaml": "^2.3.2"
+    "json-schema-to-zod": "^1.1.1",
+    "openapi-types": "^12.1.3"
   }
 }
