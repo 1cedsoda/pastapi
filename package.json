@@ -11,7 +11,8 @@
     "clean": "pnpm run -r clean",
     "build": "pnpm run -r build",
     "test": "pnpm run -r test",
-    "lint": "eslint --ext js,ts,tsx ."
+    "lint": "eslint --ext js,ts,tsx .",
+    "test:publish": "pnpm run -r test:publish"
   },
   "devDependencies": {
     "@pastapi/eslint-config-tsx": "~12.0.0-alpha.2",
