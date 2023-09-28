@@ -11,6 +11,7 @@
     "clean": "pnpm run -r clean",
     "build": "pnpm run -r build",
     "test": "pnpm run -r test",
+    "publish": "pnpm run -r publish",
     "lint": "eslint --ext js,ts,tsx .",
     "test:publish": "pnpm run -r test:publish"
   },
