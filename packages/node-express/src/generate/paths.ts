@@ -1,4 +1,4 @@
-import { Operation, RequestBody, RequestParameter } from "@pastapi/core";
+import { Operation, RequestBody, RequestParameter } from "pastapi-core";
 import { toZod, expressPath, fuc, camelCase } from "../helpers";
 import { z } from "zod";
 

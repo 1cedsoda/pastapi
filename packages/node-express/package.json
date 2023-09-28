@@ -1,5 +1,5 @@
 {
-  "name": "@pastapi/node-express",
+  "name": "pastapi-node-express",
   "version": "0.1.0",
   "main": "dist/index",
   "types": "dist/index",
@@ -34,7 +34,7 @@
     "zod": "^3.22.2"
   },
   "dependencies": {
-    "@pastapi/core": "workspace:*",
+    "pastapi-core": "workspace:*",
     "json-schema-to-zod": "^1.1.1",
     "openapi-types": "^12.1.3"
   }
