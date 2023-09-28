@@ -13,7 +13,7 @@
     "prepublishOnly": "pnpm run build",
     "test": "ts-mocha ./{,+\\(test\\|src\\)}/**/*.test.ts --ui bdd",
     "test:publish": "pnpm publish --dry-run --no-git-checks",
-    "publish": "pnpm publish --access public --no-git-checks"
+    "publish": "pnpm publish --no-git-checks"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.3",
