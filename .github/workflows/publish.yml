@@ -35,11 +35,12 @@ jobs:
       - name: Test
         run: pnpm run test
 
-      - name: Write NPM token
-        run: echo "//registry.npmjs.org/:_authToken=\\${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
       - name: Login
-        run: pnpm login --auth-type=legacy
+        run: |
+          pnpm login --auth-type=legacy <<EOF 
+          1cedsoda
+          ${{ secrets.NPM_TOKEN }}
+          EOF
 
       - name: Publish
         run: pnpm run publish
