@@ -18,7 +18,7 @@ export namespace GetUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -78,7 +78,7 @@ export namespace PostUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -89,12 +89,12 @@ export namespace PostUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -148,7 +148,7 @@ export namespace GetUserId {
     id: z.infer<(typeof parameterSchemas)["id"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -213,7 +213,7 @@ export namespace GetCookie {
     myOptionalCookie: z.infer<(typeof parameterSchemas)["myOptionalCookie"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -288,7 +288,7 @@ export namespace GetHeader {
     xMyOptionalHeader: z.infer<(typeof parameterSchemas)["xMyOptionalHeader"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -363,7 +363,7 @@ export namespace GetQuery {
     b: z.infer<(typeof parameterSchemas)["b"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
