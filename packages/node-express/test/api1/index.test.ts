@@ -108,6 +108,22 @@ describe("api1", () => {
           },
         });
       });
+      it("should return 422 when giving no Content-Type", async () => {
+        app.use(
+          createRouter({
+            postUser: async (req, res, parsed) => {
+              res.status(200).send("ok");
+            },
+          })
+        );
+        const res = await post("http://localhost:9999/user", {
+          data: {
+            name: "test",
+            id: 123,
+          },
+        });
+        expect(res.status).to.equal(422);
+      });
       afterEach(() => {
         server.close();
       });

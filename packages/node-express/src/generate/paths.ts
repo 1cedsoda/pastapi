@@ -1,6 +1,5 @@
-import { Operation, RequestBody, RequestParameter } from "@pastapi/core";
+import { Operation, RequestParameter } from "@pastapi/core";
 import { toZod, expressPath, fuc, camelCase } from "../helpers";
-import { z } from "zod";
 
 export const generate = (ops: Operation[]): string => `
 ${buildHeader()}
@@ -61,7 +60,9 @@ export namespace ${fuc(o.operationId)} {
     )}
   }
   export type Parsed = {
-    contentType: ParsedContentType | undefined,
+    contentType: ${
+      o.requestBodies.length > 0 ? "ParsedContentType" : "undefined"
+    },
     body: ParsedBody
     parameters: ParsedParameters
   }
@@ -76,13 +77,12 @@ const parseFunction = (o: Operation) => `
 export const parse = (req: Request): Parsed => {
     ${
       o.requestBodies.length > 0
-        ? `// parse body
-            const _contentType = single(req.headers["Content-Type"]);
-            const contentType = 
-            _contentType !== undefined &&
-            keysInclude(bodySchemas, _contentType)
-              ? _contentType as ParsedContentType
-              : undefined;`
+        ? `z.string().parse(req.headers["Content-Type"], { path: ["header", "Content-Type"] });`
+        : ``
+    }
+    ${
+      o.requestBodies.length > 0
+        ? `const contentType = single(req.headers["Content-Type"]) as ParsedContentType;`
         : `const contentType = undefined`
     }
 

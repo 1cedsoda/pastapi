@@ -89,7 +89,7 @@ export namespace UpdatePet {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -100,12 +100,12 @@ export namespace UpdatePet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -239,7 +239,7 @@ export namespace AddPet {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -250,12 +250,12 @@ export namespace AddPet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -325,7 +325,7 @@ export namespace FindPetsByStatus {
     status: z.infer<(typeof parameterSchemas)["status"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -391,7 +391,7 @@ export namespace FindPetsByTags {
     tags: z.infer<(typeof parameterSchemas)["tags"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -454,7 +454,7 @@ export namespace GetPetById {
     petId: z.infer<(typeof parameterSchemas)["petId"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -521,7 +521,7 @@ export namespace UpdatePetWithForm {
     status: z.infer<(typeof parameterSchemas)["status"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -597,7 +597,7 @@ export namespace DeletePet {
     petId: z.infer<(typeof parameterSchemas)["petId"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -677,7 +677,7 @@ export namespace UploadFile {
     >;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -688,12 +688,12 @@ export namespace UploadFile {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -755,7 +755,7 @@ export namespace GetInventory {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -844,7 +844,7 @@ export namespace PlaceOrder {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -855,12 +855,12 @@ export namespace PlaceOrder {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -927,7 +927,7 @@ export namespace GetOrderById {
     orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -990,7 +990,7 @@ export namespace DeleteOrder {
     orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1090,7 +1090,7 @@ export namespace CreateUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1101,12 +1101,12 @@ export namespace CreateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -1186,7 +1186,7 @@ export namespace CreateUsersWithListInput {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1197,12 +1197,12 @@ export namespace CreateUsersWithListInput {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -1258,7 +1258,7 @@ export namespace LoginUser {
     password: z.infer<(typeof parameterSchemas)["password"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1327,7 +1327,7 @@ export namespace LogoutUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1385,7 +1385,7 @@ export namespace GetUserByName {
     username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1489,7 +1489,7 @@ export namespace UpdateUser {
     username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: ParsedContentType;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1500,12 +1500,12 @@ export namespace UpdateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    // parse body
-    const _contentType = single(req.headers["Content-Type"]);
-    const contentType =
-      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
-        ? (_contentType as ParsedContentType)
-        : undefined;
+    z.string().parse(req.headers["Content-Type"], {
+      path: ["header", "Content-Type"],
+    });
+    const contentType = single(
+      req.headers["Content-Type"],
+    ) as ParsedContentType;
 
     const parsed: Parsed = {
       contentType,
@@ -1577,7 +1577,7 @@ export namespace DeleteUser {
     username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType | undefined;
+    contentType: undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
