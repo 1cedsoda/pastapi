@@ -15,18 +15,8 @@ export namespace GetUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
-    age: z.number().int().optional(),
-    name: z.string().optional(),
-    limit: z.number().int().optional(),
-    offset: z.number().int().optional(),
-  };
-  export type ParsedParameters = {
-    age: z.infer<(typeof parameterSchemas)["age"]>;
-    name: z.infer<(typeof parameterSchemas)["name"]>;
-    limit: z.infer<(typeof parameterSchemas)["limit"]>;
-    offset: z.infer<(typeof parameterSchemas)["offset"]>;
-  };
+  export const parameterSchemas = {};
+  export type ParsedParameters = {};
   export type Parsed = {
     contentType: ParsedContentType | undefined;
     body: ParsedBody;
@@ -44,30 +34,7 @@ export namespace GetUser {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        age: parameterSchemas.age?.parse(
-          castParsedQueryStringForZod(parameterSchemas.age, req.query["age"]),
-          { path: ["query", "age"] },
-        ),
-        name: parameterSchemas.name?.parse(
-          castParsedQueryStringForZod(parameterSchemas.name, req.query["name"]),
-          { path: ["query", "name"] },
-        ),
-        limit: parameterSchemas.limit?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.limit,
-            req.query["limit"],
-          ),
-          { path: ["query", "limit"] },
-        ),
-        offset: parameterSchemas.offset?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.offset,
-            req.query["offset"],
-          ),
-          { path: ["query", "offset"] },
-        ),
-      },
+      parameters: {},
     };
 
     return parsed;
@@ -383,12 +350,82 @@ export namespace GetHeader {
   };
 }
 
+export namespace GetQuery {
+  export const bodySchemas = {};
+  export type ParsedBody = {};
+  export type ParsedContentType = keyof ParsedBody;
+  export const parameterSchemas = {
+    a: z.number(),
+    b: z.string().optional(),
+  };
+  export type ParsedParameters = {
+    a: z.infer<(typeof parameterSchemas)["a"]>;
+    b: z.infer<(typeof parameterSchemas)["b"]>;
+  };
+  export type Parsed = {
+    contentType: ParsedContentType | undefined;
+    body: ParsedBody;
+    parameters: ParsedParameters;
+  };
+  export type Handler = (
+    req: Request,
+    res: Response,
+    parsed: Parsed,
+  ) => Promise<void>;
+
+  export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
+    const parsed: Parsed = {
+      contentType,
+      body: {},
+      parameters: {
+        a: parameterSchemas.a?.parse(
+          castParsedQueryStringForZod(parameterSchemas.a, req.query["a"]),
+          { path: ["query", "a"] },
+        ),
+        b: parameterSchemas.b?.parse(
+          castParsedQueryStringForZod(parameterSchemas.b, req.query["b"]),
+          { path: ["query", "b"] },
+        ),
+      },
+    };
+
+    return parsed;
+  };
+
+  export const createRouter = (handler: Handler | undefined): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      let parsed: Parsed;
+      try {
+        parsed = parse(req);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
+        return next();
+      }
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
+      next();
+    });
+    return router;
+  };
+}
+
 export type PastapiHandlers = {
   getUser?: GetUser.Handler | undefined;
   postUser?: PostUser.Handler | undefined;
   getUserId?: GetUserId.Handler | undefined;
   getCookie?: GetCookie.Handler | undefined;
   getHeader?: GetHeader.Handler | undefined;
+  getQuery?: GetQuery.Handler | undefined;
 };
 
 export function createRouter(handlers: PastapiHandlers): Router {
@@ -403,6 +440,8 @@ export function createRouter(handlers: PastapiHandlers): Router {
   router.get("/cookie", GetCookie.createRouter(handlers.getCookie));
 
   router.get("/header", GetHeader.createRouter(handlers.getHeader));
+
+  router.get("/query", GetQuery.createRouter(handlers.getQuery));
 
   return router;
 }

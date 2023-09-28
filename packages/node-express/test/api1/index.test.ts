@@ -141,7 +141,6 @@ describe("api1", () => {
     describe("getCookie", () => {
       beforeEach(async () => {
         app = express();
-        app.use(bodyParser.json());
         app.use(cookieParser());
         server = app.listen(9999);
       });
@@ -203,8 +202,6 @@ describe("api1", () => {
     describe("getHeader", () => {
       beforeEach(async () => {
         app = express();
-        app.use(bodyParser.json());
-        app.use(cookieParser());
         server = app.listen(9999);
       });
       it("should return 200 when giving all headers", async () => {
@@ -257,6 +254,58 @@ describe("api1", () => {
           })
         );
         const res = await get("http://localhost:9999/header", {});
+        expect(res.status).to.equal(422);
+      });
+
+      afterEach(() => {
+        server.close();
+      });
+    });
+
+    describe("getQuery", () => {
+      beforeEach(async () => {
+        app = express();
+        server = app.listen(9999);
+      });
+      it("should return 200 when giving all query params", async () => {
+        app.use(
+          createRouter({
+            getQuery: async (req, res, parsed) => {
+              const { a, b } = parsed.parameters;
+              expect(a).to.equal(1);
+              expect(b).to.equal("value2");
+              res.status(200).send("ok");
+            },
+          })
+        );
+        const res = await get("http://localhost:9999/query?a=1&b=value2");
+        expect(res.status).to.equal(200);
+      });
+
+      it("should return 200 when giving only required query params", async () => {
+        app.use(
+          createRouter({
+            getQuery: async (req, res, parsed) => {
+              const { a, b } = parsed.parameters;
+              expect(a).to.equal(1);
+              expect(b).to.equal(undefined);
+              res.status(200).send("ok");
+            },
+          })
+        );
+        const res = await get("http://localhost:9999/query?a=1");
+        expect(res.status).to.equal(200);
+      });
+
+      it("should return 422 when no required query params are given", async () => {
+        app.use(
+          createRouter({
+            getQuery: async (req, res, parsed) => {
+              res.status(200).send("ok");
+            },
+          })
+        );
+        const res = await get("http://localhost:9999/query", {});
         expect(res.status).to.equal(422);
       });
 

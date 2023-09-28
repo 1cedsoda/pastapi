@@ -26,39 +26,7 @@
       }
     ],
     "requestBodies": [],
-    "requestParameters": [
-      {
-        "name": "age",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "format": "int64"
-        }
-      },
-      {
-        "name": "name",
-        "in": "query",
-        "schema": {
-          "type": "string"
-        }
-      },
-      {
-        "name": "limit",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "format": "int64"
-        }
-      },
-      {
-        "name": "offset",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "format": "int64"
-        }
-      }
-    ]
+    "requestParameters": []
   },
   {
     "path": "/user",
@@ -193,6 +161,38 @@
       {
         "name": "x-my-optional-header",
         "in": "header",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/query",
+    "method": "get",
+    "operationId": "getQuery",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "text/plain",
+        "bodySchema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "a",
+        "in": "query",
+        "schema": {
+          "type": "number"
+        },
+        "required": true
+      },
+      {
+        "name": "b",
+        "in": "query",
         "schema": {
           "type": "string"
         }

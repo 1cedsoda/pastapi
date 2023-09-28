@@ -13,26 +13,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-      parameters:
-        - name: age
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: name
-          in: query
-          schema:
-            type: string
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            format: int64
     post:
       responses:
         "200":
@@ -99,6 +79,26 @@ paths:
           required: true
         - name: x-my-optional-header
           in: header
+          schema:
+            type: string
+
+  /query:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: a
+          in: query
+          schema:
+            type: number
+          required: true
+        - name: b
+          in: query
           schema:
             type: string
       
