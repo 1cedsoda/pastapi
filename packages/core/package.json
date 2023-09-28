@@ -11,7 +11,8 @@
     "clean": "rimraf ./dist",
     "compile": "tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build",
-    "test:publish": "pnpm publish --dry-run --no-git-checks"
+    "test:publish": "pnpm publish --dry-run --no-git-checks",
+    "publish": "pnpm publish --no-git-checks"
   },
   "devDependencies": {
     "rimraf": "~5.0.0",
