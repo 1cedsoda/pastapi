@@ -1,5 +1,5 @@
 {
-  "name": "@pastapi/core",
+  "name": "pastapi-core",
   "version": "0.1.0",
   "main": "dist/index",
   "types": "dist/index",
@@ -11,7 +11,7 @@
     "clean": "rimraf ./dist",
     "compile": "tsc -p tsconfig.build.json",
     "prepublishOnly": "pnpm run build",
-    "test:publish": "pnpm publish --dry-run --no-git-checks",
+    "publish-test": "pnpm publish --dry-run --no-git-checks",
     "publish": "pnpm publish --no-git-checks"
   },
   "devDependencies": {

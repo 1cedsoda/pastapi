@@ -1,4 +1,4 @@
-import { Operation, RequestParameter } from "@pastapi/core";
+import { Operation,  RequestParameter } from "pastapi-core";
 import { toZod, expressPath, fuc, camelCase } from "../helpers";
 
 export const generate = (ops: Operation[]): string => `

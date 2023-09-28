@@ -5,7 +5,7 @@
     "baseUrl": ".",
     "lib": ["ESNext", "DOM"],
     "paths": {
-      "@pastapi/*": ["packages/*/src"]
+      "pastapi-*": ["packages/*/src"]
     },
     "noEmit": true
   }

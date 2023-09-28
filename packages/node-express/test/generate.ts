@@ -1,4 +1,4 @@
-import { format, loadYaml, parseOperations } from "@pastapi/core";
+import { format, loadYaml, parseOperations } from "pastapi-core";
 import * as fs from "fs";
 import { generate as _generate } from "../src/generate";
 import { join } from "path";

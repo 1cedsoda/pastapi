@@ -13,6 +13,7 @@
     "types": [],
     "jsx": "react",
     "noEmit": false,
+    "noImplicitAny": false
   },
   "exclude": [
     "node_modules",
