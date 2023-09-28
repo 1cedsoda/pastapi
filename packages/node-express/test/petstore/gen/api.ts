@@ -3,8 +3,9 @@
 /   ║        Do not modify.        ║
 /   ╚══════════════════════════════╝
 /   
-/   Dependencies:
+/   External Middleware Dependencies:
 /   - body-parser to validate bodies
+/   - cookie-parser to validate cookies
 */
 
 import { Request, Response, Router } from "express";
@@ -13,6 +14,26 @@ import { z } from "zod";
 export namespace UpdatePet {
   export const bodySchemas = {
     "application/json": z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    "application/xml": z.object({
       id: z.number().int().optional(),
       name: z.string(),
       category: z
@@ -57,6 +78,9 @@ export namespace UpdatePet {
     "application/json":
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
+    "application/xml":
+      | z.infer<(typeof bodySchemas)["application/xml"]>
+      | undefined;
     "application/x-www-form-urlencoded":
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
@@ -65,7 +89,7 @@ export namespace UpdatePet {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -76,62 +100,61 @@ export namespace UpdatePet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
-        "application/x-www-form-urlencoded": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/xml":
+          contentType === "application/xml"
+            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/x-www-form-urlencoded":
+          contentType === "application/x-www-form-urlencoded"
+            ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
+                req.body.data,
+                { path: ["body"] },
+              )
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -160,6 +183,26 @@ export namespace AddPet {
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
     }),
+    "application/xml": z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
     "application/x-www-form-urlencoded": z.object({
       id: z.number().int().optional(),
       name: z.string(),
@@ -185,6 +228,9 @@ export namespace AddPet {
     "application/json":
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
+    "application/xml":
+      | z.infer<(typeof bodySchemas)["application/xml"]>
+      | undefined;
     "application/x-www-form-urlencoded":
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
@@ -193,7 +239,7 @@ export namespace AddPet {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -204,62 +250,61 @@ export namespace AddPet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
-        "application/x-www-form-urlencoded": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/xml":
+          contentType === "application/xml"
+            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/x-www-form-urlencoded":
+          contentType === "application/x-www-form-urlencoded"
+            ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
+                req.body.data,
+                { path: ["body"] },
+              )
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -271,13 +316,16 @@ export namespace FindPetsByStatus {
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
-    status: z.enum(["available", "pending", "sold"]).default("available"),
+    status: z
+      .enum(["available", "pending", "sold"])
+      .default("available")
+      .optional(),
   };
   export type ParsedParameters = {
-    status: z.infer<(typeof parameterSchemas)["status"]> | undefined;
+    status: z.infer<(typeof parameterSchemas)["status"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -288,51 +336,44 @@ export namespace FindPetsByStatus {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        status: undefined,
+        status: parameterSchemas.status?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.status,
+            req.query["status"],
+          ),
+          { path: ["query", "status"] },
+        ),
       },
     };
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -344,13 +385,13 @@ export namespace FindPetsByTags {
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
-    tags: z.array(z.string()),
+    tags: z.array(z.string()).optional(),
   };
   export type ParsedParameters = {
-    tags: z.infer<(typeof parameterSchemas)["tags"]> | undefined;
+    tags: z.infer<(typeof parameterSchemas)["tags"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -361,51 +402,41 @@ export namespace FindPetsByTags {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        tags: undefined,
+        tags: parameterSchemas.tags?.parse(
+          castParsedQueryStringForZod(parameterSchemas.tags, req.query["tags"]),
+          { path: ["query", "tags"] },
+        ),
       },
     };
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -420,10 +451,10 @@ export namespace GetPetById {
     petId: z.number().int(),
   };
   export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]> | undefined;
+    petId: z.infer<(typeof parameterSchemas)["petId"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -434,60 +465,41 @@ export namespace GetPetById {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        petId: undefined,
+        petId: parameterSchemas.petId?.parse(
+          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+          { path: ["path", "petId"] },
+        ),
       },
     };
-
-    // parse petId
-    const petIdParam = req.params["petId"];
-    const petIdParamCasted = tryCastStringForZod(
-      parameterSchemas["petId"],
-      petIdParam,
-    );
-    parsed.parameters["petId"] =
-      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -500,16 +512,16 @@ export namespace UpdatePetWithForm {
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
     petId: z.number().int(),
-    name: z.string(),
-    status: z.string(),
+    name: z.string().optional(),
+    status: z.string().optional(),
   };
   export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]> | undefined;
-    name: z.infer<(typeof parameterSchemas)["name"]> | undefined;
-    status: z.infer<(typeof parameterSchemas)["status"]> | undefined;
+    petId: z.infer<(typeof parameterSchemas)["petId"]>;
+    name: z.infer<(typeof parameterSchemas)["name"]>;
+    status: z.infer<(typeof parameterSchemas)["status"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -520,48 +532,52 @@ export namespace UpdatePetWithForm {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        petId: undefined,
-        name: undefined,
-        status: undefined,
+        petId: parameterSchemas.petId?.parse(
+          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+          { path: ["path", "petId"] },
+        ),
+        name: parameterSchemas.name?.parse(
+          castParsedQueryStringForZod(parameterSchemas.name, req.query["name"]),
+          { path: ["query", "name"] },
+        ),
+        status: parameterSchemas.status?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.status,
+            req.query["status"],
+          ),
+          { path: ["query", "status"] },
+        ),
       },
     };
-
-    // parse petId
-    const petIdParam = req.params["petId"];
-    const petIdParamCasted = tryCastStringForZod(
-      parameterSchemas["petId"],
-      petIdParam,
-    );
-    parsed.parameters["petId"] =
-      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -573,15 +589,15 @@ export namespace DeletePet {
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
-    api_key: z.string(),
+    apiKey: z.string().optional(),
     petId: z.number().int(),
   };
   export type ParsedParameters = {
-    api_key: z.infer<(typeof parameterSchemas)["api_key"]> | undefined;
-    petId: z.infer<(typeof parameterSchemas)["petId"]> | undefined;
+    apiKey: z.infer<(typeof parameterSchemas)["apiKey"]>;
+    petId: z.infer<(typeof parameterSchemas)["petId"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -592,47 +608,48 @@ export namespace DeletePet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        api_key: undefined,
-        petId: undefined,
+        apiKey: parameterSchemas.apiKey?.parse(
+          castStringForZod(
+            parameterSchemas.apiKey,
+            single(req.headers["api_key"]),
+          ),
+          { path: ["header", "api_key"] },
+        ),
+        petId: parameterSchemas.petId?.parse(
+          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+          { path: ["path", "petId"] },
+        ),
       },
     };
-
-    // parse petId
-    const petIdParam = req.params["petId"];
-    const petIdParamCasted = tryCastStringForZod(
-      parameterSchemas["petId"],
-      petIdParam,
-    );
-    parsed.parameters["petId"] =
-      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -640,21 +657,27 @@ export namespace DeletePet {
 }
 
 export namespace UploadFile {
-  export const bodySchemas = {};
-  export type ParsedBody = {};
+  export const bodySchemas = {
+    "application/octet-stream": z.string(),
+  };
+  export type ParsedBody = {
+    "application/octet-stream":
+      | z.infer<(typeof bodySchemas)["application/octet-stream"]>
+      | undefined;
+  };
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
     petId: z.number().int(),
-    additionalMetadata: z.string(),
+    additionalMetadata: z.string().optional(),
   };
   export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]> | undefined;
-    additionalMetadata:
-      | z.infer<(typeof parameterSchemas)["additionalMetadata"]>
-      | undefined;
+    petId: z.infer<(typeof parameterSchemas)["petId"]>;
+    additionalMetadata: z.infer<
+      (typeof parameterSchemas)["additionalMetadata"]
+    >;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -665,56 +688,60 @@ export namespace UploadFile {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
-      body: {},
+      contentType,
+      body: {
+        "application/octet-stream":
+          contentType === "application/octet-stream"
+            ? bodySchemas["application/octet-stream"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+      },
       parameters: {
-        petId: undefined,
-        additionalMetadata: undefined,
+        petId: parameterSchemas.petId?.parse(
+          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+          { path: ["path", "petId"] },
+        ),
+        additionalMetadata: parameterSchemas.additionalMetadata?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.additionalMetadata,
+            req.query["additionalMetadata"],
+          ),
+          { path: ["query", "additionalMetadata"] },
+        ),
       },
     };
-
-    // parse petId
-    const petIdParam = req.params["petId"];
-    const petIdParamCasted = tryCastStringForZod(
-      parameterSchemas["petId"],
-      petIdParam,
-    );
-    parsed.parameters["petId"] =
-      parameterSchemas["petId"]?.parse(petIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -728,7 +755,7 @@ export namespace GetInventory {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -739,8 +766,10 @@ export namespace GetInventory {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {},
     };
@@ -748,35 +777,25 @@ export namespace GetInventory {
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -786,6 +805,14 @@ export namespace GetInventory {
 export namespace PlaceOrder {
   export const bodySchemas = {
     "application/json": z.object({
+      id: z.number().int().optional(),
+      petId: z.number().int().optional(),
+      quantity: z.number().int().optional(),
+      shipDate: z.string().datetime().optional(),
+      status: z.enum(["placed", "approved", "delivered"]).optional(),
+      complete: z.boolean().optional(),
+    }),
+    "application/xml": z.object({
       id: z.number().int().optional(),
       petId: z.number().int().optional(),
       quantity: z.number().int().optional(),
@@ -806,6 +833,9 @@ export namespace PlaceOrder {
     "application/json":
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
+    "application/xml":
+      | z.infer<(typeof bodySchemas)["application/xml"]>
+      | undefined;
     "application/x-www-form-urlencoded":
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
@@ -814,7 +844,7 @@ export namespace PlaceOrder {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -825,57 +855,61 @@ export namespace PlaceOrder {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
-        "application/x-www-form-urlencoded": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/xml":
+          contentType === "application/xml"
+            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/x-www-form-urlencoded":
+          contentType === "application/x-www-form-urlencoded"
+            ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
+                req.body.data,
+                { path: ["body"] },
+              )
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -890,10 +924,10 @@ export namespace GetOrderById {
     orderId: z.number().int(),
   };
   export type ParsedParameters = {
-    orderId: z.infer<(typeof parameterSchemas)["orderId"]> | undefined;
+    orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -904,60 +938,41 @@ export namespace GetOrderById {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        orderId: undefined,
+        orderId: parameterSchemas.orderId?.parse(
+          castStringForZod(parameterSchemas.orderId, req.params["orderId"]),
+          { path: ["path", "orderId"] },
+        ),
       },
     };
-
-    // parse orderId
-    const orderIdParam = req.params["orderId"];
-    const orderIdParamCasted = tryCastStringForZod(
-      parameterSchemas["orderId"],
-      orderIdParam,
-    );
-    parsed.parameters["orderId"] =
-      parameterSchemas["orderId"]?.parse(orderIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -972,10 +987,10 @@ export namespace DeleteOrder {
     orderId: z.number().int(),
   };
   export type ParsedParameters = {
-    orderId: z.infer<(typeof parameterSchemas)["orderId"]> | undefined;
+    orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -986,46 +1001,41 @@ export namespace DeleteOrder {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        orderId: undefined,
+        orderId: parameterSchemas.orderId?.parse(
+          castStringForZod(parameterSchemas.orderId, req.params["orderId"]),
+          { path: ["path", "orderId"] },
+        ),
       },
     };
-
-    // parse orderId
-    const orderIdParam = req.params["orderId"];
-    const orderIdParamCasted = tryCastStringForZod(
-      parameterSchemas["orderId"],
-      orderIdParam,
-    );
-    parsed.parameters["orderId"] =
-      parameterSchemas["orderId"]?.parse(orderIdParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -1044,6 +1054,16 @@ export namespace CreateUser {
       phone: z.string().optional(),
       userStatus: z.number().int().optional(),
     }),
+    "application/xml": z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
     "application/x-www-form-urlencoded": z.object({
       id: z.number().int().optional(),
       username: z.string().optional(),
@@ -1059,6 +1079,9 @@ export namespace CreateUser {
     "application/json":
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
+    "application/xml":
+      | z.infer<(typeof bodySchemas)["application/xml"]>
+      | undefined;
     "application/x-www-form-urlencoded":
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
@@ -1067,7 +1090,7 @@ export namespace CreateUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1078,56 +1101,61 @@ export namespace CreateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
-        "application/x-www-form-urlencoded": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/xml":
+          contentType === "application/xml"
+            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/x-www-form-urlencoded":
+          contentType === "application/x-www-form-urlencoded"
+            ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
+                req.body.data,
+                { path: ["body"] },
+              )
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (res.getHeader("Content-Type") === "application/json") {
-        // TODO validate application/json default response
-      } else if (res.getHeader("Content-Type") === "application/xml") {
-        // TODO validate application/xml default response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -1158,7 +1186,7 @@ export namespace CreateUsersWithListInput {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1169,61 +1197,48 @@ export namespace CreateUsersWithListInput {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -1235,15 +1250,15 @@ export namespace LoginUser {
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
-    username: z.string(),
-    password: z.string(),
+    username: z.string().optional(),
+    password: z.string().optional(),
   };
   export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]> | undefined;
-    password: z.infer<(typeof parameterSchemas)["password"]> | undefined;
+    username: z.infer<(typeof parameterSchemas)["username"]>;
+    password: z.infer<(typeof parameterSchemas)["password"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1254,52 +1269,51 @@ export namespace LoginUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        username: undefined,
-        password: undefined,
+        username: parameterSchemas.username?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.username,
+            req.query["username"],
+          ),
+          { path: ["query", "username"] },
+        ),
+        password: parameterSchemas.password?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.password,
+            req.query["password"],
+          ),
+          { path: ["query", "password"] },
+        ),
       },
     };
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -1313,7 +1327,7 @@ export namespace LogoutUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1324,8 +1338,10 @@ export namespace LogoutUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {},
     };
@@ -1333,26 +1349,25 @@ export namespace LogoutUser {
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -1367,10 +1382,10 @@ export namespace GetUserByName {
     username: z.string(),
   };
   export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]> | undefined;
+    username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1381,60 +1396,41 @@ export namespace GetUserByName {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        username: undefined,
+        username: parameterSchemas.username?.parse(
+          castStringForZod(parameterSchemas.username, req.params["username"]),
+          { path: ["path", "username"] },
+        ),
       },
     };
-
-    // parse username
-    const usernameParam = req.params["username"];
-    const usernameParamCasted = tryCastStringForZod(
-      parameterSchemas["username"],
-      usernameParam,
-    );
-    parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/xml"
-      ) {
-        // TODO validate application/xml 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -1444,6 +1440,16 @@ export namespace GetUserByName {
 export namespace UpdateUser {
   export const bodySchemas = {
     "application/json": z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    "application/xml": z.object({
       id: z.number().int().optional(),
       username: z.string().optional(),
       firstName: z.string().optional(),
@@ -1468,6 +1474,9 @@ export namespace UpdateUser {
     "application/json":
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
+    "application/xml":
+      | z.infer<(typeof bodySchemas)["application/xml"]>
+      | undefined;
     "application/x-www-form-urlencoded":
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
@@ -1477,10 +1486,10 @@ export namespace UpdateUser {
     username: z.string(),
   };
   export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]> | undefined;
+    username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1491,59 +1500,66 @@ export namespace UpdateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
-        "application/x-www-form-urlencoded": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/xml":
+          contentType === "application/xml"
+            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
+        "application/x-www-form-urlencoded":
+          contentType === "application/x-www-form-urlencoded"
+            ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
+                req.body.data,
+                { path: ["body"] },
+              )
+            : undefined,
       },
       parameters: {
-        username: undefined,
+        username: parameterSchemas.username?.parse(
+          castStringForZod(parameterSchemas.username, req.params["username"]),
+          { path: ["path", "username"] },
+        ),
       },
     };
-
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
-    // parse username
-    const usernameParam = req.params["username"];
-    const usernameParamCasted = tryCastStringForZod(
-      parameterSchemas["username"],
-      usernameParam,
-    );
-    parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -1558,10 +1574,10 @@ export namespace DeleteUser {
     username: z.string(),
   };
   export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]> | undefined;
+    username: z.infer<(typeof parameterSchemas)["username"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -1572,46 +1588,41 @@ export namespace DeleteUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        username: undefined,
+        username: parameterSchemas.username?.parse(
+          castStringForZod(parameterSchemas.username, req.params["username"]),
+          { path: ["path", "username"] },
+        ),
       },
     };
-
-    // parse username
-    const usernameParam = req.params["username"];
-    const usernameParamCasted = tryCastStringForZod(
-      parameterSchemas["username"],
-      usernameParam,
-    );
-    parsed.parameters["username"] =
-      parameterSchemas["username"]?.parse(usernameParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -1640,108 +1651,87 @@ export type PastapiHandlers = {
   deleteUser?: DeleteUser.Handler | undefined;
 };
 
-export function createRouter(
-  handlers: PastapiHandlers,
-  logging?: boolean | undefined,
-): Router {
+export function createRouter(handlers: PastapiHandlers): Router {
   const router = Router();
 
-  router.put("/pet", UpdatePet.createRouter(handlers.updatePet, logging));
+  router.put("/pet", UpdatePet.createRouter(handlers.updatePet));
 
-  router.post("/pet", AddPet.createRouter(handlers.addPet, logging));
+  router.post("/pet", AddPet.createRouter(handlers.addPet));
 
   router.get(
     "/pet/findByStatus",
-    FindPetsByStatus.createRouter(handlers.findPetsByStatus, logging),
+    FindPetsByStatus.createRouter(handlers.findPetsByStatus),
   );
 
   router.get(
     "/pet/findByTags",
-    FindPetsByTags.createRouter(handlers.findPetsByTags, logging),
+    FindPetsByTags.createRouter(handlers.findPetsByTags),
   );
 
-  router.get(
-    "/pet/:petId",
-    GetPetById.createRouter(handlers.getPetById, logging),
-  );
+  router.get("/pet/:petId", GetPetById.createRouter(handlers.getPetById));
 
   router.post(
     "/pet/:petId",
-    UpdatePetWithForm.createRouter(handlers.updatePetWithForm, logging),
+    UpdatePetWithForm.createRouter(handlers.updatePetWithForm),
   );
 
-  router.delete(
-    "/pet/:petId",
-    DeletePet.createRouter(handlers.deletePet, logging),
-  );
+  router.delete("/pet/:petId", DeletePet.createRouter(handlers.deletePet));
 
   router.post(
     "/pet/:petId/uploadImage",
-    UploadFile.createRouter(handlers.uploadFile, logging),
+    UploadFile.createRouter(handlers.uploadFile),
   );
 
   router.get(
     "/store/inventory",
-    GetInventory.createRouter(handlers.getInventory, logging),
+    GetInventory.createRouter(handlers.getInventory),
   );
 
-  router.post(
-    "/store/order",
-    PlaceOrder.createRouter(handlers.placeOrder, logging),
-  );
+  router.post("/store/order", PlaceOrder.createRouter(handlers.placeOrder));
 
   router.get(
     "/store/order/:orderId",
-    GetOrderById.createRouter(handlers.getOrderById, logging),
+    GetOrderById.createRouter(handlers.getOrderById),
   );
 
   router.delete(
     "/store/order/:orderId",
-    DeleteOrder.createRouter(handlers.deleteOrder, logging),
+    DeleteOrder.createRouter(handlers.deleteOrder),
   );
 
-  router.post("/user", CreateUser.createRouter(handlers.createUser, logging));
+  router.post("/user", CreateUser.createRouter(handlers.createUser));
 
   router.post(
     "/user/createWithList",
-    CreateUsersWithListInput.createRouter(
-      handlers.createUsersWithListInput,
-      logging,
-    ),
+    CreateUsersWithListInput.createRouter(handlers.createUsersWithListInput),
   );
 
-  router.get(
-    "/user/login",
-    LoginUser.createRouter(handlers.loginUser, logging),
-  );
+  router.get("/user/login", LoginUser.createRouter(handlers.loginUser));
 
-  router.get(
-    "/user/logout",
-    LogoutUser.createRouter(handlers.logoutUser, logging),
-  );
+  router.get("/user/logout", LogoutUser.createRouter(handlers.logoutUser));
 
   router.get(
     "/user/:username",
-    GetUserByName.createRouter(handlers.getUserByName, logging),
+    GetUserByName.createRouter(handlers.getUserByName),
   );
 
-  router.put(
-    "/user/:username",
-    UpdateUser.createRouter(handlers.updateUser, logging),
-  );
+  router.put("/user/:username", UpdateUser.createRouter(handlers.updateUser));
 
   router.delete(
     "/user/:username",
-    DeleteUser.createRouter(handlers.deleteUser, logging),
+    DeleteUser.createRouter(handlers.deleteUser),
   );
 
   return router;
 }
 
-export function castStringForZod(
+export function tryCastStringForZod(
   schema: z.ZodTypeAny,
-  value: string,
+  value: string | undefined,
 ): any | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
   if (schema instanceof z.ZodNumber) {
     if (schema._def.checks.map((c) => c.kind).includes("int")) {
       const casted = parseInt(value);
@@ -1761,10 +1751,30 @@ export function castStringForZod(
   }
 }
 
-export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
-  return castStringForZod(schema, value) ?? value;
+export function castStringForZod(
+  schema: z.ZodTypeAny,
+  value: string | undefined,
+): any {
+  return tryCastStringForZod(schema, value) ?? value;
+}
+
+export function castParsedQueryStringForZod(
+  schema: z.ZodTypeAny,
+  value: any,
+): any {
+  if (typeof value === "string") {
+    return castStringForZod(schema, value);
+  }
+  return value as any;
 }
 
 export function single<T>(input: T | T[]): T {
   return Array.isArray(input) ? input[0] : input;
+}
+
+export function keysInclude<T extends object>(
+  obj: T,
+  key: keyof any,
+): key is keyof T {
+  return Object.keys(obj).indexOf(key as string) !== -1;
 }

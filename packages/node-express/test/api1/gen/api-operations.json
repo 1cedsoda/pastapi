@@ -69,10 +69,7 @@
         "statusCode": "200",
         "applicationType": "text/plain",
         "bodySchema": {
-          "type": "enum",
-          "enum": [
-            "OK"
-          ]
+          "type": "string"
         }
       }
     ],
@@ -135,6 +132,70 @@
           "format": "int64"
         },
         "required": true
+      }
+    ]
+  },
+  {
+    "path": "/cookie",
+    "method": "get",
+    "operationId": "getCookie",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "text/plain",
+        "bodySchema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "MyRequiredCookie",
+        "in": "cookie",
+        "schema": {
+          "type": "number"
+        },
+        "required": true
+      },
+      {
+        "name": "MyOptionalCookie",
+        "in": "cookie",
+        "schema": {
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "path": "/header",
+    "method": "get",
+    "operationId": "getHeader",
+    "responses": [
+      {
+        "statusCode": "200",
+        "applicationType": "text/plain",
+        "bodySchema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": [
+      {
+        "name": "x-my-required-header",
+        "in": "header",
+        "schema": {
+          "type": "number"
+        },
+        "required": true
+      },
+      {
+        "name": "x-my-optional-header",
+        "in": "header",
+        "schema": {
+          "type": "string"
+        }
       }
     ]
   }

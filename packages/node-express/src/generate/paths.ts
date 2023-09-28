@@ -1,16 +1,6 @@
-import { Operation, RequestBody } from "@pastapi/core";
-import {
-  toZod,
-  expressPath,
-  fuc,
-  includes,
-  concatIfNotEmpty,
-} from "../helpers";
-
-const supportedContentTypes = [
-  "application/json",
-  "application/x-www-form-urlencoded",
-];
+import { Operation, RequestBody, RequestParameter } from "@pastapi/core";
+import { toZod, expressPath, fuc, camelCase } from "../helpers";
+import { z } from "zod";
 
 export const generate = (ops: Operation[]): string => `
 ${buildHeader()}
@@ -20,8 +10,9 @@ import { z } from "zod";
 ${operationNamespaces(ops)}
 ${handlerType(ops)}
 ${router(ops)}
-${zodStringPreprocessor()}
+${zodPreprocessors()}
 ${singleFunction()}
+${keysIncludeFunction()}
 `;
 
 const buildHeader = () => `
@@ -30,127 +21,140 @@ const buildHeader = () => `
 /   ║        Do not modify.        ║
 /   ╚══════════════════════════════╝
 /   
-/   Dependencies:
+/   External Middleware Dependencies:
 /   - body-parser to validate bodies
+/   - cookie-parser to validate cookies
 */`;
 
 const operationNamespaces = (ast: Operation[]) => `
 ${ast.map(operationNamespace).join("\n")}`;
 
 const operationNamespace = (o: Operation) => {
-  const requestBodies = o.requestBodies.filter((rb) =>
-    includes(supportedContentTypes, rb.applicationType)
-  );
   return `
 export namespace ${fuc(o.operationId)} {
   export const bodySchemas = {
-    ${requestBodies.map(
+    ${o.requestBodies.map(
       (rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`
     )}
   }
   export type ParsedBody = {
-    ${requestBodies.map(
+    ${o.requestBodies.map(
       (rb) =>
         `"${rb.applicationType}" : z.infer<typeof bodySchemas["${rb.applicationType}"]> | undefined`
     )}
   }
   export type ParsedContentType = keyof ParsedBody
   export const parameterSchemas = {
-    ${o.requestParameters.map((p) => `"${p.name}" : ${toZod(p.schema)}`)}
+    ${o.requestParameters.map(
+      (p) =>
+        `${camelCase(p.name)} : ${toZod(p.schema)}${
+          p.required ? "" : ".optional()"
+        }`
+    )}
   }
   export type ParsedParameters = {
     ${o.requestParameters.map(
       (p) =>
-        `"${p.name}" : z.infer<typeof parameterSchemas["${p.name}"]> | undefined`
+        `${camelCase(p.name)} : z.infer<typeof parameterSchemas["${camelCase(
+          p.name
+        )}"]>`
     )}
   }
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined,
+    contentType: ParsedContentType | undefined,
     body: ParsedBody
     parameters: ParsedParameters
   }
   export type Handler = (req: Request, res: Response, parsed: Parsed) => Promise<void>
 
-  ${parseFunction(o, requestBodies)}
+  ${parseFunction(o)}
   ${createRouter(o)}
 }`;
 };
 
-const parseFunction = (o: Operation, requestBodies: RequestBody[]) => `
+const parseFunction = (o: Operation) => `
 export const parse = (req: Request): Parsed => {
-    const parsed: Parsed = {
-      bodyContentType: undefined,
-      body: {
-        ${o.requestBodies
-          .filter((rb) => includes(supportedContentTypes, rb.applicationType))
-          .map((rb) => `"${rb.applicationType}" : undefined`)
-          .join(",\n")}
-      },
-      parameters: {
-        ${o.requestParameters.map((p) => `"${p.name}" : undefined`).join(",\n")}
-      }
-    }
-    
     ${
-      requestBodies.length > 0
-        ? `
-        // parse body
-        const contentType = single(req.headers["Content-Type"]);
-        if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-          const parsedContentType = contentType as ParsedContentType
-          parsed.bodyContentType = parsedContentType;
-          parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(req.body.data);
-        }
-    `
-        : ""
+      o.requestBodies.length > 0
+        ? `// parse body
+            const _contentType = single(req.headers["Content-Type"]);
+            const contentType = 
+            _contentType !== undefined &&
+            keysInclude(bodySchemas, _contentType)
+              ? _contentType as ParsedContentType
+              : undefined;`
+        : `const contentType = undefined`
     }
 
-    ${o.requestParameters
-      .filter((p) => p.in == "path")
-      .map(
-        (p) => `// parse ${p.name}
-        const ${p.name}Param = req.params["${p.name}"];
-        const ${p.name}ParamCasted = tryCastStringForZod(parameterSchemas["${p.name}"], ${p.name}Param);
-        parsed.parameters["${p.name}"] = parameterSchemas["${p.name}"]?.parse(${p.name}ParamCasted);`
-      )
-      .join("\n")}
-    
-      return parsed;
+  const parsed: Parsed = {
+    contentType,
+    body: {
+      ${o.requestBodies
+        .map(
+          (rb) =>
+            `"${rb.applicationType}" : contentType === "${rb.applicationType}" ? bodySchemas["${rb.applicationType}"]?.parse(req.body.data, { path: ["body"] }) : undefined`
+        )
+        .join(",\n")}
+    },
+    parameters: {
+      ${o.requestParameters
+        .map(
+          (p) => `
+      "${camelCase(p.name)}": parameterSchemas.${camelCase(
+        p.name
+      )}?.parse(${readParameter(p)}, { path: ["${p.in}", "${p.name}"] })
+      `
+        )
+        .join(",\n")}
+    }
+  };
+
+  return parsed;
   }`;
 
+const readParameter = (p: RequestParameter) => {
+  if (p.in === "path") {
+    return `castStringForZod(parameterSchemas.${camelCase(
+      p.name
+    )}, req.params["${p.name}"])`;
+  }
+  if (p.in === "query") {
+    return `castParsedQueryStringForZod(parameterSchemas.${camelCase(
+      p.name
+    )}, req.query["${p.name}"])`;
+  }
+  if (p.in === "header") {
+    return `castStringForZod(parameterSchemas.${camelCase(
+      p.name
+    )}, single(req.headers["${p.name}"]))`;
+  }
+  if (p.in === "cookie") {
+    return `castStringForZod(parameterSchemas.${camelCase(
+      p.name
+    )}, req.cookies["${p.name}"])`;
+  }
+};
+
 const createRouter = (o: Operation) => `
-export const createRouter = (handler: Handler | undefined, logging?: boolean | undefined): Router => {
+export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(\`\${req.method} \${req.path}\`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      ${concatIfNotEmpty(
-        o.responses.map(
-          (r) => `if (${
-            r.statusCode !== "default"
-              ? `res.statusCode == ${r.statusCode} &&`
-              : ``
-          } res.getHeader("Content-Type") === "${r.applicationType}") {
-                // TODO validate ${r.applicationType} ${r.statusCode} response
-              }`
-        ),
-        `{
-          // response not handled
-        }`
-      ).join(" else ")}
-
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -166,7 +170,7 @@ const handlerTypeHandler = (o: Operation) =>
   `  ${o.operationId}?: ${fuc(o.operationId)}.Handler | undefined`;
 
 const router = (ast: Operation[]) => `
-export function createRouter(handlers: PastapiHandlers, logging?: boolean | undefined): Router {
+export function createRouter(handlers: PastapiHandlers): Router {
   const router = Router();
   ${ast.map(route).join("\n")}
   return router;
@@ -175,13 +179,16 @@ export function createRouter(handlers: PastapiHandlers, logging?: boolean | unde
 const route = (o: Operation) => `
     router.${o.method}("${expressPath(o.path)}", ${fuc(
       o.operationId
-    )}.createRouter(handlers.${o.operationId}, logging));
+    )}.createRouter(handlers.${o.operationId}));
   `;
-const zodStringPreprocessor = () => `
-export function castStringForZod(
+const zodPreprocessors = () => `
+export function tryCastStringForZod(
   schema: z.ZodTypeAny,
-  value: string
+  value: string | undefined
 ): any | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
   if (schema instanceof z.ZodNumber) {
     if (schema._def.checks.map((c) => c.kind).includes("int")) {
       const casted = parseInt(value);
@@ -201,14 +208,26 @@ export function castStringForZod(
   }
 }
 
-export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
-  return castStringForZod(schema, value) ?? value;
+export function castStringForZod(schema: z.ZodTypeAny, value: string | undefined): any {
+  return tryCastStringForZod(schema, value) ?? value;
 }
 
+export function castParsedQueryStringForZod(schema: z.ZodTypeAny, value: any): any {
+  if (typeof value === "string") {
+    return castStringForZod(schema, value);
+  }
+  return value as any;
+}
 `;
 
 const singleFunction = () => `
 export function single<T>(input: T | T[]): T {
   return Array.isArray(input) ? input[0] : input;
+}
+`;
+
+const keysIncludeFunction = () => `
+export function keysInclude<T extends object>(obj: T, key: keyof any): key is keyof T {
+  return Object.keys(obj).indexOf(key as string) !== -1;
 }
 `;

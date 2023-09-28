@@ -40,9 +40,7 @@ paths:
           content:
             text/plain:
               schema:
-                type: enum
-                enum:
-                  - "OK"
+                type: string
       requestBody:
         content:
           application/json:
@@ -64,6 +62,45 @@ paths:
           schema:
             type: integer
             format: int64
+  /cookie:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: MyRequiredCookie
+          in: cookie
+          schema:
+            type: number
+          required: true
+        - name: MyOptionalCookie
+          in: cookie
+          schema:
+            type: string
+  
+  /header:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: x-my-required-header
+          in: header
+          schema:
+            type: number
+          required: true
+        - name: x-my-optional-header
+          in: header
+          schema:
+            type: string
       
 components:
   schemas:

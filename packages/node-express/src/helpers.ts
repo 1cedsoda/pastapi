@@ -40,3 +40,17 @@ const prepareJsonForZod = (schema: any) => {
 export function concatIfNotEmpty<T>(arr: T[], item: T): T[] {
   return arr.length > 0 ? arr.concat(item) : arr;
 }
+
+export function camelCase(_s: string): string {
+  // deep clone string
+  let s = cloneString(_s);
+  // remove all non alphanumeric characters and capitalize letters after them
+  s = s.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+  // lowercase first character
+  s = s.charAt(0).toLowerCase() + s.substring(1);
+  return s;
+}
+
+export function cloneString(s: string): string {
+  return (" " + s).slice(1);
+}

@@ -3,8 +3,9 @@
 /   ║        Do not modify.        ║
 /   ╚══════════════════════════════╝
 /   
-/   Dependencies:
+/   External Middleware Dependencies:
 /   - body-parser to validate bodies
+/   - cookie-parser to validate cookies
 */
 
 import { Request, Response, Router } from "express";
@@ -15,19 +16,19 @@ export namespace GetUser {
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
   export const parameterSchemas = {
-    age: z.number().int(),
-    name: z.string(),
-    limit: z.number().int(),
-    offset: z.number().int(),
+    age: z.number().int().optional(),
+    name: z.string().optional(),
+    limit: z.number().int().optional(),
+    offset: z.number().int().optional(),
   };
   export type ParsedParameters = {
-    age: z.infer<(typeof parameterSchemas)["age"]> | undefined;
-    name: z.infer<(typeof parameterSchemas)["name"]> | undefined;
-    limit: z.infer<(typeof parameterSchemas)["limit"]> | undefined;
-    offset: z.infer<(typeof parameterSchemas)["offset"]> | undefined;
+    age: z.infer<(typeof parameterSchemas)["age"]>;
+    name: z.infer<(typeof parameterSchemas)["name"]>;
+    limit: z.infer<(typeof parameterSchemas)["limit"]>;
+    offset: z.infer<(typeof parameterSchemas)["offset"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -38,49 +39,59 @@ export namespace GetUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        age: undefined,
-        name: undefined,
-        limit: undefined,
-        offset: undefined,
+        age: parameterSchemas.age?.parse(
+          castParsedQueryStringForZod(parameterSchemas.age, req.query["age"]),
+          { path: ["query", "age"] },
+        ),
+        name: parameterSchemas.name?.parse(
+          castParsedQueryStringForZod(parameterSchemas.name, req.query["name"]),
+          { path: ["query", "name"] },
+        ),
+        limit: parameterSchemas.limit?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.limit,
+            req.query["limit"],
+          ),
+          { path: ["query", "limit"] },
+        ),
+        offset: parameterSchemas.offset?.parse(
+          castParsedQueryStringForZod(
+            parameterSchemas.offset,
+            req.query["offset"],
+          ),
+          { path: ["query", "offset"] },
+        ),
       },
     };
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -100,7 +111,7 @@ export namespace PostUser {
   export const parameterSchemas = {};
   export type ParsedParameters = {};
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -111,56 +122,48 @@ export namespace PostUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    // parse body
+    const _contentType = single(req.headers["Content-Type"]);
+    const contentType =
+      _contentType !== undefined && keysInclude(bodySchemas, _contentType)
+        ? (_contentType as ParsedContentType)
+        : undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {
-        "application/json": undefined,
+        "application/json":
+          contentType === "application/json"
+            ? bodySchemas["application/json"]?.parse(req.body.data, {
+                path: ["body"],
+              })
+            : undefined,
       },
       parameters: {},
     };
 
-    // parse body
-    const contentType = single(req.headers["Content-Type"]);
-    if (contentType && Object.keys(parsed.body).indexOf(contentType) !== -1) {
-      const parsedContentType = contentType as ParsedContentType;
-      parsed.bodyContentType = parsedContentType;
-      parsed.body[parsedContentType] = bodySchemas[parsedContentType]?.parse(
-        req.body.data,
-      );
-    }
-
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
-      next();
-    });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "text/plain"
-      ) {
-        // TODO validate text/plain 200 response
+      if (handler !== undefined) {
+        handler(req, res, parsed);
       } else {
-        // response not handled
+        res.status(501).send("Not Implemented");
       }
-
       next();
     });
     return router;
@@ -175,10 +178,10 @@ export namespace GetUserId {
     id: z.number().int(),
   };
   export type ParsedParameters = {
-    id: z.infer<(typeof parameterSchemas)["id"]> | undefined;
+    id: z.infer<(typeof parameterSchemas)["id"]>;
   };
   export type Parsed = {
-    bodyContentType: ParsedContentType | undefined;
+    contentType: ParsedContentType | undefined;
     body: ParsedBody;
     parameters: ParsedParameters;
   };
@@ -189,51 +192,191 @@ export namespace GetUserId {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
     const parsed: Parsed = {
-      bodyContentType: undefined,
+      contentType,
       body: {},
       parameters: {
-        id: undefined,
+        id: parameterSchemas.id?.parse(
+          castStringForZod(parameterSchemas.id, req.params["id"]),
+          { path: ["path", "id"] },
+        ),
       },
     };
-
-    // parse id
-    const idParam = req.params["id"];
-    const idParamCasted = tryCastStringForZod(parameterSchemas["id"], idParam);
-    parsed.parameters["id"] = parameterSchemas["id"]?.parse(idParamCasted);
 
     return parsed;
   };
 
-  export const createRouter = (
-    handler: Handler | undefined,
-    logging?: boolean | undefined,
-  ): Router => {
+  export const createRouter = (handler: Handler | undefined): Router => {
     const router = Router({ mergeParams: true });
     router.use(async (req, res, next) => {
-      if (logging) {
-        console.log(`${req.method} ${req.path}`);
-      }
       let parsed: Parsed;
       try {
         parsed = parse(req);
       } catch (e) {
-        res.status(500).send(e);
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
         return next();
       }
-      handler?.call({}, req, res, parsed);
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
-    router.use(async (req, res, next) => {
-      if (
-        res.statusCode == 200 &&
-        res.getHeader("Content-Type") === "application/json"
-      ) {
-        // TODO validate application/json 200 response
-      } else {
-        // response not handled
-      }
+    return router;
+  };
+}
 
+export namespace GetCookie {
+  export const bodySchemas = {};
+  export type ParsedBody = {};
+  export type ParsedContentType = keyof ParsedBody;
+  export const parameterSchemas = {
+    myRequiredCookie: z.number(),
+    myOptionalCookie: z.string().optional(),
+  };
+  export type ParsedParameters = {
+    myRequiredCookie: z.infer<(typeof parameterSchemas)["myRequiredCookie"]>;
+    myOptionalCookie: z.infer<(typeof parameterSchemas)["myOptionalCookie"]>;
+  };
+  export type Parsed = {
+    contentType: ParsedContentType | undefined;
+    body: ParsedBody;
+    parameters: ParsedParameters;
+  };
+  export type Handler = (
+    req: Request,
+    res: Response,
+    parsed: Parsed,
+  ) => Promise<void>;
+
+  export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
+    const parsed: Parsed = {
+      contentType,
+      body: {},
+      parameters: {
+        myRequiredCookie: parameterSchemas.myRequiredCookie?.parse(
+          castStringForZod(
+            parameterSchemas.myRequiredCookie,
+            req.cookies["MyRequiredCookie"],
+          ),
+          { path: ["cookie", "MyRequiredCookie"] },
+        ),
+        myOptionalCookie: parameterSchemas.myOptionalCookie?.parse(
+          castStringForZod(
+            parameterSchemas.myOptionalCookie,
+            req.cookies["MyOptionalCookie"],
+          ),
+          { path: ["cookie", "MyOptionalCookie"] },
+        ),
+      },
+    };
+
+    return parsed;
+  };
+
+  export const createRouter = (handler: Handler | undefined): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      let parsed: Parsed;
+      try {
+        parsed = parse(req);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
+        return next();
+      }
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
+      next();
+    });
+    return router;
+  };
+}
+
+export namespace GetHeader {
+  export const bodySchemas = {};
+  export type ParsedBody = {};
+  export type ParsedContentType = keyof ParsedBody;
+  export const parameterSchemas = {
+    xMyRequiredHeader: z.number(),
+    xMyOptionalHeader: z.string().optional(),
+  };
+  export type ParsedParameters = {
+    xMyRequiredHeader: z.infer<(typeof parameterSchemas)["xMyRequiredHeader"]>;
+    xMyOptionalHeader: z.infer<(typeof parameterSchemas)["xMyOptionalHeader"]>;
+  };
+  export type Parsed = {
+    contentType: ParsedContentType | undefined;
+    body: ParsedBody;
+    parameters: ParsedParameters;
+  };
+  export type Handler = (
+    req: Request,
+    res: Response,
+    parsed: Parsed,
+  ) => Promise<void>;
+
+  export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
+    const parsed: Parsed = {
+      contentType,
+      body: {},
+      parameters: {
+        xMyRequiredHeader: parameterSchemas.xMyRequiredHeader?.parse(
+          castStringForZod(
+            parameterSchemas.xMyRequiredHeader,
+            single(req.headers["x-my-required-header"]),
+          ),
+          { path: ["header", "x-my-required-header"] },
+        ),
+        xMyOptionalHeader: parameterSchemas.xMyOptionalHeader?.parse(
+          castStringForZod(
+            parameterSchemas.xMyOptionalHeader,
+            single(req.headers["x-my-optional-header"]),
+          ),
+          { path: ["header", "x-my-optional-header"] },
+        ),
+      },
+    };
+
+    return parsed;
+  };
+
+  export const createRouter = (handler: Handler | undefined): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      let parsed: Parsed;
+      try {
+        parsed = parse(req);
+      } catch (e) {
+        if (e instanceof z.ZodError) {
+          res.status(422).send(e.issues);
+        } else {
+          res.status(500).send(e);
+        }
+        return next();
+      }
+      if (handler !== undefined) {
+        handler(req, res, parsed);
+      } else {
+        res.status(501).send("Not Implemented");
+      }
       next();
     });
     return router;
@@ -244,27 +387,33 @@ export type PastapiHandlers = {
   getUser?: GetUser.Handler | undefined;
   postUser?: PostUser.Handler | undefined;
   getUserId?: GetUserId.Handler | undefined;
+  getCookie?: GetCookie.Handler | undefined;
+  getHeader?: GetHeader.Handler | undefined;
 };
 
-export function createRouter(
-  handlers: PastapiHandlers,
-  logging?: boolean | undefined,
-): Router {
+export function createRouter(handlers: PastapiHandlers): Router {
   const router = Router();
 
-  router.get("/user", GetUser.createRouter(handlers.getUser, logging));
+  router.get("/user", GetUser.createRouter(handlers.getUser));
 
-  router.post("/user", PostUser.createRouter(handlers.postUser, logging));
+  router.post("/user", PostUser.createRouter(handlers.postUser));
 
-  router.get("/user/:id", GetUserId.createRouter(handlers.getUserId, logging));
+  router.get("/user/:id", GetUserId.createRouter(handlers.getUserId));
+
+  router.get("/cookie", GetCookie.createRouter(handlers.getCookie));
+
+  router.get("/header", GetHeader.createRouter(handlers.getHeader));
 
   return router;
 }
 
-export function castStringForZod(
+export function tryCastStringForZod(
   schema: z.ZodTypeAny,
-  value: string,
+  value: string | undefined,
 ): any | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
   if (schema instanceof z.ZodNumber) {
     if (schema._def.checks.map((c) => c.kind).includes("int")) {
       const casted = parseInt(value);
@@ -284,10 +433,30 @@ export function castStringForZod(
   }
 }
 
-export function tryCastStringForZod(schema: z.ZodTypeAny, value: string): any {
-  return castStringForZod(schema, value) ?? value;
+export function castStringForZod(
+  schema: z.ZodTypeAny,
+  value: string | undefined,
+): any {
+  return tryCastStringForZod(schema, value) ?? value;
+}
+
+export function castParsedQueryStringForZod(
+  schema: z.ZodTypeAny,
+  value: any,
+): any {
+  if (typeof value === "string") {
+    return castStringForZod(schema, value);
+  }
+  return value as any;
 }
 
 export function single<T>(input: T | T[]): T {
   return Array.isArray(input) ? input[0] : input;
+}
+
+export function keysInclude<T extends object>(
+  obj: T,
+  key: keyof any,
+): key is keyof T {
+  return Object.keys(obj).indexOf(key as string) !== -1;
 }
