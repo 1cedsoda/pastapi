@@ -1,4 +1,4 @@
-name: tests
+name: publish
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  tests:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
