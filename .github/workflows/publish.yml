@@ -35,7 +35,7 @@ jobs:
       - name: Test
         run: pnpm run test
 
-      - name: Test Publish node-express
+      - name: Publish
         run: pnpm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
