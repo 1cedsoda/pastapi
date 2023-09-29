@@ -16,16 +16,16 @@ export namespace ${fuck(o.operationId)} {
     )}
   }
   export type ParsedContentType = keyof ParsedBody
-  export const parameterSchemas = {
+  export const paramSchemas = {
     ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
   }
-  export type ParsedParameters = {
-    ${o.requestParameters.map((p) => `${camelCase(p.name)} : z.infer<typeof parameterSchemas["${camelCase(p.name)}"]>`)}
+  export type ParamsParsed = {
+    ${o.requestParameters.map((p) => `${camelCase(p.name)} : z.infer<typeof paramSchemas["${camelCase(p.name)}"]>`)}
   }
   export type Parsed = {
     contentType: ${o.requestBodies.length > 0 ? "ParsedContentType" : "undefined"},
     body: ParsedBody
-    parameters: ParsedParameters
+    params: ParamsParsed
   }
   export type Handler = (req: Request, res: Response, parsed: Parsed) => Promise<void>
 
@@ -57,11 +57,11 @@ export const parse = (req: Request): Parsed => {
         )
         .join(",\n")}
     },
-    parameters: {
+    params: {
       ${o.requestParameters
         .map(
           (p) => `
-      "${camelCase(p.name)}": parameterSchemas.${camelCase(p.name)}?.parse(${readParameter(p)}, { path: ["${p.in}", "${
+      "${camelCase(p.name)}": paramSchemas.${camelCase(p.name)}?.parse(${readParameter(p)}, { path: ["${p.in}", "${
         p.name
       }"] })
       `
@@ -75,16 +75,16 @@ export const parse = (req: Request): Parsed => {
 
 const readParameter = (p: RequestParameter) => {
   if (p.in === "path") {
-    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, req.params["${p.name}"])`;
+    return `autoCastString(paramSchemas.${camelCase(p.name)}, req.params["${p.name}"])`;
   }
   if (p.in === "query") {
-    return `castParsedQueryStringForZod(parameterSchemas.${camelCase(p.name)}, req.query["${p.name}"])`;
+    return `autoCastQuery(paramSchemas.${camelCase(p.name)}, req.query["${p.name}"])`;
   }
   if (p.in === "header") {
-    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, single(req.headers["${p.name}"]))`;
+    return `autoCastString(paramSchemas.${camelCase(p.name)}, single(req.headers["${p.name}"]))`;
   }
   if (p.in === "cookie") {
-    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, req.cookies["${p.name}"])`;
+    return `autoCastString(paramSchemas.${camelCase(p.name)}, req.cookies["${p.name}"])`;
   }
 };
 

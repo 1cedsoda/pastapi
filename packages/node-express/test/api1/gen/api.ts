@@ -14,12 +14,12 @@ export namespace GetUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -33,7 +33,7 @@ export namespace GetUser {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -67,12 +67,12 @@ export namespace PostUser {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -98,7 +98,7 @@ export namespace PostUser {
               })
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -126,16 +126,16 @@ export namespace GetUserId {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     id: z.number().int(),
   };
-  export type ParsedParameters = {
-    id: z.infer<(typeof parameterSchemas)["id"]>;
+  export type ParamsParsed = {
+    id: z.infer<(typeof paramSchemas)["id"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -149,9 +149,9 @@ export namespace GetUserId {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        id: parameterSchemas.id?.parse(
-          castStringForZod(parameterSchemas.id, req.params["id"]),
+      params: {
+        id: paramSchemas.id?.parse(
+          autoCastString(paramSchemas.id, req.params["id"]),
           { path: ["path", "id"] },
         ),
       },
@@ -182,18 +182,18 @@ export namespace GetCookie {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     myRequiredCookie: z.number(),
     myOptionalCookie: z.string().optional(),
   };
-  export type ParsedParameters = {
-    myRequiredCookie: z.infer<(typeof parameterSchemas)["myRequiredCookie"]>;
-    myOptionalCookie: z.infer<(typeof parameterSchemas)["myOptionalCookie"]>;
+  export type ParamsParsed = {
+    myRequiredCookie: z.infer<(typeof paramSchemas)["myRequiredCookie"]>;
+    myOptionalCookie: z.infer<(typeof paramSchemas)["myOptionalCookie"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -207,17 +207,17 @@ export namespace GetCookie {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        myRequiredCookie: parameterSchemas.myRequiredCookie?.parse(
-          castStringForZod(
-            parameterSchemas.myRequiredCookie,
+      params: {
+        myRequiredCookie: paramSchemas.myRequiredCookie?.parse(
+          autoCastString(
+            paramSchemas.myRequiredCookie,
             req.cookies["MyRequiredCookie"],
           ),
           { path: ["cookie", "MyRequiredCookie"] },
         ),
-        myOptionalCookie: parameterSchemas.myOptionalCookie?.parse(
-          castStringForZod(
-            parameterSchemas.myOptionalCookie,
+        myOptionalCookie: paramSchemas.myOptionalCookie?.parse(
+          autoCastString(
+            paramSchemas.myOptionalCookie,
             req.cookies["MyOptionalCookie"],
           ),
           { path: ["cookie", "MyOptionalCookie"] },
@@ -250,18 +250,18 @@ export namespace GetHeader {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     xMyRequiredHeader: z.number(),
     xMyOptionalHeader: z.string().optional(),
   };
-  export type ParsedParameters = {
-    xMyRequiredHeader: z.infer<(typeof parameterSchemas)["xMyRequiredHeader"]>;
-    xMyOptionalHeader: z.infer<(typeof parameterSchemas)["xMyOptionalHeader"]>;
+  export type ParamsParsed = {
+    xMyRequiredHeader: z.infer<(typeof paramSchemas)["xMyRequiredHeader"]>;
+    xMyOptionalHeader: z.infer<(typeof paramSchemas)["xMyOptionalHeader"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -275,17 +275,17 @@ export namespace GetHeader {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        xMyRequiredHeader: parameterSchemas.xMyRequiredHeader?.parse(
-          castStringForZod(
-            parameterSchemas.xMyRequiredHeader,
+      params: {
+        xMyRequiredHeader: paramSchemas.xMyRequiredHeader?.parse(
+          autoCastString(
+            paramSchemas.xMyRequiredHeader,
             single(req.headers["x-my-required-header"]),
           ),
           { path: ["header", "x-my-required-header"] },
         ),
-        xMyOptionalHeader: parameterSchemas.xMyOptionalHeader?.parse(
-          castStringForZod(
-            parameterSchemas.xMyOptionalHeader,
+        xMyOptionalHeader: paramSchemas.xMyOptionalHeader?.parse(
+          autoCastString(
+            paramSchemas.xMyOptionalHeader,
             single(req.headers["x-my-optional-header"]),
           ),
           { path: ["header", "x-my-optional-header"] },
@@ -318,18 +318,18 @@ export namespace GetQuery {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     a: z.number(),
     b: z.string().optional(),
   };
-  export type ParsedParameters = {
-    a: z.infer<(typeof parameterSchemas)["a"]>;
-    b: z.infer<(typeof parameterSchemas)["b"]>;
+  export type ParamsParsed = {
+    a: z.infer<(typeof paramSchemas)["a"]>;
+    b: z.infer<(typeof paramSchemas)["b"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -343,13 +343,13 @@ export namespace GetQuery {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        a: parameterSchemas.a?.parse(
-          castParsedQueryStringForZod(parameterSchemas.a, req.query["a"]),
+      params: {
+        a: paramSchemas.a?.parse(
+          autoCastQuery(paramSchemas.a, req.query["a"]),
           { path: ["query", "a"] },
         ),
-        b: parameterSchemas.b?.parse(
-          castParsedQueryStringForZod(parameterSchemas.b, req.query["b"]),
+        b: paramSchemas.b?.parse(
+          autoCastQuery(paramSchemas.b, req.query["b"]),
           { path: ["query", "b"] },
         ),
       },
@@ -403,7 +403,7 @@ export function createRouter(handlers: PastapiHandlers): Router {
   return router;
 }
 
-export function tryCastStringForZod(
+export function tryAutoCastString(
   schema: z.ZodTypeAny,
   value: string | undefined,
 ): any | undefined {
@@ -429,19 +429,16 @@ export function tryCastStringForZod(
   }
 }
 
-export function castStringForZod(
+export function autoCastString(
   schema: z.ZodTypeAny,
   value: string | undefined,
 ): any {
-  return tryCastStringForZod(schema, value) ?? value;
+  return tryAutoCastString(schema, value) ?? value;
 }
 
-export function castParsedQueryStringForZod(
-  schema: z.ZodTypeAny,
-  value: any,
-): any {
+export function autoCastQuery(schema: z.ZodTypeAny, value: any): any {
   if (typeof value === "string") {
-    return castStringForZod(schema, value);
+    return autoCastString(schema, value);
   }
   return value as any;
 }

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { before, describe, it } from "mocha";
 import { generate } from "../generate";
-import { createRouter, tryCastStringForZod, single } from "./gen/api";
+import { createRouter, tryAutoCastString, single } from "./gen/api";
 import express, { Express } from "express";
 import { get, post } from "../http";
 import { z } from "zod";
@@ -19,30 +19,30 @@ describe("api1", () => {
       expect(typeof createRouter).to.equal("function");
     });
 
-    describe("castStringForZod", () => {
+    describe("tryAutoCastString", () => {
       it("should cast a int", async () => {
         const schema = z.number().int();
-        const casted = tryCastStringForZod(schema, "123");
+        const casted = tryAutoCastString(schema, "123");
         expect(casted).to.be.a("number");
       });
       it("should cast a float", async () => {
         const schema = z.number();
-        const casted = tryCastStringForZod(schema, "123.456");
+        const casted = tryAutoCastString(schema, "123.456");
         expect(casted).to.be.a("number");
       });
       it("should cast a float without decimal", async () => {
         const schema = z.number();
-        const casted = tryCastStringForZod(schema, "123");
+        const casted = tryAutoCastString(schema, "123");
         expect(casted).to.be.a("number");
       });
       it("should cast a boolean", async () => {
         const schema = z.boolean();
-        const casted = tryCastStringForZod(schema, "true");
+        const casted = tryAutoCastString(schema, "true");
         expect(casted).to.be.a("boolean");
       });
       it("should not cast a string", async () => {
         const schema = z.string();
-        const casted = tryCastStringForZod(schema, "123");
+        const casted = tryAutoCastString(schema, "123");
         expect(casted).to.be.undefined;
       });
     });
@@ -140,7 +140,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getUserId: async (req, res, parsed) => {
-              const { id } = parsed.parameters;
+              const { id } = parsed.params;
               expect(id).to.equal(123);
               res.status(200).send("ok");
             },
@@ -164,7 +164,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getCookie: async (req, res, parsed) => {
-              const { myRequiredCookie, myOptionalCookie } = parsed.parameters;
+              const { myRequiredCookie, myOptionalCookie } = parsed.params;
               expect(myRequiredCookie).to.equal(1);
               expect(myOptionalCookie).to.equal("value2");
               res.status(200).send("ok");
@@ -183,7 +183,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getCookie: async (req, res, parsed) => {
-              const { myRequiredCookie, myOptionalCookie } = parsed.parameters;
+              const { myRequiredCookie, myOptionalCookie } = parsed.params;
               expect(myRequiredCookie).to.equal(1);
               expect(myOptionalCookie).to.equal(undefined);
               res.status(200).send("ok");
@@ -224,7 +224,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getHeader: async (req, res, parsed) => {
-              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.parameters;
+              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.params;
               expect(xMyRequiredHeader).to.equal(1);
               expect(xMyOptionalHeader).to.equal("value2");
               res.status(200).send("ok");
@@ -244,7 +244,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getHeader: async (req, res, parsed) => {
-              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.parameters;
+              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.params;
               expect(xMyRequiredHeader).to.equal(1);
               expect(xMyOptionalHeader).to.equal(undefined);
               res.status(200).send("ok");
@@ -285,7 +285,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getQuery: async (req, res, parsed) => {
-              const { a, b } = parsed.parameters;
+              const { a, b } = parsed.params;
               expect(a).to.equal(1);
               expect(b).to.equal("value2");
               res.status(200).send("ok");
@@ -300,7 +300,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getQuery: async (req, res, parsed) => {
-              const { a, b } = parsed.parameters;
+              const { a, b } = parsed.params;
               expect(a).to.equal(1);
               expect(b).to.equal(undefined);
               res.status(200).send("ok");

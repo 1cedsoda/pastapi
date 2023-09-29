@@ -5,7 +5,7 @@ ${keysIncludeFunction()}
 `;
 
 const zodPreprocessors = () => `
-export function tryCastStringForZod(
+export function tryAutoCastString(
   schema: z.ZodTypeAny,
   value: string | undefined
 ): any | undefined {
@@ -31,13 +31,13 @@ export function tryCastStringForZod(
   }
 }
 
-export function castStringForZod(schema: z.ZodTypeAny, value: string | undefined): any {
-  return tryCastStringForZod(schema, value) ?? value;
+export function autoCastString(schema: z.ZodTypeAny, value: string | undefined): any {
+  return tryAutoCastString(schema, value) ?? value;
 }
 
-export function castParsedQueryStringForZod(schema: z.ZodTypeAny, value: any): any {
+export function autoCastQuery(schema: z.ZodTypeAny, value: any): any {
   if (typeof value === "string") {
-    return castStringForZod(schema, value);
+    return autoCastString(schema, value);
   }
   return value as any;
 }

@@ -85,12 +85,12 @@ export namespace UpdatePet {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -129,7 +129,7 @@ export namespace UpdatePet {
               )
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -228,12 +228,12 @@ export namespace AddPet {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -272,7 +272,7 @@ export namespace AddPet {
               )
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -300,19 +300,19 @@ export namespace FindPetsByStatus {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     status: z
       .enum(["available", "pending", "sold"])
       .default("available")
       .optional(),
   };
-  export type ParsedParameters = {
-    status: z.infer<(typeof parameterSchemas)["status"]>;
+  export type ParamsParsed = {
+    status: z.infer<(typeof paramSchemas)["status"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -326,12 +326,9 @@ export namespace FindPetsByStatus {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        status: parameterSchemas.status?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.status,
-            req.query["status"],
-          ),
+      params: {
+        status: paramSchemas.status?.parse(
+          autoCastQuery(paramSchemas.status, req.query["status"]),
           { path: ["query", "status"] },
         ),
       },
@@ -362,16 +359,16 @@ export namespace FindPetsByTags {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     tags: z.array(z.string()).optional(),
   };
-  export type ParsedParameters = {
-    tags: z.infer<(typeof parameterSchemas)["tags"]>;
+  export type ParamsParsed = {
+    tags: z.infer<(typeof paramSchemas)["tags"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -385,9 +382,9 @@ export namespace FindPetsByTags {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        tags: parameterSchemas.tags?.parse(
-          castParsedQueryStringForZod(parameterSchemas.tags, req.query["tags"]),
+      params: {
+        tags: paramSchemas.tags?.parse(
+          autoCastQuery(paramSchemas.tags, req.query["tags"]),
           { path: ["query", "tags"] },
         ),
       },
@@ -418,16 +415,16 @@ export namespace GetPetById {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     petId: z.number().int(),
   };
-  export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]>;
+  export type ParamsParsed = {
+    petId: z.infer<(typeof paramSchemas)["petId"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -441,9 +438,9 @@ export namespace GetPetById {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        petId: parameterSchemas.petId?.parse(
-          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+      params: {
+        petId: paramSchemas.petId?.parse(
+          autoCastString(paramSchemas.petId, req.params["petId"]),
           { path: ["path", "petId"] },
         ),
       },
@@ -474,20 +471,20 @@ export namespace UpdatePetWithForm {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     petId: z.number().int(),
     name: z.string().optional(),
     status: z.string().optional(),
   };
-  export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]>;
-    name: z.infer<(typeof parameterSchemas)["name"]>;
-    status: z.infer<(typeof parameterSchemas)["status"]>;
+  export type ParamsParsed = {
+    petId: z.infer<(typeof paramSchemas)["petId"]>;
+    name: z.infer<(typeof paramSchemas)["name"]>;
+    status: z.infer<(typeof paramSchemas)["status"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -501,20 +498,17 @@ export namespace UpdatePetWithForm {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        petId: parameterSchemas.petId?.parse(
-          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+      params: {
+        petId: paramSchemas.petId?.parse(
+          autoCastString(paramSchemas.petId, req.params["petId"]),
           { path: ["path", "petId"] },
         ),
-        name: parameterSchemas.name?.parse(
-          castParsedQueryStringForZod(parameterSchemas.name, req.query["name"]),
+        name: paramSchemas.name?.parse(
+          autoCastQuery(paramSchemas.name, req.query["name"]),
           { path: ["query", "name"] },
         ),
-        status: parameterSchemas.status?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.status,
-            req.query["status"],
-          ),
+        status: paramSchemas.status?.parse(
+          autoCastQuery(paramSchemas.status, req.query["status"]),
           { path: ["query", "status"] },
         ),
       },
@@ -545,18 +539,18 @@ export namespace DeletePet {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     apiKey: z.string().optional(),
     petId: z.number().int(),
   };
-  export type ParsedParameters = {
-    apiKey: z.infer<(typeof parameterSchemas)["apiKey"]>;
-    petId: z.infer<(typeof parameterSchemas)["petId"]>;
+  export type ParamsParsed = {
+    apiKey: z.infer<(typeof paramSchemas)["apiKey"]>;
+    petId: z.infer<(typeof paramSchemas)["petId"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -570,16 +564,13 @@ export namespace DeletePet {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        apiKey: parameterSchemas.apiKey?.parse(
-          castStringForZod(
-            parameterSchemas.apiKey,
-            single(req.headers["api_key"]),
-          ),
+      params: {
+        apiKey: paramSchemas.apiKey?.parse(
+          autoCastString(paramSchemas.apiKey, single(req.headers["api_key"])),
           { path: ["header", "api_key"] },
         ),
-        petId: parameterSchemas.petId?.parse(
-          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+        petId: paramSchemas.petId?.parse(
+          autoCastString(paramSchemas.petId, req.params["petId"]),
           { path: ["path", "petId"] },
         ),
       },
@@ -616,20 +607,18 @@ export namespace UploadFile {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     petId: z.number().int(),
     additionalMetadata: z.string().optional(),
   };
-  export type ParsedParameters = {
-    petId: z.infer<(typeof parameterSchemas)["petId"]>;
-    additionalMetadata: z.infer<
-      (typeof parameterSchemas)["additionalMetadata"]
-    >;
+  export type ParamsParsed = {
+    petId: z.infer<(typeof paramSchemas)["petId"]>;
+    additionalMetadata: z.infer<(typeof paramSchemas)["additionalMetadata"]>;
   };
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -655,14 +644,14 @@ export namespace UploadFile {
               })
             : undefined,
       },
-      parameters: {
-        petId: parameterSchemas.petId?.parse(
-          castStringForZod(parameterSchemas.petId, req.params["petId"]),
+      params: {
+        petId: paramSchemas.petId?.parse(
+          autoCastString(paramSchemas.petId, req.params["petId"]),
           { path: ["path", "petId"] },
         ),
-        additionalMetadata: parameterSchemas.additionalMetadata?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.additionalMetadata,
+        additionalMetadata: paramSchemas.additionalMetadata?.parse(
+          autoCastQuery(
+            paramSchemas.additionalMetadata,
             req.query["additionalMetadata"],
           ),
           { path: ["query", "additionalMetadata"] },
@@ -695,12 +684,12 @@ export namespace GetInventory {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -714,7 +703,7 @@ export namespace GetInventory {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -777,12 +766,12 @@ export namespace PlaceOrder {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -821,7 +810,7 @@ export namespace PlaceOrder {
               )
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -849,16 +838,16 @@ export namespace GetOrderById {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     orderId: z.number().int(),
   };
-  export type ParsedParameters = {
-    orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
+  export type ParamsParsed = {
+    orderId: z.infer<(typeof paramSchemas)["orderId"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -872,9 +861,9 @@ export namespace GetOrderById {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        orderId: parameterSchemas.orderId?.parse(
-          castStringForZod(parameterSchemas.orderId, req.params["orderId"]),
+      params: {
+        orderId: paramSchemas.orderId?.parse(
+          autoCastString(paramSchemas.orderId, req.params["orderId"]),
           { path: ["path", "orderId"] },
         ),
       },
@@ -905,16 +894,16 @@ export namespace DeleteOrder {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     orderId: z.number().int(),
   };
-  export type ParsedParameters = {
-    orderId: z.infer<(typeof parameterSchemas)["orderId"]>;
+  export type ParamsParsed = {
+    orderId: z.infer<(typeof paramSchemas)["orderId"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -928,9 +917,9 @@ export namespace DeleteOrder {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        orderId: parameterSchemas.orderId?.parse(
-          castStringForZod(parameterSchemas.orderId, req.params["orderId"]),
+      params: {
+        orderId: paramSchemas.orderId?.parse(
+          autoCastString(paramSchemas.orderId, req.params["orderId"]),
           { path: ["path", "orderId"] },
         ),
       },
@@ -1002,12 +991,12 @@ export namespace CreateUser {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1046,7 +1035,7 @@ export namespace CreateUser {
               )
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -1091,12 +1080,12 @@ export namespace CreateUsersWithListInput {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1122,7 +1111,7 @@ export namespace CreateUsersWithListInput {
               })
             : undefined,
       },
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -1150,18 +1139,18 @@ export namespace LoginUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     username: z.string().optional(),
     password: z.string().optional(),
   };
-  export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]>;
-    password: z.infer<(typeof parameterSchemas)["password"]>;
+  export type ParamsParsed = {
+    username: z.infer<(typeof paramSchemas)["username"]>;
+    password: z.infer<(typeof paramSchemas)["password"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1175,19 +1164,13 @@ export namespace LoginUser {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        username: parameterSchemas.username?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.username,
-            req.query["username"],
-          ),
+      params: {
+        username: paramSchemas.username?.parse(
+          autoCastQuery(paramSchemas.username, req.query["username"]),
           { path: ["query", "username"] },
         ),
-        password: parameterSchemas.password?.parse(
-          castParsedQueryStringForZod(
-            parameterSchemas.password,
-            req.query["password"],
-          ),
+        password: paramSchemas.password?.parse(
+          autoCastQuery(paramSchemas.password, req.query["password"]),
           { path: ["query", "password"] },
         ),
       },
@@ -1218,12 +1201,12 @@ export namespace LogoutUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {};
-  export type ParsedParameters = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1237,7 +1220,7 @@ export namespace LogoutUser {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {},
+      params: {},
     };
 
     return parsed;
@@ -1265,16 +1248,16 @@ export namespace GetUserByName {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     username: z.string(),
   };
-  export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]>;
+  export type ParamsParsed = {
+    username: z.infer<(typeof paramSchemas)["username"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1288,9 +1271,9 @@ export namespace GetUserByName {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        username: parameterSchemas.username?.parse(
-          castStringForZod(parameterSchemas.username, req.params["username"]),
+      params: {
+        username: paramSchemas.username?.parse(
+          autoCastString(paramSchemas.username, req.params["username"]),
           { path: ["path", "username"] },
         ),
       },
@@ -1362,16 +1345,16 @@ export namespace UpdateUser {
       | undefined;
   };
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     username: z.string(),
   };
-  export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]>;
+  export type ParamsParsed = {
+    username: z.infer<(typeof paramSchemas)["username"]>;
   };
   export type Parsed = {
     contentType: ParsedContentType;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1410,9 +1393,9 @@ export namespace UpdateUser {
               )
             : undefined,
       },
-      parameters: {
-        username: parameterSchemas.username?.parse(
-          castStringForZod(parameterSchemas.username, req.params["username"]),
+      params: {
+        username: paramSchemas.username?.parse(
+          autoCastString(paramSchemas.username, req.params["username"]),
           { path: ["path", "username"] },
         ),
       },
@@ -1443,16 +1426,16 @@ export namespace DeleteUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
   export type ParsedContentType = keyof ParsedBody;
-  export const parameterSchemas = {
+  export const paramSchemas = {
     username: z.string(),
   };
-  export type ParsedParameters = {
-    username: z.infer<(typeof parameterSchemas)["username"]>;
+  export type ParamsParsed = {
+    username: z.infer<(typeof paramSchemas)["username"]>;
   };
   export type Parsed = {
     contentType: undefined;
     body: ParsedBody;
-    parameters: ParsedParameters;
+    params: ParamsParsed;
   };
   export type Handler = (
     req: Request,
@@ -1466,9 +1449,9 @@ export namespace DeleteUser {
     const parsed: Parsed = {
       contentType,
       body: {},
-      parameters: {
-        username: parameterSchemas.username?.parse(
-          castStringForZod(parameterSchemas.username, req.params["username"]),
+      params: {
+        username: paramSchemas.username?.parse(
+          autoCastString(paramSchemas.username, req.params["username"]),
           { path: ["path", "username"] },
         ),
       },
@@ -1591,7 +1574,7 @@ export function createRouter(handlers: PastapiHandlers): Router {
   return router;
 }
 
-export function tryCastStringForZod(
+export function tryAutoCastString(
   schema: z.ZodTypeAny,
   value: string | undefined,
 ): any | undefined {
@@ -1617,19 +1600,16 @@ export function tryCastStringForZod(
   }
 }
 
-export function castStringForZod(
+export function autoCastString(
   schema: z.ZodTypeAny,
   value: string | undefined,
 ): any {
-  return tryCastStringForZod(schema, value) ?? value;
+  return tryAutoCastString(schema, value) ?? value;
 }
 
-export function castParsedQueryStringForZod(
-  schema: z.ZodTypeAny,
-  value: any,
-): any {
+export function autoCastQuery(schema: z.ZodTypeAny, value: any): any {
   if (typeof value === "string") {
-    return castStringForZod(schema, value);
+    return autoCastString(schema, value);
   }
   return value as any;
 }
