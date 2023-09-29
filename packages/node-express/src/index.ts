@@ -6,10 +6,7 @@ import { boilerplate } from "./boilerplate";
 import { format } from "@prettier/sync";
 import { Options } from "prettier";
 
-export const generate = (
-  ops: Operation[],
-  prettierConfig?: Options | undefined
-): string => {
+export const generate = (ops: Operation[], prettierConfig?: Options | undefined): string => {
   const code = `${buildHeader()}
 import { Request, Response, Router } from "express";
 import { z } from "zod";

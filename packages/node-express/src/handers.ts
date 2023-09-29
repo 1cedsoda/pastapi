@@ -6,5 +6,4 @@ export type PastapiHandlers = {
 ${ast.map(handlerTypeHandler).join("\n")}
 }`;
 
-const handlerTypeHandler = (o: Operation) =>
-  `  ${o.operationId}?: ${fuck(o.operationId)}.Handler | undefined`;
+const handlerTypeHandler = (o: Operation) => `  ${o.operationId}?: ${fuck(o.operationId)}.Handler | undefined`;

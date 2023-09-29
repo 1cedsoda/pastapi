@@ -224,8 +224,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getHeader: async (req, res, parsed) => {
-              const { xMyRequiredHeader, xMyOptionalHeader } =
-                parsed.parameters;
+              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.parameters;
               expect(xMyRequiredHeader).to.equal(1);
               expect(xMyOptionalHeader).to.equal("value2");
               res.status(200).send("ok");
@@ -245,8 +244,7 @@ describe("api1", () => {
         app.use(
           createRouter({
             getHeader: async (req, res, parsed) => {
-              const { xMyRequiredHeader, xMyOptionalHeader } =
-                parsed.parameters;
+              const { xMyRequiredHeader, xMyOptionalHeader } = parsed.parameters;
               expect(xMyRequiredHeader).to.equal(1);
               expect(xMyOptionalHeader).to.equal(undefined);
               res.status(200).send("ok");

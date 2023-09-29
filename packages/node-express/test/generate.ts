@@ -17,10 +17,7 @@ export async function generate(basePath: string) {
 
       // parse
       const operations = parseOperations(spec);
-      fs.writeFileSync(
-        join(basePath, "gen/api-operations.json"),
-        JSON.stringify(operations, null, 2)
-      );
+      fs.writeFileSync(join(basePath, "gen/api-operations.json"), JSON.stringify(operations, null, 2));
 
       // generate
       const ts = _generate(operations);

@@ -1,24 +1,11 @@
 import { OpenAPI } from "openapi-types";
-import {
-  Operation,
-  OperationResponse,
-  RequestBody,
-  RequestParameter,
-} from "./pathsTypes";
+import { Operation, OperationResponse, RequestBody, RequestParameter } from "./pathsTypes";
 
 export function parseOperations(spec: OpenAPI.Document): Operation[] {
   const operations: Operation[] = [];
 
   for (const path in spec.paths) {
-    for (const method of [
-      "get",
-      "put",
-      "post",
-      "delete",
-      "options",
-      "head",
-      "patch",
-    ]) {
+    for (const method of ["get", "put", "post", "delete", "options", "head", "patch"]) {
       let operation;
       switch (method) {
         case "get":
@@ -46,8 +33,7 @@ export function parseOperations(spec: OpenAPI.Document): Operation[] {
       if (!operation) {
         continue;
       }
-      const operationId =
-        operation.operationId ?? generateOperationId(method, path);
+      const operationId = operation.operationId ?? generateOperationId(method, path);
       const responses = parseResponses(operation);
       const requestBodies = parseRequestBodies(operation);
       const requestParameters = parseRequestParameters(operation);
@@ -129,9 +115,7 @@ function parseRequestParameters(operation: any): RequestParameter[] {
 function generateOperationId(mehtod: string, path: string): string {
   const cleanPath = path.replace(/[^a-zA-Z0-9\/]/g, "");
   const splitPath = cleanPath.split("/");
-  return `${mehtod}${splitPath
-    .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
-    .join("")}`;
+  return `${mehtod}${splitPath.map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()).join("")}`;
 }
 
 // sort statusCode "default" to the end

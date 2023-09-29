@@ -8,37 +8,22 @@ const operationNamespace = (o: Operation) => {
   return `
 export namespace ${fuck(o.operationId)} {
   export const bodySchemas = {
-    ${o.requestBodies.map(
-      (rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`
-    )}
+    ${o.requestBodies.map((rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`)}
   }
   export type ParsedBody = {
     ${o.requestBodies.map(
-      (rb) =>
-        `"${rb.applicationType}" : z.infer<typeof bodySchemas["${rb.applicationType}"]> | undefined`
+      (rb) => `"${rb.applicationType}" : z.infer<typeof bodySchemas["${rb.applicationType}"]> | undefined`
     )}
   }
   export type ParsedContentType = keyof ParsedBody
   export const parameterSchemas = {
-    ${o.requestParameters.map(
-      (p) =>
-        `${camelCase(p.name)} : ${toZod(p.schema)}${
-          p.required ? "" : ".optional()"
-        }`
-    )}
+    ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
   }
   export type ParsedParameters = {
-    ${o.requestParameters.map(
-      (p) =>
-        `${camelCase(p.name)} : z.infer<typeof parameterSchemas["${camelCase(
-          p.name
-        )}"]>`
-    )}
+    ${o.requestParameters.map((p) => `${camelCase(p.name)} : z.infer<typeof parameterSchemas["${camelCase(p.name)}"]>`)}
   }
   export type Parsed = {
-    contentType: ${
-      o.requestBodies.length > 0 ? "ParsedContentType" : "undefined"
-    },
+    contentType: ${o.requestBodies.length > 0 ? "ParsedContentType" : "undefined"},
     body: ParsedBody
     parameters: ParsedParameters
   }
@@ -76,9 +61,9 @@ export const parse = (req: Request): Parsed => {
       ${o.requestParameters
         .map(
           (p) => `
-      "${camelCase(p.name)}": parameterSchemas.${camelCase(
+      "${camelCase(p.name)}": parameterSchemas.${camelCase(p.name)}?.parse(${readParameter(p)}, { path: ["${p.in}", "${
         p.name
-      )}?.parse(${readParameter(p)}, { path: ["${p.in}", "${p.name}"] })
+      }"] })
       `
         )
         .join(",\n")}
@@ -90,24 +75,16 @@ export const parse = (req: Request): Parsed => {
 
 const readParameter = (p: RequestParameter) => {
   if (p.in === "path") {
-    return `castStringForZod(parameterSchemas.${camelCase(
-      p.name
-    )}, req.params["${p.name}"])`;
+    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, req.params["${p.name}"])`;
   }
   if (p.in === "query") {
-    return `castParsedQueryStringForZod(parameterSchemas.${camelCase(
-      p.name
-    )}, req.query["${p.name}"])`;
+    return `castParsedQueryStringForZod(parameterSchemas.${camelCase(p.name)}, req.query["${p.name}"])`;
   }
   if (p.in === "header") {
-    return `castStringForZod(parameterSchemas.${camelCase(
-      p.name
-    )}, single(req.headers["${p.name}"]))`;
+    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, single(req.headers["${p.name}"]))`;
   }
   if (p.in === "cookie") {
-    return `castStringForZod(parameterSchemas.${camelCase(
-      p.name
-    )}, req.cookies["${p.name}"])`;
+    return `castStringForZod(parameterSchemas.${camelCase(p.name)}, req.cookies["${p.name}"])`;
   }
 };
 

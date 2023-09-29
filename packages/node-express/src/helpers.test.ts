@@ -1,11 +1,5 @@
 import { expect } from "chai";
-import {
-  expressPath,
-  fuck,
-  includes,
-  concatIfNotEmpty,
-  toZod,
-} from "./helpers";
+import { expressPath, fuck, includes, concatIfNotEmpty, toZod } from "./helpers";
 
 describe("helpers", () => {
   describe("fuck", () => {
