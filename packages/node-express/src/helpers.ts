@@ -1,7 +1,7 @@
 import { parseSchema } from "json-schema-to-zod";
 
-// fist uppercase
-export function fuc(a: string): string {
+// fist uppercase key
+export function fuck(a: string): string {
   return a.charAt(0).toUpperCase() + a.slice(1);
 }
 

@@ -1,10 +1,16 @@
 import { expect } from "chai";
-import { expressPath, fuc, includes, concatIfNotEmpty, toZod } from "./helpers";
+import {
+  expressPath,
+  fuck,
+  includes,
+  concatIfNotEmpty,
+  toZod,
+} from "./helpers";
 
 describe("helpers", () => {
-  describe("fuc", () => {
-    it("should return first uppercase", () => {
-      const result = fuc("abc");
+  describe("fuck", () => {
+    it("should make first key uppercase", () => {
+      const result = fuck("abc");
       expect(result).to.equal("Abc");
     });
   });
