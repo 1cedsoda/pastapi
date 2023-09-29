@@ -7,7 +7,6 @@
 /   - body-parser to validate bodies
 /   - cookie-parser to validate cookies
 */
-
 import { Request, Response, Router } from "express";
 import { z } from "zod";
 
@@ -143,18 +142,11 @@ export namespace UpdatePet {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -293,18 +285,11 @@ export namespace AddPet {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -362,18 +347,11 @@ export namespace FindPetsByStatus {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -425,18 +403,11 @@ export namespace FindPetsByTags {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -488,18 +459,11 @@ export namespace GetPetById {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -566,18 +530,11 @@ export namespace UpdatePetWithForm {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -638,18 +595,11 @@ export namespace DeletePet {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -730,18 +680,11 @@ export namespace UploadFile {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -784,18 +727,11 @@ export namespace GetInventory {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -898,18 +834,11 @@ export namespace PlaceOrder {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -961,18 +890,11 @@ export namespace GetOrderById {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1024,18 +946,11 @@ export namespace DeleteOrder {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1144,18 +1059,11 @@ export namespace CreateUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1227,18 +1135,11 @@ export namespace CreateUsersWithListInput {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1302,18 +1203,11 @@ export namespace LoginUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1356,18 +1250,11 @@ export namespace LogoutUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1419,18 +1306,11 @@ export namespace GetUserByName {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1548,18 +1428,11 @@ export namespace UpdateUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -1611,18 +1484,11 @@ export namespace DeleteUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;

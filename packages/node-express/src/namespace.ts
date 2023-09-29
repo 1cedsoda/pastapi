@@ -101,7 +101,6 @@ export const createRouter = (handler: Handler | undefined): Router => {
         return next();
       }
       if (handler !== undefined) handler(req, res, parsed);
-      else res.status(501).send("Not Implemented");
       next();
     });
     return router;

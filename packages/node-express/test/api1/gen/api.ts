@@ -7,7 +7,6 @@
 /   - body-parser to validate bodies
 /   - cookie-parser to validate cookies
 */
-
 import { Request, Response, Router } from "express";
 import { z } from "zod";
 
@@ -47,18 +46,11 @@ export namespace GetUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -119,18 +111,11 @@ export namespace PostUser {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -182,18 +167,11 @@ export namespace GetUserId {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -257,18 +235,11 @@ export namespace GetCookie {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -332,18 +303,11 @@ export namespace GetHeader {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
@@ -401,18 +365,11 @@ export namespace GetQuery {
       try {
         parsed = parse(req);
       } catch (e) {
-        if (e instanceof z.ZodError) {
-          res.status(422).send(e.issues);
-        } else {
-          res.status(500).send(e);
-        }
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) {
-        handler(req, res, parsed);
-      } else {
-        res.status(501).send("Not Implemented");
-      }
+      if (handler !== undefined) handler(req, res, parsed);
       next();
     });
     return router;
