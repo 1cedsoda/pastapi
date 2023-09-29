@@ -4,8 +4,12 @@ import { router } from "./router";
 import { handlerType } from "./handers";
 import { boilerplate } from "./boilerplate";
 import { format } from "@prettier/sync";
+import { Options } from "prettier";
 
-export const generate = (ops: Operation[]): string => {
+export const generate = (
+  ops: Operation[],
+  prettierConfig?: Options | undefined
+): string => {
   const code = `${buildHeader()}
 import { Request, Response, Router } from "express";
 import { z } from "zod";
@@ -14,7 +18,7 @@ ${handlerType(ops)}
 ${router(ops)}
 ${boilerplate()}
 `;
-  return format(code);
+  return format(code, { parser: "typescript", ...prettierConfig });
 };
 
 const buildHeader = () => `
