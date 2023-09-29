@@ -22,7 +22,6 @@
   "dependencies": {
     "oas-normalize": "^11.0.0",
     "openapi-types": "^12.1.3",
-    "prettier": "^3.0.3",
     "yaml": "^2.3.2"
   }
 }

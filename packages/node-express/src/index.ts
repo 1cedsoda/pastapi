@@ -3,10 +3,10 @@ import { operationNamespaces } from "./namespace";
 import { router } from "./router";
 import { handlerType } from "./handers";
 import { boilerplate } from "./boilerplate";
+import { format } from "@prettier/sync";
 
-export const generate = (ops: Operation[]): string => `
-${buildHeader()}
-
+export const generate = (ops: Operation[]): string => {
+  const code = `${buildHeader()}
 import { Request, Response, Router } from "express";
 import { z } from "zod";
 ${operationNamespaces(ops)}
@@ -14,6 +14,8 @@ ${handlerType(ops)}
 ${router(ops)}
 ${boilerplate()}
 `;
+  return format(code);
+};
 
 const buildHeader = () => `
 /*  ╔══════════════════════════════╗

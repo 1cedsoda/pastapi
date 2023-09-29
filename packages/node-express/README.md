@@ -12,5 +12,4 @@
 - [x] request cookie validation
 - [ ] response body validation
 - [ ] response header validation
-- [ ] security validation
 - [ ] re-use $ref schemas
