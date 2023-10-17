@@ -15,7 +15,13 @@ export namespace ${fuck(o.operationId)} {
       (rb) => `"${rb.applicationType}" : z.infer<typeof bodySchemas["${rb.applicationType}"]> | undefined`
     )}
   }
-  export type ParsedContentType = keyof ParsedBody
+  ${
+    o.requestBodies.length > 0
+      ? `export const parsedContentTypeSchema = z.enum([${o.requestBodies
+          .map((rb) => `"${rb.applicationType}"`)
+          .join(",\n")}])`
+      : `;`
+  }
   export const paramSchemas = {
     ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
   }
@@ -23,7 +29,7 @@ export namespace ${fuck(o.operationId)} {
     ${o.requestParameters.map((p) => `${camelCase(p.name)} : z.infer<typeof paramSchemas["${camelCase(p.name)}"]>`)}
   }
   export type Parsed = {
-    contentType: ${o.requestBodies.length > 0 ? "ParsedContentType" : "undefined"},
+    contentType: ${o.requestBodies.length > 0 ? "keyof ParsedBody" : "undefined"},
     body: ParsedBody
     params: ParamsParsed
   }
@@ -38,12 +44,7 @@ const parseFunction = (o: Operation) => `
 export const parse = (req: Request): Parsed => {
     ${
       o.requestBodies.length > 0
-        ? `z.string().parse(req.headers["Content-Type"], { path: ["header", "Content-Type"] });`
-        : ``
-    }
-    ${
-      o.requestBodies.length > 0
-        ? `const contentType = single(req.headers["Content-Type"]) as ParsedContentType;`
+        ? `const contentType = parsedContentTypeSchema.parse(req.headers["content-type"], { path: ["header", "Content-Type"] });`
         : `const contentType = undefined`
     }
 
@@ -81,7 +82,7 @@ const readParameter = (p: RequestParameter) => {
     return `autoCastQuery(paramSchemas.${camelCase(p.name)}, req.query["${p.name}"])`;
   }
   if (p.in === "header") {
-    return `autoCastString(paramSchemas.${camelCase(p.name)}, single(req.headers["${p.name}"]))`;
+    return `autoCastString(paramSchemas.${camelCase(p.name)}, single(req.headers["${p.name.toLowerCase()}"]))`;
   }
   if (p.in === "cookie") {
     return `autoCastString(paramSchemas.${camelCase(p.name)}, req.cookies["${p.name}"])`;

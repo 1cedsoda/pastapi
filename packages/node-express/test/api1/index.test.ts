@@ -98,15 +98,20 @@ describe("api1", () => {
             },
           })
         );
-        const res = await post("http://localhost:9999/user", {
-          headers: {
-            "Content-Type": "application/json",
+        const res = await post(
+          "http://localhost:9999/user",
+          {
+            data: {
+              name: "test",
+              id: 123,
+            },
           },
-          data: {
-            name: "test",
-            id: 123,
-          },
-        });
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       });
       it("should return 422 when giving no Content-Type", async () => {
         app.use(
@@ -116,12 +121,18 @@ describe("api1", () => {
             },
           })
         );
-        const res = await post("http://localhost:9999/user", {
-          data: {
-            name: "test",
-            id: 123,
+        const res = await post(
+          "http://localhost:9999/user",
+          {
+            data: "test",
           },
-        });
+          {
+            headers: {
+              "Content-Type": undefined,
+            },
+          }
+        );
+        console.log(res.data);
         expect(res.status).to.equal(422);
       });
       afterEach(() => {

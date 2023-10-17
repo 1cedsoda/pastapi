@@ -84,11 +84,15 @@ export namespace UpdatePet {
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum([
+    "application/json",
+    "application/xml",
+    "application/x-www-form-urlencoded",
+  ]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -99,12 +103,10 @@ export namespace UpdatePet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -227,11 +229,15 @@ export namespace AddPet {
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum([
+    "application/json",
+    "application/xml",
+    "application/x-www-form-urlencoded",
+  ]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -242,12 +248,10 @@ export namespace AddPet {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -299,7 +303,6 @@ export namespace AddPet {
 export namespace FindPetsByStatus {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     status: z
       .enum(["available", "pending", "sold"])
@@ -358,7 +361,6 @@ export namespace FindPetsByStatus {
 export namespace FindPetsByTags {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     tags: z.array(z.string()).optional(),
   };
@@ -414,7 +416,6 @@ export namespace FindPetsByTags {
 export namespace GetPetById {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     petId: z.number().int(),
   };
@@ -470,7 +471,6 @@ export namespace GetPetById {
 export namespace UpdatePetWithForm {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     petId: z.number().int(),
     name: z.string().optional(),
@@ -538,7 +538,6 @@ export namespace UpdatePetWithForm {
 export namespace DeletePet {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     apiKey: z.string().optional(),
     petId: z.number().int(),
@@ -606,7 +605,7 @@ export namespace UploadFile {
       | z.infer<(typeof bodySchemas)["application/octet-stream"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum(["application/octet-stream"]);
   export const paramSchemas = {
     petId: z.number().int(),
     additionalMetadata: z.string().optional(),
@@ -616,7 +615,7 @@ export namespace UploadFile {
     additionalMetadata: z.infer<(typeof paramSchemas)["additionalMetadata"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -627,12 +626,10 @@ export namespace UploadFile {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -683,7 +680,6 @@ export namespace UploadFile {
 export namespace GetInventory {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
@@ -765,11 +761,15 @@ export namespace PlaceOrder {
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum([
+    "application/json",
+    "application/xml",
+    "application/x-www-form-urlencoded",
+  ]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -780,12 +780,10 @@ export namespace PlaceOrder {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -837,7 +835,6 @@ export namespace PlaceOrder {
 export namespace GetOrderById {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     orderId: z.number().int(),
   };
@@ -893,7 +890,6 @@ export namespace GetOrderById {
 export namespace DeleteOrder {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     orderId: z.number().int(),
   };
@@ -990,11 +986,15 @@ export namespace CreateUser {
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum([
+    "application/json",
+    "application/xml",
+    "application/x-www-form-urlencoded",
+  ]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -1005,12 +1005,10 @@ export namespace CreateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -1079,11 +1077,11 @@ export namespace CreateUsersWithListInput {
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum(["application/json"]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -1094,12 +1092,10 @@ export namespace CreateUsersWithListInput {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -1138,7 +1134,6 @@ export namespace CreateUsersWithListInput {
 export namespace LoginUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     username: z.string().optional(),
     password: z.string().optional(),
@@ -1200,7 +1195,6 @@ export namespace LoginUser {
 export namespace LogoutUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
@@ -1247,7 +1241,6 @@ export namespace LogoutUser {
 export namespace GetUserByName {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     username: z.string(),
   };
@@ -1344,7 +1337,11 @@ export namespace UpdateUser {
       | z.infer<(typeof bodySchemas)["application/x-www-form-urlencoded"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum([
+    "application/json",
+    "application/xml",
+    "application/x-www-form-urlencoded",
+  ]);
   export const paramSchemas = {
     username: z.string(),
   };
@@ -1352,7 +1349,7 @@ export namespace UpdateUser {
     username: z.infer<(typeof paramSchemas)["username"]>;
   };
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -1363,12 +1360,10 @@ export namespace UpdateUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -1425,7 +1420,6 @@ export namespace UpdateUser {
 export namespace DeleteUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     username: z.string(),
   };

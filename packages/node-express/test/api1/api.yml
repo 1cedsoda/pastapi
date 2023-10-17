@@ -72,12 +72,12 @@ paths:
               schema:
                 type: string
       parameters:
-        - name: x-my-required-header
+        - name: X-My-Required-Header
           in: header
           schema:
             type: number
           required: true
-        - name: x-my-optional-header
+        - name: X-My-Optional-Header
           in: header
           schema:
             type: string

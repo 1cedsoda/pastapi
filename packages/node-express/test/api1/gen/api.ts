@@ -13,7 +13,6 @@ import { z } from "zod";
 export namespace GetUser {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
@@ -66,11 +65,11 @@ export namespace PostUser {
       | z.infer<(typeof bodySchemas)["application/json"]>
       | undefined;
   };
-  export type ParsedContentType = keyof ParsedBody;
+  export const parsedContentTypeSchema = z.enum(["application/json"]);
   export const paramSchemas = {};
   export type ParamsParsed = {};
   export type Parsed = {
-    contentType: ParsedContentType;
+    contentType: keyof ParsedBody;
     body: ParsedBody;
     params: ParamsParsed;
   };
@@ -81,12 +80,10 @@ export namespace PostUser {
   ) => Promise<void>;
 
   export const parse = (req: Request): Parsed => {
-    z.string().parse(req.headers["Content-Type"], {
-      path: ["header", "Content-Type"],
-    });
-    const contentType = single(
-      req.headers["Content-Type"],
-    ) as ParsedContentType;
+    const contentType = parsedContentTypeSchema.parse(
+      req.headers["content-type"],
+      { path: ["header", "Content-Type"] },
+    );
 
     const parsed: Parsed = {
       contentType,
@@ -125,7 +122,6 @@ export namespace PostUser {
 export namespace GetUserId {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     id: z.number().int(),
   };
@@ -181,7 +177,6 @@ export namespace GetUserId {
 export namespace GetCookie {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     myRequiredCookie: z.number(),
     myOptionalCookie: z.string().optional(),
@@ -249,7 +244,6 @@ export namespace GetCookie {
 export namespace GetHeader {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     xMyRequiredHeader: z.number(),
     xMyOptionalHeader: z.string().optional(),
@@ -281,14 +275,14 @@ export namespace GetHeader {
             paramSchemas.xMyRequiredHeader,
             single(req.headers["x-my-required-header"]),
           ),
-          { path: ["header", "x-my-required-header"] },
+          { path: ["header", "X-My-Required-Header"] },
         ),
         xMyOptionalHeader: paramSchemas.xMyOptionalHeader?.parse(
           autoCastString(
             paramSchemas.xMyOptionalHeader,
             single(req.headers["x-my-optional-header"]),
           ),
-          { path: ["header", "x-my-optional-header"] },
+          { path: ["header", "X-My-Optional-Header"] },
         ),
       },
     };
@@ -317,7 +311,6 @@ export namespace GetHeader {
 export namespace GetQuery {
   export const bodySchemas = {};
   export type ParsedBody = {};
-  export type ParsedContentType = keyof ParsedBody;
   export const paramSchemas = {
     a: z.number(),
     b: z.string().optional(),
