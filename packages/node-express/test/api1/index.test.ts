@@ -132,7 +132,6 @@ describe("api1", () => {
             },
           }
         );
-        console.log(res.data);
         expect(res.status).to.equal(422);
       });
       afterEach(() => {

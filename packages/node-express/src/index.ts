@@ -7,7 +7,12 @@ import { format } from "@prettier/sync";
 import { Options } from "prettier";
 
 export const generate = (ops: Operation[], prettierConfig?: Options | undefined): string => {
-  const code = `${buildHeader()}
+  const code = generateRaw(ops);
+  return format(code, { parser: "typescript", ...prettierConfig });
+};
+
+export const generateRaw = (ops: Operation[]): string => `
+${buildHeader()}
 import { Request, Response, Router } from "express";
 import { z } from "zod";
 ${operationNamespaces(ops)}
@@ -15,8 +20,6 @@ ${handlerType(ops)}
 ${router(ops)}
 ${boilerplate()}
 `;
-  return format(code, { parser: "typescript", ...prettierConfig });
-};
 
 const buildHeader = () => `
 /*  ╔══════════════════════════════╗
