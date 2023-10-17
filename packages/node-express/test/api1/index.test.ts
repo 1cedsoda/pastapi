@@ -101,10 +101,8 @@ describe("api1", () => {
         const res = await post(
           "http://localhost:9999/user",
           {
-            data: {
-              name: "test",
-              id: 123,
-            },
+            name: "test",
+            id: 123,
           },
           {
             headers: {
@@ -124,7 +122,8 @@ describe("api1", () => {
         const res = await post(
           "http://localhost:9999/user",
           {
-            data: "test",
+            name: "test",
+            id: 123,
           },
           {
             headers: {

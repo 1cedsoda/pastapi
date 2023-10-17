@@ -90,7 +90,7 @@ export namespace PostUser {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,

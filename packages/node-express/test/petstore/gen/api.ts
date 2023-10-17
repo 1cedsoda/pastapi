@@ -113,20 +113,20 @@ export namespace UpdatePet {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/xml":
           contentType === "application/xml"
-            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+            ? bodySchemas["application/xml"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/x-www-form-urlencoded":
           contentType === "application/x-www-form-urlencoded"
             ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
-                req.body.data,
+                req.body,
                 { path: ["body"] },
               )
             : undefined,
@@ -258,20 +258,20 @@ export namespace AddPet {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/xml":
           contentType === "application/xml"
-            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+            ? bodySchemas["application/xml"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/x-www-form-urlencoded":
           contentType === "application/x-www-form-urlencoded"
             ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
-                req.body.data,
+                req.body,
                 { path: ["body"] },
               )
             : undefined,
@@ -636,7 +636,7 @@ export namespace UploadFile {
       body: {
         "application/octet-stream":
           contentType === "application/octet-stream"
-            ? bodySchemas["application/octet-stream"]?.parse(req.body.data, {
+            ? bodySchemas["application/octet-stream"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
@@ -790,20 +790,20 @@ export namespace PlaceOrder {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/xml":
           contentType === "application/xml"
-            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+            ? bodySchemas["application/xml"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/x-www-form-urlencoded":
           contentType === "application/x-www-form-urlencoded"
             ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
-                req.body.data,
+                req.body,
                 { path: ["body"] },
               )
             : undefined,
@@ -1015,20 +1015,20 @@ export namespace CreateUser {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/xml":
           contentType === "application/xml"
-            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+            ? bodySchemas["application/xml"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/x-www-form-urlencoded":
           contentType === "application/x-www-form-urlencoded"
             ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
-                req.body.data,
+                req.body,
                 { path: ["body"] },
               )
             : undefined,
@@ -1102,7 +1102,7 @@ export namespace CreateUsersWithListInput {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
@@ -1370,20 +1370,20 @@ export namespace UpdateUser {
       body: {
         "application/json":
           contentType === "application/json"
-            ? bodySchemas["application/json"]?.parse(req.body.data, {
+            ? bodySchemas["application/json"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/xml":
           contentType === "application/xml"
-            ? bodySchemas["application/xml"]?.parse(req.body.data, {
+            ? bodySchemas["application/xml"]?.parse(req.body, {
                 path: ["body"],
               })
             : undefined,
         "application/x-www-form-urlencoded":
           contentType === "application/x-www-form-urlencoded"
             ? bodySchemas["application/x-www-form-urlencoded"]?.parse(
-                req.body.data,
+                req.body,
                 { path: ["body"] },
               )
             : undefined,

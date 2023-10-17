@@ -54,7 +54,7 @@ export const parse = (req: Request): Parsed => {
       ${o.requestBodies
         .map(
           (rb) =>
-            `"${rb.applicationType}" : contentType === "${rb.applicationType}" ? bodySchemas["${rb.applicationType}"]?.parse(req.body.data, { path: ["body"] }) : undefined`
+            `"${rb.applicationType}" : contentType === "${rb.applicationType}" ? bodySchemas["${rb.applicationType}"]?.parse(req.body, { path: ["body"] }) : undefined`
         )
         .join(",\n")}
     },
