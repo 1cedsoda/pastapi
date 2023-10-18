@@ -101,7 +101,15 @@ paths:
           in: query
           schema:
             type: string
-      
+  /error:
+    get:
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: string    
 components:
   schemas:
     User:

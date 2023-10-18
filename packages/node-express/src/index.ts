@@ -1,7 +1,7 @@
 import { Operation } from "pastapi-core";
 import { operationNamespaces } from "./namespace";
 import { router } from "./router";
-import { handlerType } from "./handers";
+import { handlerType } from "./handlers";
 import { boilerplate } from "./boilerplate";
 import { format } from "@prettier/sync";
 import { Options } from "prettier";

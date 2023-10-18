@@ -49,7 +49,8 @@ export namespace GetUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -112,7 +113,8 @@ export namespace PostUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -167,7 +169,8 @@ export namespace GetUserId {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -234,7 +237,8 @@ export namespace GetCookie {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -301,7 +305,8 @@ export namespace GetHeader {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -362,7 +367,55 @@ export namespace GetQuery {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
+      next();
+    });
+    return router;
+  };
+}
+
+export namespace GetError {
+  export const bodySchemas = {};
+  export type ParsedBody = {};
+  export const paramSchemas = {};
+  export type ParamsParsed = {};
+  export type Parsed = {
+    contentType: undefined;
+    body: ParsedBody;
+    params: ParamsParsed;
+  };
+  export type Handler = (
+    req: Request,
+    res: Response,
+    parsed: Parsed,
+  ) => Promise<void>;
+
+  export const parse = (req: Request): Parsed => {
+    const contentType = undefined;
+
+    const parsed: Parsed = {
+      contentType,
+      body: {},
+      params: {},
+    };
+
+    return parsed;
+  };
+
+  export const createRouter = (handler: Handler | undefined): Router => {
+    const router = Router({ mergeParams: true });
+    router.use(async (req, res, next) => {
+      let parsed: Parsed;
+      try {
+        parsed = parse(req);
+      } catch (e) {
+        if (e instanceof z.ZodError) res.status(422).send(e.issues);
+        else res.status(500).send(e);
+        return next();
+      }
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -376,6 +429,7 @@ export type PastapiHandlers = {
   getCookie?: GetCookie.Handler | undefined;
   getHeader?: GetHeader.Handler | undefined;
   getQuery?: GetQuery.Handler | undefined;
+  getError?: GetError.Handler | undefined;
 };
 
 export function createRouter(handlers: PastapiHandlers): Router {
@@ -392,6 +446,8 @@ export function createRouter(handlers: PastapiHandlers): Router {
   router.get("/header", GetHeader.createRouter(handlers.getHeader));
 
   router.get("/query", GetQuery.createRouter(handlers.getQuery));
+
+  router.get("/error", GetError.createRouter(handlers.getError));
 
   return router;
 }

@@ -111,7 +111,7 @@ describe("api1", () => {
           }
         );
       });
-      it("should return 422 when giving no Content-Type", async () => {
+      it("should return 422 when giving wrong Content-Type", async () => {
         app.use(
           createRouter({
             postUser: async (req, res, parsed) => {
@@ -127,7 +127,7 @@ describe("api1", () => {
           },
           {
             headers: {
-              "Content-Type": undefined,
+              "Content-Type": "wrong",
             },
           }
         );
@@ -330,6 +330,33 @@ describe("api1", () => {
         );
         const res = await get("http://localhost:9999/query", {});
         expect(res.status).to.equal(422);
+      });
+
+      afterEach(() => {
+        server.close();
+      });
+    });
+
+    describe("getError", () => {
+      beforeEach(async () => {
+        app = express();
+        server = app.listen(9999);
+      });
+
+      it("should return 500", async () => {
+        app.use(
+          createRouter({
+            getError: async (req, res, parsed) => {
+              throw new Error("something wrong");
+            },
+          })
+        );
+        app.use((err, req, res, next) => {
+          if (err) res.status(500).send("ok");
+          else next();
+        });
+        const res = await get("http://localhost:9999/error");
+        expect(res.status).to.equal(500);
       });
 
       afterEach(() => {

@@ -148,7 +148,8 @@ export namespace UpdatePet {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -293,7 +294,8 @@ export namespace AddPet {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -351,7 +353,8 @@ export namespace FindPetsByStatus {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -406,7 +409,8 @@ export namespace FindPetsByTags {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -461,7 +465,8 @@ export namespace GetPetById {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -528,7 +533,8 @@ export namespace UpdatePetWithForm {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -589,7 +595,8 @@ export namespace DeletePet {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -670,7 +677,8 @@ export namespace UploadFile {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -716,7 +724,8 @@ export namespace GetInventory {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -825,7 +834,8 @@ export namespace PlaceOrder {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -880,7 +890,8 @@ export namespace GetOrderById {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -935,7 +946,8 @@ export namespace DeleteOrder {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1050,7 +1062,8 @@ export namespace CreateUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1124,7 +1137,8 @@ export namespace CreateUsersWithListInput {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1185,7 +1199,8 @@ export namespace LoginUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1231,7 +1246,8 @@ export namespace LogoutUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1286,7 +1302,8 @@ export namespace GetUserByName {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1410,7 +1427,8 @@ export namespace UpdateUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -1465,7 +1483,8 @@ export namespace DeleteUser {
         else res.status(500).send(e);
         return next();
       }
-      if (handler !== undefined) handler(req, res, parsed);
+      if (handler !== undefined)
+        handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;

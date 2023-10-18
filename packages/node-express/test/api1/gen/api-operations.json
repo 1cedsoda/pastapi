@@ -198,5 +198,21 @@
         }
       }
     ]
+  },
+  {
+    "path": "/error",
+    "method": "get",
+    "operationId": "getError",
+    "responses": [
+      {
+        "statusCode": "500",
+        "applicationType": "text/plain",
+        "bodySchema": {
+          "type": "string"
+        }
+      }
+    ],
+    "requestBodies": [],
+    "requestParameters": []
   }
 ]
