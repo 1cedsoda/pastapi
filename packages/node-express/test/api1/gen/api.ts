@@ -50,7 +50,7 @@ export namespace GetUser {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -114,7 +114,7 @@ export namespace PostUser {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -170,7 +170,7 @@ export namespace GetUserId {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -238,7 +238,7 @@ export namespace GetCookie {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -306,7 +306,7 @@ export namespace GetHeader {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -368,7 +368,7 @@ export namespace GetQuery {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
@@ -415,7 +415,7 @@ export namespace GetError {
         return next();
       }
       if (handler !== undefined)
-        handler(req, res, parsed).catch((e) => next(e));
+        await handler(req, res, parsed).catch((e) => next(e));
       next();
     });
     return router;
