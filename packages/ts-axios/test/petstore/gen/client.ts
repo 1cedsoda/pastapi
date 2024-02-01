@@ -6,7 +6,7 @@
 */
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
 
 export namespace UpdatePet {
   export const requestBodySchemas = {
@@ -153,7 +153,7 @@ export namespace UpdatePet {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "put",
       url: `/pet`,
       headers: {
@@ -310,7 +310,7 @@ export namespace AddPet {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/pet`,
       headers: {
@@ -403,7 +403,7 @@ export namespace FindPetsByStatus {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/pet/findByStatus`,
       headers: {},
@@ -493,7 +493,7 @@ export namespace FindPetsByTags {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/pet/findByTags`,
       headers: {},
@@ -579,7 +579,7 @@ export namespace GetPetById {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/pet/${vars.petId}`,
       headers: {},
@@ -616,7 +616,7 @@ export namespace UpdatePetWithForm {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/pet/${vars.petId}`,
       headers: {},
@@ -654,7 +654,7 @@ export namespace DeletePet {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "delete",
       url: `/pet/${vars.petId}`,
       headers: {
@@ -709,7 +709,7 @@ export namespace UploadFile {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/pet/${vars.petId}/uploadImage`,
       headers: {
@@ -751,7 +751,7 @@ export namespace GetInventory {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/store/inventory`,
       headers: {},
@@ -833,7 +833,7 @@ export namespace PlaceOrder {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/store/order`,
       headers: {
@@ -895,7 +895,7 @@ export namespace GetOrderById {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/store/order/${vars.orderId}`,
       headers: {},
@@ -928,7 +928,7 @@ export namespace DeleteOrder {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "delete",
       url: `/store/order/${vars.orderId}`,
       headers: {},
@@ -1033,7 +1033,7 @@ export namespace CreateUser {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/user`,
       headers: {
@@ -1111,7 +1111,7 @@ export namespace CreateUsersWithListInput {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/user/createWithList`,
       headers: {
@@ -1161,7 +1161,7 @@ export namespace LoginUser {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/user/login`,
       headers: {},
@@ -1193,7 +1193,7 @@ export namespace LogoutUser {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/user/logout`,
       headers: {},
@@ -1257,7 +1257,7 @@ export namespace GetUserByName {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/user/${vars.username}`,
       headers: {},
@@ -1335,7 +1335,7 @@ export namespace UpdateUser {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "put",
       url: `/user/${vars.username}`,
       headers: {
@@ -1370,7 +1370,7 @@ export namespace DeleteUser {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "delete",
       url: `/user/${vars.username}`,
       headers: {},

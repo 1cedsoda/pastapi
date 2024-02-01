@@ -6,7 +6,7 @@
 */
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
+import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
 
 export namespace GetUser {
   export const requestBodySchemas = {};
@@ -34,7 +34,7 @@ export namespace GetUser {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/user`,
       headers: {},
@@ -75,7 +75,7 @@ export namespace PostUser {
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "post",
       url: `/user`,
       headers: {
@@ -117,7 +117,7 @@ export namespace GetUserId {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/user/${vars.id}`,
       headers: {},
@@ -159,7 +159,7 @@ export namespace GetCookie {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/cookie`,
       headers: {},
@@ -205,7 +205,7 @@ export namespace GetHeader {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/header`,
       headers: {
@@ -254,7 +254,7 @@ export namespace GetQuery {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/query`,
       headers: {},
@@ -293,7 +293,7 @@ export namespace GetError {
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, ResponseBody>({
+    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
       method: "get",
       url: `/error`,
       headers: {},
