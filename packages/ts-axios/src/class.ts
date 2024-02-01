@@ -3,9 +3,9 @@ import { fuck } from "./helpers";
 
 export const apiClass = (ast: Operation[]) => `
 export class Client {
-  public axiosInstance: Axios
+  public axiosInstance: AxiosInstance
   constructor (
-    axiosInstance?: Axios,
+    axiosInstance?: AxiosInstance,
   ) {
     this.axiosInstance = axiosInstance ?? axios.create()
   }

@@ -6,7 +6,7 @@
 */
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig, Axios } from "axios";
+import axios, { AxiosRequestConfig, AxiosInstance } from "axios";
 
 export namespace GetUser {
   export const requestBodySchemas = {};
@@ -30,7 +30,7 @@ export namespace GetUser {
   export type Variables = RequestBody & {};
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -71,7 +71,7 @@ export namespace PostUser {
   export type Variables = RequestBody & {};
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
@@ -113,7 +113,7 @@ export namespace GetUserId {
   };
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -155,7 +155,7 @@ export namespace GetCookie {
   };
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -201,7 +201,7 @@ export namespace GetHeader {
   };
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -250,7 +250,7 @@ export namespace GetQuery {
   };
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -289,7 +289,7 @@ export namespace GetError {
   export type Variables = RequestBody & {};
 
   export const request = async (
-    axios: Axios,
+    axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
@@ -304,8 +304,8 @@ export namespace GetError {
 }
 
 export class Client {
-  public axiosInstance: Axios;
-  constructor(axiosInstance?: Axios) {
+  public axiosInstance: AxiosInstance;
+  constructor(axiosInstance?: AxiosInstance) {
     this.axiosInstance = axiosInstance ?? axios.create();
   }
 

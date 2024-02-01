@@ -44,7 +44,7 @@ const operationNamespace = (o: Operation) => {
       )}
     }
 
-    export const request = async (axios: Axios, vars: Variables, config?: AxiosRequestConfig<${
+    export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
       o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
     }>) => axios.request<RequestBody, ResponseBody>({
       method: "${o.method}",
