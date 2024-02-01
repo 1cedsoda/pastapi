@@ -25,7 +25,7 @@ export namespace UpdatePet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -45,7 +45,7 @@ export namespace UpdatePet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -65,7 +65,7 @@ export namespace UpdatePet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -82,7 +82,9 @@ export namespace UpdatePet {
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
-        body: z.infer<(typeof requestBodySchemas)["application/x-www-form-urlencoded"]>;
+        body: z.infer<
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
+        >;
       };
 
   export const responseSchemas = [
@@ -104,7 +106,7 @@ export namespace UpdatePet {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -129,7 +131,7 @@ export namespace UpdatePet {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -138,7 +140,9 @@ export namespace UpdatePet {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
@@ -147,7 +151,7 @@ export namespace UpdatePet {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "put",
@@ -178,7 +182,7 @@ export namespace AddPet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -198,7 +202,7 @@ export namespace AddPet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -218,7 +222,7 @@ export namespace AddPet {
           z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
+          }),
         )
         .optional(),
       status: z.enum(["available", "pending", "sold"]).optional(),
@@ -235,7 +239,9 @@ export namespace AddPet {
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
-        body: z.infer<(typeof requestBodySchemas)["application/x-www-form-urlencoded"]>;
+        body: z.infer<
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
+        >;
       };
 
   export const responseSchemas = [
@@ -257,7 +263,7 @@ export namespace AddPet {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -282,7 +288,7 @@ export namespace AddPet {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -291,7 +297,9 @@ export namespace AddPet {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
@@ -300,7 +308,7 @@ export namespace AddPet {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
@@ -338,11 +346,11 @@ export namespace FindPetsByStatus {
               z.object({
                 id: z.number().int().optional(),
                 name: z.string().optional(),
-              })
+              }),
             )
             .optional(),
           status: z.enum(["available", "pending", "sold"]).optional(),
-        })
+        }),
       ),
       headerSchema: z.never(),
     },
@@ -365,27 +373,36 @@ export namespace FindPetsByStatus {
               z.object({
                 id: z.number().int().optional(),
                 name: z.string().optional(),
-              })
+              }),
             )
             .optional(),
           status: z.enum(["available", "pending", "sold"]).optional(),
-        })
+        }),
       ),
       headerSchema: z.never(),
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
-    status: z.enum(["available", "pending", "sold"]).default("available").optional(),
+    status: z
+      .enum(["available", "pending", "sold"])
+      .default("available")
+      .optional(),
   };
 
   export type Variables = RequestBody & {
     status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/pet/findByStatus`,
@@ -422,11 +439,11 @@ export namespace FindPetsByTags {
               z.object({
                 id: z.number().int().optional(),
                 name: z.string().optional(),
-              })
+              }),
             )
             .optional(),
           status: z.enum(["available", "pending", "sold"]).optional(),
-        })
+        }),
       ),
       headerSchema: z.never(),
     },
@@ -449,17 +466,19 @@ export namespace FindPetsByTags {
               z.object({
                 id: z.number().int().optional(),
                 name: z.string().optional(),
-              })
+              }),
             )
             .optional(),
           status: z.enum(["available", "pending", "sold"]).optional(),
-        })
+        }),
       ),
       headerSchema: z.never(),
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     tags: z.array(z.string()).optional(),
@@ -469,7 +488,11 @@ export namespace FindPetsByTags {
     tags: z.infer<(typeof requestParamSchemas)["tags"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/pet/findByTags`,
@@ -505,7 +528,7 @@ export namespace GetPetById {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -530,7 +553,7 @@ export namespace GetPetById {
             z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
+            }),
           )
           .optional(),
         status: z.enum(["available", "pending", "sold"]).optional(),
@@ -539,7 +562,9 @@ export namespace GetPetById {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -549,7 +574,11 @@ export namespace GetPetById {
     petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/pet/${vars.petId}`,
@@ -566,7 +595,9 @@ export namespace UpdatePetWithForm {
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -580,7 +611,11 @@ export namespace UpdatePetWithForm {
     status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
       url: `/pet/${vars.petId}`,
@@ -600,7 +635,9 @@ export namespace DeletePet {
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     apiKey: z.string().optional(),
@@ -612,7 +649,11 @@ export namespace DeletePet {
     petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "delete",
       url: `/pet/${vars.petId}`,
@@ -647,7 +688,9 @@ export namespace UploadFile {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -656,13 +699,15 @@ export namespace UploadFile {
 
   export type Variables = RequestBody & {
     petId: z.infer<(typeof requestParamSchemas)["petId"]>;
-    additionalMetadata: z.infer<(typeof requestParamSchemas)["additionalMetadata"]>;
+    additionalMetadata: z.infer<
+      (typeof requestParamSchemas)["additionalMetadata"]
+    >;
   };
 
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
@@ -671,7 +716,9 @@ export namespace UploadFile {
         "Content-Type": "application/octet-stream",
       },
       params: {
-        additionalMetadata: requestParamSchemas["additionalMetadata"].parse(vars.additionalMetadata),
+        additionalMetadata: requestParamSchemas["additionalMetadata"].parse(
+          vars.additionalMetadata,
+        ),
       },
       data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
@@ -691,13 +738,19 @@ export namespace GetInventory {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/store/inventory`,
@@ -746,7 +799,9 @@ export namespace PlaceOrder {
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
-        body: z.infer<(typeof requestBodySchemas)["application/x-www-form-urlencoded"]>;
+        body: z.infer<
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
+        >;
       };
 
   export const responseSchemas = [
@@ -765,7 +820,9 @@ export namespace PlaceOrder {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
@@ -774,7 +831,7 @@ export namespace PlaceOrder {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
@@ -821,7 +878,9 @@ export namespace GetOrderById {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -831,7 +890,11 @@ export namespace GetOrderById {
     orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/store/order/${vars.orderId}`,
@@ -848,7 +911,9 @@ export namespace DeleteOrder {
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -858,7 +923,11 @@ export namespace DeleteOrder {
     orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "delete",
       url: `/store/order/${vars.orderId}`,
@@ -913,7 +982,9 @@ export namespace CreateUser {
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
-        body: z.infer<(typeof requestBodySchemas)["application/x-www-form-urlencoded"]>;
+        body: z.infer<
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
+        >;
       };
 
   export const responseSchemas = [
@@ -949,7 +1020,9 @@ export namespace CreateUser {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
@@ -958,7 +1031,7 @@ export namespace CreateUser {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
@@ -984,7 +1057,7 @@ export namespace CreateUsersWithListInput {
         password: z.string().optional(),
         phone: z.string().optional(),
         userStatus: z.number().int().optional(),
-      })
+      }),
     ),
   };
   export type RequestBody = {
@@ -1025,7 +1098,9 @@ export namespace CreateUsersWithListInput {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
@@ -1034,7 +1109,7 @@ export namespace CreateUsersWithListInput {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "post",
@@ -1067,7 +1142,9 @@ export namespace LoginUser {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     username: z.string().optional(),
@@ -1079,7 +1156,11 @@ export namespace LoginUser {
     password: z.infer<(typeof requestParamSchemas)["password"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/user/login`,
@@ -1099,13 +1180,19 @@ export namespace LogoutUser {
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/user/logout`,
@@ -1153,7 +1240,9 @@ export namespace GetUserByName {
     },
   ];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1163,7 +1252,11 @@ export namespace GetUserByName {
     username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "get",
       url: `/user/${vars.username}`,
@@ -1218,12 +1311,16 @@ export namespace UpdateUser {
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
-        body: z.infer<(typeof requestBodySchemas)["application/x-www-form-urlencoded"]>;
+        body: z.infer<
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
+        >;
       };
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1236,7 +1333,7 @@ export namespace UpdateUser {
   export const request = async (
     axios: AxiosInstance,
     vars: Variables,
-    config?: AxiosRequestConfig<Pick<RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "put",
@@ -1256,7 +1353,9 @@ export namespace DeleteUser {
 
   export const responseSchemas = [];
 
-  export type ResponseBody = z.infer<(typeof responseSchemas)[number]["bodySchema"]>;
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1266,7 +1365,11 @@ export namespace DeleteUser {
     username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<undefined>) =>
+  export const request = async (
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) =>
     axios.request<RequestBody, ResponseBody>({
       method: "delete",
       url: `/user/${vars.username}`,
@@ -1285,95 +1388,144 @@ export class Client {
 
   public async updatePet(
     variables: UpdatePet.Variables,
-    config?: AxiosRequestConfig<Pick<UpdatePet.RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<UpdatePet.RequestBody, "body">>,
   ) {
     return UpdatePet.request(this.axiosInstance, variables, config);
   }
 
-  public async addPet(variables: AddPet.Variables, config?: AxiosRequestConfig<Pick<AddPet.RequestBody, "body">>) {
+  public async addPet(
+    variables: AddPet.Variables,
+    config?: AxiosRequestConfig<Pick<AddPet.RequestBody, "body">>,
+  ) {
     return AddPet.request(this.axiosInstance, variables, config);
   }
 
-  public async findPetsByStatus(variables: FindPetsByStatus.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async findPetsByStatus(
+    variables: FindPetsByStatus.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return FindPetsByStatus.request(this.axiosInstance, variables, config);
   }
 
-  public async findPetsByTags(variables: FindPetsByTags.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async findPetsByTags(
+    variables: FindPetsByTags.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return FindPetsByTags.request(this.axiosInstance, variables, config);
   }
 
-  public async getPetById(variables: GetPetById.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async getPetById(
+    variables: GetPetById.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return GetPetById.request(this.axiosInstance, variables, config);
   }
 
-  public async updatePetWithForm(variables: UpdatePetWithForm.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async updatePetWithForm(
+    variables: UpdatePetWithForm.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return UpdatePetWithForm.request(this.axiosInstance, variables, config);
   }
 
-  public async deletePet(variables: DeletePet.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async deletePet(
+    variables: DeletePet.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return DeletePet.request(this.axiosInstance, variables, config);
   }
 
   public async uploadFile(
-    variables: UploadFile.Variables,
-    config?: AxiosRequestConfig<Pick<UploadFile.RequestBody, "body">>
+    variables: Omit<UploadFile.Variables, "applicationType">,
+    config?: AxiosRequestConfig<Pick<UploadFile.RequestBody, "body">>,
   ) {
-    return UploadFile.request(this.axiosInstance, variables, config);
+    return UploadFile.request(
+      this.axiosInstance,
+      { applicationType: "application/octet-stream", ...variables },
+      config,
+    );
   }
 
-  public async getInventory(variables: GetInventory.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async getInventory(
+    variables: GetInventory.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return GetInventory.request(this.axiosInstance, variables, config);
   }
 
   public async placeOrder(
     variables: PlaceOrder.Variables,
-    config?: AxiosRequestConfig<Pick<PlaceOrder.RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<PlaceOrder.RequestBody, "body">>,
   ) {
     return PlaceOrder.request(this.axiosInstance, variables, config);
   }
 
-  public async getOrderById(variables: GetOrderById.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async getOrderById(
+    variables: GetOrderById.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return GetOrderById.request(this.axiosInstance, variables, config);
   }
 
-  public async deleteOrder(variables: DeleteOrder.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async deleteOrder(
+    variables: DeleteOrder.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return DeleteOrder.request(this.axiosInstance, variables, config);
   }
 
   public async createUser(
     variables: CreateUser.Variables,
-    config?: AxiosRequestConfig<Pick<CreateUser.RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<CreateUser.RequestBody, "body">>,
   ) {
     return CreateUser.request(this.axiosInstance, variables, config);
   }
 
   public async createUsersWithListInput(
-    variables: CreateUsersWithListInput.Variables,
-    config?: AxiosRequestConfig<Pick<CreateUsersWithListInput.RequestBody, "body">>
+    variables: Omit<CreateUsersWithListInput.Variables, "applicationType">,
+    config?: AxiosRequestConfig<
+      Pick<CreateUsersWithListInput.RequestBody, "body">
+    >,
   ) {
-    return CreateUsersWithListInput.request(this.axiosInstance, variables, config);
+    return CreateUsersWithListInput.request(
+      this.axiosInstance,
+      { applicationType: "application/json", ...variables },
+      config,
+    );
   }
 
-  public async loginUser(variables: LoginUser.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async loginUser(
+    variables: LoginUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return LoginUser.request(this.axiosInstance, variables, config);
   }
 
-  public async logoutUser(variables: LogoutUser.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async logoutUser(
+    variables: LogoutUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return LogoutUser.request(this.axiosInstance, variables, config);
   }
 
-  public async getUserByName(variables: GetUserByName.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async getUserByName(
+    variables: GetUserByName.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return GetUserByName.request(this.axiosInstance, variables, config);
   }
 
   public async updateUser(
     variables: UpdateUser.Variables,
-    config?: AxiosRequestConfig<Pick<UpdateUser.RequestBody, "body">>
+    config?: AxiosRequestConfig<Pick<UpdateUser.RequestBody, "body">>,
   ) {
     return UpdateUser.request(this.axiosInstance, variables, config);
   }
 
-  public async deleteUser(variables: DeleteUser.Variables, config?: AxiosRequestConfig<undefined>) {
+  public async deleteUser(
+    variables: DeleteUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
     return DeleteUser.request(this.axiosInstance, variables, config);
   }
 }

@@ -317,10 +317,14 @@ export class Client {
   }
 
   public async postUser(
-    variables: PostUser.Variables,
+    variables: Omit<PostUser.Variables, "applicationType">,
     config?: AxiosRequestConfig<Pick<PostUser.RequestBody, "body">>,
   ) {
-    return PostUser.request(this.axiosInstance, variables, config);
+    return PostUser.request(
+      this.axiosInstance,
+      { applicationType: "application/json", ...variables },
+      config,
+    );
   }
 
   public async getUserId(
