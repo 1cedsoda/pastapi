@@ -19,18 +19,18 @@ export const toZod = (schema: any) => parseSchema(prepareJsonForZod(schema));
 
 // remove key "example" and description recusively
 const prepareJsonForZod = (schema: any) => {
-  if (schema.example) {
+  if (schema?.example) {
     delete schema.example;
   }
-  if (schema.description) {
+  if (schema?.description) {
     delete schema.description;
   }
-  if (schema.properties) {
+  if (schema?.properties) {
     Object.keys(schema.properties).forEach((key) => {
       prepareJsonForZod(schema.properties[key]);
     });
   }
-  if (schema.items) {
+  if (schema?.items) {
     prepareJsonForZod(schema.items);
   }
   return schema;

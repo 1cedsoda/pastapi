@@ -12,7 +12,7 @@ export const generate = (ops: Operation[], prettierConfig?: Options | undefined)
 export const generateRaw = (ops: Operation[]): string => `${buildHeader()}
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, Axios } from "axios";
 
 ${operationNamespaces(ops)}
 ${apiClass(ops)}

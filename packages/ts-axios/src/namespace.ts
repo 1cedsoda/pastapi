@@ -6,56 +6,64 @@ ${ast.map(operationNamespace).join("\n")}`;
 
 const operationNamespace = (o: Operation) => {
   return `export namespace ${fuck(o.operationId)} {
-    export const bodySchemas = {
+    export const requestBodySchemas = {
        ${o.requestBodies.map((rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`)}
      }
-    export type Body =
+    export type RequestBody =
       ${
         o.requestBodies.length > 0
           ? o.requestBodies
               .map(
                 (rb) =>
-                  `{ ${o.requestBodies.length > 1 ? `applicationType: "${rb.applicationType}",` : ``}
-                   body: z.infer<typeof bodySchemas["${rb.applicationType}"]> }`
+                  `{ applicationType: "${rb.applicationType}", body: z.infer<typeof requestBodySchemas["${rb.applicationType}"]> }`
               )
               .join(` | `)
           : `{}`
       }
 
-      export const paramSchemas = {
+    export const responseSchemas = [
+      ${o.responses.map(
+        (res) => `{
+          statusCode: "${res.statusCode}",
+          applicationType: "${res.applicationType}",
+          bodySchema: ${toZod(res.bodySchema)},
+          headerSchema: ${toZod(res.headerSchema)}
+        }`
+      )}
+    ]
+  
+    export type ResponseBody = z.infer<(typeof responseSchemas[number]["bodySchema"])>
+
+    export const requestParamSchemas = {
        ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
-     }
-    export type FetchVariables = Body & {
-      ${o.requestParameters.map((p) => camelCase(p.name) + `: z.infer<typeof paramSchemas["${camelCase(p.name)}"]>`)}
     }
 
-    export const fetch = async ({${[
-      ...o.requestParameters.map((p) => camelCase(p.name)),
-      ...(o.requestBodies.length > 0 ? [`body`] : []),
-      ...(o.requestBodies.length > 1 ? [`applicationType`] : []),
-    ].join(",")}}: FetchVariables, config?: AxiosRequestConfig) => axios({
-      url: \`${o.path.replace(/{/g, "${")}\`,
+    export type Variables = RequestBody & {
+      ${o.requestParameters.map(
+        (p) => camelCase(p.name) + `: z.infer<typeof requestParamSchemas["${camelCase(p.name)}"]>`
+      )}
+    }
+
+    export const request = async (axios: Axios, vars: Variables, config?: AxiosRequestConfig<${
+      o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
+    }>) => axios.request<RequestBody, ResponseBody>({
+      method: "${o.method}",
+      url: \`${o.path.replace(/{/g, "${vars.")}\`,
       headers: {
         ${[
           ...o.requestParameters
             .filter((p) => p.in == "header")
-            .map((p) => `"${p.name.toLowerCase()}": ${camelCase(p.name)}`),
-          ...(o.requestBodies.length > 0
-            ? [
-                `"Content-Type": ${
-                  o.requestBodies.length > 1 ? `applicationType` : `"${o.requestBodies[0].applicationType}"`
-                }`,
-              ]
-            : []),
+            .map((p) => `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(p.name)})`),
+          ...(o.requestBodies.length > 0 ? [`"Content-Type": "${o.requestBodies[0].applicationType}"`] : []),
         ].join(",")}
       },
       params: {
         ${o.requestParameters
           .filter((p) => p.in == "query")
-          .map((p) => `"${p.name}": ${camelCase(p.name)}`)
+          .map((p) => `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(p.name)})`)
           .join(",")}
       },
-      ${o.requestBodies.length > 0 ? `data: body,` : ``}
+      ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.applicationType].parse(vars.body),` : ``}
       ...config
     })
   }

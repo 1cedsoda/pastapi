@@ -6,20 +6,36 @@
 */
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, Axios } from "axios";
 
 export namespace GetUser {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({ id: z.number().int(), name: z.string() }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    {}: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/user`,
       headers: {},
       params: {},
@@ -29,48 +45,81 @@ export namespace GetUser {
 }
 
 export namespace PostUser {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({ id: z.number().int(), name: z.string() }),
   };
-  export type Body = {
-    body: z.infer<(typeof bodySchemas)["application/json"]>;
+  export type RequestBody = {
+    applicationType: "application/json";
+    body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "text/plain",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
       url: `/user`,
       headers: {
         "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace GetUserId {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({ id: z.number().int(), name: z.string() }),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     id: z.number().int(),
   };
-  export type FetchVariables = Body & {
-    id: z.infer<(typeof paramSchemas)["id"]>;
+
+  export type Variables = RequestBody & {
+    id: z.infer<(typeof requestParamSchemas)["id"]>;
   };
 
-  export const fetch = async (
-    { id }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/user/${id}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
+      url: `/user/${vars.id}`,
       headers: {},
       params: {},
 
@@ -79,23 +128,39 @@ export namespace GetUserId {
 }
 
 export namespace GetCookie {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "text/plain",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     myRequiredCookie: z.number(),
     myOptionalCookie: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    myRequiredCookie: z.infer<(typeof paramSchemas)["myRequiredCookie"]>;
-    myOptionalCookie: z.infer<(typeof paramSchemas)["myOptionalCookie"]>;
+
+  export type Variables = RequestBody & {
+    myRequiredCookie: z.infer<(typeof requestParamSchemas)["myRequiredCookie"]>;
+    myOptionalCookie: z.infer<(typeof requestParamSchemas)["myOptionalCookie"]>;
   };
 
-  export const fetch = async (
-    { myRequiredCookie, myOptionalCookie }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/cookie`,
       headers: {},
       params: {},
@@ -105,27 +170,51 @@ export namespace GetCookie {
 }
 
 export namespace GetHeader {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "text/plain",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     xMyRequiredHeader: z.number(),
     xMyOptionalHeader: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    xMyRequiredHeader: z.infer<(typeof paramSchemas)["xMyRequiredHeader"]>;
-    xMyOptionalHeader: z.infer<(typeof paramSchemas)["xMyOptionalHeader"]>;
+
+  export type Variables = RequestBody & {
+    xMyRequiredHeader: z.infer<
+      (typeof requestParamSchemas)["xMyRequiredHeader"]
+    >;
+    xMyOptionalHeader: z.infer<
+      (typeof requestParamSchemas)["xMyOptionalHeader"]
+    >;
   };
 
-  export const fetch = async (
-    { xMyRequiredHeader, xMyOptionalHeader }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/header`,
       headers: {
-        "x-my-required-header": xMyRequiredHeader,
-        "x-my-optional-header": xMyOptionalHeader,
+        "X-My-Required-Header": requestParamSchemas["xMyRequiredHeader"].parse(
+          vars.xMyRequiredHeader,
+        ),
+        "X-My-Optional-Header": requestParamSchemas["xMyOptionalHeader"].parse(
+          vars.xMyOptionalHeader,
+        ),
       },
       params: {},
 
@@ -134,28 +223,44 @@ export namespace GetHeader {
 }
 
 export namespace GetQuery {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "text/plain",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     a: z.number(),
     b: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    a: z.infer<(typeof paramSchemas)["a"]>;
-    b: z.infer<(typeof paramSchemas)["b"]>;
+
+  export type Variables = RequestBody & {
+    a: z.infer<(typeof requestParamSchemas)["a"]>;
+    b: z.infer<(typeof requestParamSchemas)["b"]>;
   };
 
-  export const fetch = async (
-    { a, b }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/query`,
       headers: {},
       params: {
-        a: a,
-        b: b,
+        a: requestParamSchemas["a"].parse(vars.a),
+        b: requestParamSchemas["b"].parse(vars.b),
       },
 
       ...config,
@@ -163,17 +268,33 @@ export namespace GetQuery {
 }
 
 export namespace GetError {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "500",
+      applicationType: "text/plain",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    {}: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/error`,
       headers: {},
       params: {},
@@ -182,93 +303,58 @@ export namespace GetError {
     });
 }
 
-export class Api {
-  public staticConfig: AxiosRequestConfig;
-  public dynamicConfig: (AxiosRequestConfig) => Promise<AxiosRequestConfig>;
-  constructor(
-    staticConfig?: AxiosRequestConfig,
-    dynamicConfig?: (AxiosRequestConfig) => Promise<AxiosRequestConfig>,
-  ) {
-    this.staticConfig = staticConfig ?? {};
-    this.dynamicConfig = dynamicConfig ?? (async (x: AxiosRequestConfig) => x);
-  }
-
-  private async applyStaticAndDynamicConfig(
-    individualConfig?: AxiosRequestConfig,
-  ) {
-    return this.dynamicConfig({
-      ...this.staticConfig,
-      ...individualConfig,
-    });
+export class Client {
+  public axiosInstance: Axios;
+  constructor(axiosInstance?: Axios) {
+    this.axiosInstance = axiosInstance ?? axios.create();
   }
 
   public async getUser(
-    variables: GetUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetUser.request(this.axiosInstance, variables, config);
   }
 
   public async postUser(
-    variables: PostUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: PostUser.Variables,
+    config?: AxiosRequestConfig<Pick<PostUser.RequestBody, "body">>,
   ) {
-    return PostUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return PostUser.request(this.axiosInstance, variables, config);
   }
 
   public async getUserId(
-    variables: GetUserId.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetUserId.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetUserId.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetUserId.request(this.axiosInstance, variables, config);
   }
 
   public async getCookie(
-    variables: GetCookie.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetCookie.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetCookie.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetCookie.request(this.axiosInstance, variables, config);
   }
 
   public async getHeader(
-    variables: GetHeader.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetHeader.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetHeader.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetHeader.request(this.axiosInstance, variables, config);
   }
 
   public async getQuery(
-    variables: GetQuery.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetQuery.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetQuery.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetQuery.request(this.axiosInstance, variables, config);
   }
 
   public async getError(
-    variables: GetError.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetError.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetError.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetError.request(this.axiosInstance, variables, config);
   }
 }

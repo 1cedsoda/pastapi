@@ -6,10 +6,10 @@
 */
 
 import { z } from "zod";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, Axios } from "axios";
 
 export namespace UpdatePet {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({
       id: z.number().int().optional(),
       name: z.string(),
@@ -71,42 +71,102 @@ export namespace UpdatePet {
       status: z.enum(["available", "pending", "sold"]).optional(),
     }),
   };
-  export type Body =
+  export type RequestBody =
     | {
         applicationType: "application/json";
-        body: z.infer<(typeof bodySchemas)["application/json"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
         applicationType: "application/xml";
-        body: z.infer<(typeof bodySchemas)["application/xml"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
         body: z.infer<
-          (typeof bodySchemas)["application/x-www-form-urlencoded"]
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
       };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body, applicationType }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "put",
       url: `/pet`,
       headers: {
-        "Content-Type": applicationType,
+        "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace AddPet {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({
       id: z.number().int().optional(),
       name: z.string(),
@@ -168,63 +228,187 @@ export namespace AddPet {
       status: z.enum(["available", "pending", "sold"]).optional(),
     }),
   };
-  export type Body =
+  export type RequestBody =
     | {
         applicationType: "application/json";
-        body: z.infer<(typeof bodySchemas)["application/json"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
         applicationType: "application/xml";
-        body: z.infer<(typeof bodySchemas)["application/xml"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
         body: z.infer<
-          (typeof bodySchemas)["application/x-www-form-urlencoded"]
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
       };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body, applicationType }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
       url: `/pet`,
       headers: {
-        "Content-Type": applicationType,
+        "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace FindPetsByStatus {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.array(
+        z.object({
+          id: z.number().int().optional(),
+          name: z.string(),
+          category: z
+            .object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            })
+            .optional(),
+          photoUrls: z.array(z.string()),
+          tags: z
+            .array(
+              z.object({
+                id: z.number().int().optional(),
+                name: z.string().optional(),
+              }),
+            )
+            .optional(),
+          status: z.enum(["available", "pending", "sold"]).optional(),
+        }),
+      ),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.array(
+        z.object({
+          id: z.number().int().optional(),
+          name: z.string(),
+          category: z
+            .object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            })
+            .optional(),
+          photoUrls: z.array(z.string()),
+          tags: z
+            .array(
+              z.object({
+                id: z.number().int().optional(),
+                name: z.string().optional(),
+              }),
+            )
+            .optional(),
+          status: z.enum(["available", "pending", "sold"]).optional(),
+        }),
+      ),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     status: z
       .enum(["available", "pending", "sold"])
       .default("available")
       .optional(),
   };
-  export type FetchVariables = Body & {
-    status: z.infer<(typeof paramSchemas)["status"]>;
+
+  export type Variables = RequestBody & {
+    status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const fetch = async (
-    { status }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/pet/findByStatus`,
       headers: {},
       params: {
-        status: status,
+        status: requestParamSchemas["status"].parse(vars.status),
       },
 
       ...config,
@@ -232,25 +416,89 @@ export namespace FindPetsByStatus {
 }
 
 export namespace FindPetsByTags {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.array(
+        z.object({
+          id: z.number().int().optional(),
+          name: z.string(),
+          category: z
+            .object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            })
+            .optional(),
+          photoUrls: z.array(z.string()),
+          tags: z
+            .array(
+              z.object({
+                id: z.number().int().optional(),
+                name: z.string().optional(),
+              }),
+            )
+            .optional(),
+          status: z.enum(["available", "pending", "sold"]).optional(),
+        }),
+      ),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.array(
+        z.object({
+          id: z.number().int().optional(),
+          name: z.string(),
+          category: z
+            .object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            })
+            .optional(),
+          photoUrls: z.array(z.string()),
+          tags: z
+            .array(
+              z.object({
+                id: z.number().int().optional(),
+                name: z.string().optional(),
+              }),
+            )
+            .optional(),
+          status: z.enum(["available", "pending", "sold"]).optional(),
+        }),
+      ),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     tags: z.array(z.string()).optional(),
   };
-  export type FetchVariables = Body & {
-    tags: z.infer<(typeof paramSchemas)["tags"]>;
+
+  export type Variables = RequestBody & {
+    tags: z.infer<(typeof requestParamSchemas)["tags"]>;
   };
 
-  export const fetch = async (
-    { tags }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/pet/findByTags`,
       headers: {},
       params: {
-        tags: tags,
+        tags: requestParamSchemas["tags"].parse(vars.tags),
       },
 
       ...config,
@@ -258,22 +506,82 @@ export namespace FindPetsByTags {
 }
 
 export namespace GetPetById {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
+              id: z.number().int().optional(),
+              name: z.string().optional(),
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     petId: z.number().int(),
   };
-  export type FetchVariables = Body & {
-    petId: z.infer<(typeof paramSchemas)["petId"]>;
+
+  export type Variables = RequestBody & {
+    petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const fetch = async (
-    { petId }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/pet/${petId}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
+      url: `/pet/${vars.petId}`,
       headers: {},
       params: {},
 
@@ -282,30 +590,39 @@ export namespace GetPetById {
 }
 
 export namespace UpdatePetWithForm {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     petId: z.number().int(),
     name: z.string().optional(),
     status: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    petId: z.infer<(typeof paramSchemas)["petId"]>;
-    name: z.infer<(typeof paramSchemas)["name"]>;
-    status: z.infer<(typeof paramSchemas)["status"]>;
+
+  export type Variables = RequestBody & {
+    petId: z.infer<(typeof requestParamSchemas)["petId"]>;
+    name: z.infer<(typeof requestParamSchemas)["name"]>;
+    status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const fetch = async (
-    { petId, name, status }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/pet/${petId}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
+      url: `/pet/${vars.petId}`,
       headers: {},
       params: {
-        name: name,
-        status: status,
+        name: requestParamSchemas["name"].parse(vars.name),
+        status: requestParamSchemas["status"].parse(vars.status),
       },
 
       ...config,
@@ -313,26 +630,35 @@ export namespace UpdatePetWithForm {
 }
 
 export namespace DeletePet {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     apiKey: z.string().optional(),
     petId: z.number().int(),
   };
-  export type FetchVariables = Body & {
-    apiKey: z.infer<(typeof paramSchemas)["apiKey"]>;
-    petId: z.infer<(typeof paramSchemas)["petId"]>;
+
+  export type Variables = RequestBody & {
+    apiKey: z.infer<(typeof requestParamSchemas)["apiKey"]>;
+    petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const fetch = async (
-    { apiKey, petId }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/pet/${petId}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "delete",
+      url: `/pet/${vars.petId}`,
       headers: {
-        api_key: apiKey,
+        api_key: requestParamSchemas["apiKey"].parse(vars.apiKey),
       },
       params: {},
 
@@ -341,51 +667,92 @@ export namespace DeletePet {
 }
 
 export namespace UploadFile {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/octet-stream": z.string(),
   };
-  export type Body = {
-    body: z.infer<(typeof bodySchemas)["application/octet-stream"]>;
+  export type RequestBody = {
+    applicationType: "application/octet-stream";
+    body: z.infer<(typeof requestBodySchemas)["application/octet-stream"]>;
   };
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        code: z.number().int().optional(),
+        type: z.string().optional(),
+        message: z.string().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     petId: z.number().int(),
     additionalMetadata: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    petId: z.infer<(typeof paramSchemas)["petId"]>;
-    additionalMetadata: z.infer<(typeof paramSchemas)["additionalMetadata"]>;
+
+  export type Variables = RequestBody & {
+    petId: z.infer<(typeof requestParamSchemas)["petId"]>;
+    additionalMetadata: z.infer<
+      (typeof requestParamSchemas)["additionalMetadata"]
+    >;
   };
 
-  export const fetch = async (
-    { petId, additionalMetadata, body }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
-      url: `/pet/${petId}/uploadImage`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
+      url: `/pet/${vars.petId}/uploadImage`,
       headers: {
         "Content-Type": "application/octet-stream",
       },
       params: {
-        additionalMetadata: additionalMetadata,
+        additionalMetadata: requestParamSchemas["additionalMetadata"].parse(
+          vars.additionalMetadata,
+        ),
       },
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace GetInventory {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.record(z.number().int()),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    {}: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/store/inventory`,
       headers: {},
       params: {},
@@ -395,7 +762,7 @@ export namespace GetInventory {
 }
 
 export namespace PlaceOrder {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({
       id: z.number().int().optional(),
       petId: z.number().int().optional(),
@@ -421,57 +788,116 @@ export namespace PlaceOrder {
       complete: z.boolean().optional(),
     }),
   };
-  export type Body =
+  export type RequestBody =
     | {
         applicationType: "application/json";
-        body: z.infer<(typeof bodySchemas)["application/json"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
         applicationType: "application/xml";
-        body: z.infer<(typeof bodySchemas)["application/xml"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
         body: z.infer<
-          (typeof bodySchemas)["application/x-www-form-urlencoded"]
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
       };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        petId: z.number().int().optional(),
+        quantity: z.number().int().optional(),
+        shipDate: z.string().datetime().optional(),
+        status: z.enum(["placed", "approved", "delivered"]).optional(),
+        complete: z.boolean().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body, applicationType }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
       url: `/store/order`,
       headers: {
-        "Content-Type": applicationType,
+        "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace GetOrderById {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        petId: z.number().int().optional(),
+        quantity: z.number().int().optional(),
+        shipDate: z.string().datetime().optional(),
+        status: z.enum(["placed", "approved", "delivered"]).optional(),
+        complete: z.boolean().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        petId: z.number().int().optional(),
+        quantity: z.number().int().optional(),
+        shipDate: z.string().datetime().optional(),
+        status: z.enum(["placed", "approved", "delivered"]).optional(),
+        complete: z.boolean().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     orderId: z.number().int(),
   };
-  export type FetchVariables = Body & {
-    orderId: z.infer<(typeof paramSchemas)["orderId"]>;
+
+  export type Variables = RequestBody & {
+    orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const fetch = async (
-    { orderId }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/store/order/${orderId}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
+      url: `/store/order/${vars.orderId}`,
       headers: {},
       params: {},
 
@@ -480,22 +906,31 @@ export namespace GetOrderById {
 }
 
 export namespace DeleteOrder {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     orderId: z.number().int(),
   };
-  export type FetchVariables = Body & {
-    orderId: z.infer<(typeof paramSchemas)["orderId"]>;
+
+  export type Variables = RequestBody & {
+    orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const fetch = async (
-    { orderId }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/store/order/${orderId}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "delete",
+      url: `/store/order/${vars.orderId}`,
       headers: {},
       params: {},
 
@@ -504,7 +939,7 @@ export namespace DeleteOrder {
 }
 
 export namespace CreateUser {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({
       id: z.number().int().optional(),
       username: z.string().optional(),
@@ -536,42 +971,82 @@ export namespace CreateUser {
       userStatus: z.number().int().optional(),
     }),
   };
-  export type Body =
+  export type RequestBody =
     | {
         applicationType: "application/json";
-        body: z.infer<(typeof bodySchemas)["application/json"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
         applicationType: "application/xml";
-        body: z.infer<(typeof bodySchemas)["application/xml"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
         body: z.infer<
-          (typeof bodySchemas)["application/x-www-form-urlencoded"]
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
       };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "default",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "default",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body, applicationType }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
       url: `/user`,
       headers: {
-        "Content-Type": applicationType,
+        "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace CreateUsersWithListInput {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.array(
       z.object({
         id: z.number().int().optional(),
@@ -585,51 +1060,114 @@ export namespace CreateUsersWithListInput {
       }),
     ),
   };
-  export type Body = {
-    body: z.infer<(typeof bodySchemas)["application/json"]>;
+  export type RequestBody = {
+    applicationType: "application/json";
+    body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
 
-  export const fetch = async (
-    { body }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "post",
       url: `/user/createWithList`,
       headers: {
         "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace LoginUser {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.string(),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     username: z.string().optional(),
     password: z.string().optional(),
   };
-  export type FetchVariables = Body & {
-    username: z.infer<(typeof paramSchemas)["username"]>;
-    password: z.infer<(typeof paramSchemas)["password"]>;
+
+  export type Variables = RequestBody & {
+    username: z.infer<(typeof requestParamSchemas)["username"]>;
+    password: z.infer<(typeof requestParamSchemas)["password"]>;
   };
 
-  export const fetch = async (
-    { username, password }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/user/login`,
       headers: {},
       params: {
-        username: username,
-        password: password,
+        username: requestParamSchemas["username"].parse(vars.username),
+        password: requestParamSchemas["password"].parse(vars.password),
       },
 
       ...config,
@@ -637,17 +1175,26 @@ export namespace LoginUser {
 }
 
 export namespace LogoutUser {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {};
-  export type FetchVariables = Body & {};
+  export const responseSchemas = [];
 
-  export const fetch = async (
-    {}: FetchVariables,
-    config?: AxiosRequestConfig,
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {};
+
+  export type Variables = RequestBody & {};
+
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
       url: `/user/logout`,
       headers: {},
       params: {},
@@ -657,22 +1204,62 @@ export namespace LogoutUser {
 }
 
 export namespace GetUserByName {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [
+    {
+      statusCode: "200",
+      applicationType: "application/json",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+    {
+      statusCode: "200",
+      applicationType: "application/xml",
+      bodySchema: z.object({
+        id: z.number().int().optional(),
+        username: z.string().optional(),
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        email: z.string().optional(),
+        password: z.string().optional(),
+        phone: z.string().optional(),
+        userStatus: z.number().int().optional(),
+      }),
+      headerSchema: z.never(),
+    },
+  ];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     username: z.string(),
   };
-  export type FetchVariables = Body & {
-    username: z.infer<(typeof paramSchemas)["username"]>;
+
+  export type Variables = RequestBody & {
+    username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const fetch = async (
-    { username }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/user/${username}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "get",
+      url: `/user/${vars.username}`,
       headers: {},
       params: {},
 
@@ -681,7 +1268,7 @@ export namespace GetUserByName {
 }
 
 export namespace UpdateUser {
-  export const bodySchemas = {
+  export const requestBodySchemas = {
     "application/json": z.object({
       id: z.number().int().optional(),
       username: z.string().optional(),
@@ -713,61 +1300,79 @@ export namespace UpdateUser {
       userStatus: z.number().int().optional(),
     }),
   };
-  export type Body =
+  export type RequestBody =
     | {
         applicationType: "application/json";
-        body: z.infer<(typeof bodySchemas)["application/json"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
         applicationType: "application/xml";
-        body: z.infer<(typeof bodySchemas)["application/xml"]>;
+        body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
         applicationType: "application/x-www-form-urlencoded";
         body: z.infer<
-          (typeof bodySchemas)["application/x-www-form-urlencoded"]
+          (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
       };
 
-  export const paramSchemas = {
+  export const responseSchemas = [];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     username: z.string(),
   };
-  export type FetchVariables = Body & {
-    username: z.infer<(typeof paramSchemas)["username"]>;
+
+  export type Variables = RequestBody & {
+    username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const fetch = async (
-    { username, body, applicationType }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios({
-      url: `/user/${username}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "put",
+      url: `/user/${vars.username}`,
       headers: {
-        "Content-Type": applicationType,
+        "Content-Type": "application/json",
       },
       params: {},
-      data: body,
+      data: requestBodySchemas[vars.applicationType].parse(vars.body),
       ...config,
     });
 }
 
 export namespace DeleteUser {
-  export const bodySchemas = {};
-  export type Body = {};
+  export const requestBodySchemas = {};
+  export type RequestBody = {};
 
-  export const paramSchemas = {
+  export const responseSchemas = [];
+
+  export type ResponseBody = z.infer<
+    (typeof responseSchemas)[number]["bodySchema"]
+  >;
+
+  export const requestParamSchemas = {
     username: z.string(),
   };
-  export type FetchVariables = Body & {
-    username: z.infer<(typeof paramSchemas)["username"]>;
+
+  export type Variables = RequestBody & {
+    username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const fetch = async (
-    { username }: FetchVariables,
-    config?: AxiosRequestConfig,
+  export const request = async (
+    axios: Axios,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios({
-      url: `/user/${username}`,
+    axios.request<RequestBody, ResponseBody>({
+      method: "delete",
+      url: `/user/${vars.username}`,
       headers: {},
       params: {},
 
@@ -775,213 +1380,148 @@ export namespace DeleteUser {
     });
 }
 
-export class Api {
-  public staticConfig: AxiosRequestConfig;
-  public dynamicConfig: (AxiosRequestConfig) => Promise<AxiosRequestConfig>;
-  constructor(
-    staticConfig?: AxiosRequestConfig,
-    dynamicConfig?: (AxiosRequestConfig) => Promise<AxiosRequestConfig>,
-  ) {
-    this.staticConfig = staticConfig ?? {};
-    this.dynamicConfig = dynamicConfig ?? (async (x: AxiosRequestConfig) => x);
-  }
-
-  private async applyStaticAndDynamicConfig(
-    individualConfig?: AxiosRequestConfig,
-  ) {
-    return this.dynamicConfig({
-      ...this.staticConfig,
-      ...individualConfig,
-    });
+export class Client {
+  public axiosInstance: Axios;
+  constructor(axiosInstance?: Axios) {
+    this.axiosInstance = axiosInstance ?? axios.create();
   }
 
   public async updatePet(
-    variables: UpdatePet.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: UpdatePet.Variables,
+    config?: AxiosRequestConfig<Pick<UpdatePet.RequestBody, "body">>,
   ) {
-    return UpdatePet.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return UpdatePet.request(this.axiosInstance, variables, config);
   }
 
   public async addPet(
-    variables: AddPet.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: AddPet.Variables,
+    config?: AxiosRequestConfig<Pick<AddPet.RequestBody, "body">>,
   ) {
-    return AddPet.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return AddPet.request(this.axiosInstance, variables, config);
   }
 
   public async findPetsByStatus(
-    variables: FindPetsByStatus.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: FindPetsByStatus.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return FindPetsByStatus.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return FindPetsByStatus.request(this.axiosInstance, variables, config);
   }
 
   public async findPetsByTags(
-    variables: FindPetsByTags.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: FindPetsByTags.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return FindPetsByTags.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return FindPetsByTags.request(this.axiosInstance, variables, config);
   }
 
   public async getPetById(
-    variables: GetPetById.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetPetById.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetPetById.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetPetById.request(this.axiosInstance, variables, config);
   }
 
   public async updatePetWithForm(
-    variables: UpdatePetWithForm.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: UpdatePetWithForm.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return UpdatePetWithForm.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return UpdatePetWithForm.request(this.axiosInstance, variables, config);
   }
 
   public async deletePet(
-    variables: DeletePet.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: DeletePet.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return DeletePet.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return DeletePet.request(this.axiosInstance, variables, config);
   }
 
   public async uploadFile(
-    variables: UploadFile.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: UploadFile.Variables,
+    config?: AxiosRequestConfig<Pick<UploadFile.RequestBody, "body">>,
   ) {
-    return UploadFile.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return UploadFile.request(this.axiosInstance, variables, config);
   }
 
   public async getInventory(
-    variables: GetInventory.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetInventory.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetInventory.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetInventory.request(this.axiosInstance, variables, config);
   }
 
   public async placeOrder(
-    variables: PlaceOrder.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: PlaceOrder.Variables,
+    config?: AxiosRequestConfig<Pick<PlaceOrder.RequestBody, "body">>,
   ) {
-    return PlaceOrder.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return PlaceOrder.request(this.axiosInstance, variables, config);
   }
 
   public async getOrderById(
-    variables: GetOrderById.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetOrderById.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetOrderById.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetOrderById.request(this.axiosInstance, variables, config);
   }
 
   public async deleteOrder(
-    variables: DeleteOrder.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: DeleteOrder.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return DeleteOrder.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return DeleteOrder.request(this.axiosInstance, variables, config);
   }
 
   public async createUser(
-    variables: CreateUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: CreateUser.Variables,
+    config?: AxiosRequestConfig<Pick<CreateUser.RequestBody, "body">>,
   ) {
-    return CreateUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return CreateUser.request(this.axiosInstance, variables, config);
   }
 
   public async createUsersWithListInput(
-    variables: CreateUsersWithListInput.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: CreateUsersWithListInput.Variables,
+    config?: AxiosRequestConfig<
+      Pick<CreateUsersWithListInput.RequestBody, "body">
+    >,
   ) {
-    return CreateUsersWithListInput.fetch(
+    return CreateUsersWithListInput.request(
+      this.axiosInstance,
       variables,
-      await this.applyStaticAndDynamicConfig(config),
+      config,
     );
   }
 
   public async loginUser(
-    variables: LoginUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: LoginUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return LoginUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return LoginUser.request(this.axiosInstance, variables, config);
   }
 
   public async logoutUser(
-    variables: LogoutUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: LogoutUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return LogoutUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return LogoutUser.request(this.axiosInstance, variables, config);
   }
 
   public async getUserByName(
-    variables: GetUserByName.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: GetUserByName.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return GetUserByName.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return GetUserByName.request(this.axiosInstance, variables, config);
   }
 
   public async updateUser(
-    variables: UpdateUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: UpdateUser.Variables,
+    config?: AxiosRequestConfig<Pick<UpdateUser.RequestBody, "body">>,
   ) {
-    return UpdateUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return UpdateUser.request(this.axiosInstance, variables, config);
   }
 
   public async deleteUser(
-    variables: DeleteUser.FetchVariables,
-    config?: AxiosRequestConfig,
+    variables: DeleteUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
   ) {
-    return DeleteUser.fetch(
-      variables,
-      await this.applyStaticAndDynamicConfig(config),
-    );
+    return DeleteUser.request(this.axiosInstance, variables, config);
   }
 }
