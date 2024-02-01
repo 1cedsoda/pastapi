@@ -1,0 +1,1 @@
+# @pastapi/ts-axios

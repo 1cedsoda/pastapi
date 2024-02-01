@@ -1,0 +1,125 @@
+openapi: "3.1.0"
+info:
+  title: "My API"
+  version: "1.0.0"
+
+paths:
+  /user:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    post:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+  /user/{id}:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+  /cookie:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: MyRequiredCookie
+          in: cookie
+          schema:
+            type: number
+          required: true
+        - name: MyOptionalCookie
+          in: cookie
+          schema:
+            type: string
+  
+  /header:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: X-My-Required-Header
+          in: header
+          schema:
+            type: number
+          required: true
+        - name: X-My-Optional-Header
+          in: header
+          schema:
+            type: string
+
+  /query:
+    get:
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: string
+      parameters:
+        - name: a
+          in: query
+          schema:
+            type: number
+          required: true
+        - name: b
+          in: query
+          schema:
+            type: string
+  /error:
+    get:
+      responses:
+        "500":
+          description: "Internal Server Error"
+          content:
+            text/plain:
+              schema:
+                type: string    
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
