@@ -133,7 +133,9 @@ export namespace PostUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -376,9 +378,11 @@ export namespace GetHeader {
       headers: {
         "X-My-Required-Header": requestParamSchemas["xMyRequiredHeader"].parse(
           vars.xMyRequiredHeader,
+          { path: ["request", "xMyRequiredHeader"] },
         ),
         "X-My-Optional-Header": requestParamSchemas["xMyOptionalHeader"].parse(
           vars.xMyOptionalHeader,
+          { path: ["request", "xMyOptionalHeader"] },
         ),
       },
       params: {},
@@ -462,8 +466,8 @@ export namespace GetQuery {
       url: `/query`,
       headers: {},
       params: {
-        a: requestParamSchemas["a"].parse(vars.a),
-        b: requestParamSchemas["b"].parse(vars.b),
+        a: requestParamSchemas["a"].parse(vars.a, { path: ["request", "a"] }),
+        b: requestParamSchemas["b"].parse(vars.b, { path: ["request", "b"] }),
       },
 
       validateStatus: () => true,

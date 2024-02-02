@@ -75,17 +75,31 @@ const operationNamespace = (o: Operation) => {
         ${[
           ...o.requestParameters
             .filter((p) => p.in == "header")
-            .map((p) => `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(p.name)})`),
+            .map(
+              (p) =>
+                `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(
+                  p.name
+                )}, { path: ["request", "${camelCase(p.name)}"] })`
+            ),
           ...(o.requestBodies.length > 0 ? [`"Content-Type": "${o.requestBodies[0].applicationType}"`] : []),
         ].join(",")}
       },
       params: {
         ${o.requestParameters
           .filter((p) => p.in == "query")
-          .map((p) => `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(p.name)})`)
+          .map(
+            (p) =>
+              `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(
+                p.name
+              )}, { path: ["request", "${camelCase(p.name)}"] })`
+          )
           .join(",")}
       },
-      ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.contentType].parse(vars.body),` : ``}
+      ${
+        o.requestBodies.length > 0
+          ? `data: requestBodySchemas[vars.contentType].parse(vars.body, { path: ["request", "body"] }),`
+          : ``
+      }
       validateStatus: () => true,
       ...config
     })

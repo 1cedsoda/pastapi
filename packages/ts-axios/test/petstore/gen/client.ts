@@ -173,7 +173,9 @@ export namespace UpdatePet {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -368,7 +370,9 @@ export namespace AddPet {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -497,7 +501,9 @@ export namespace FindPetsByStatus {
       url: `/pet/findByStatus`,
       headers: {},
       params: {
-        status: requestParamSchemas["status"].parse(vars.status),
+        status: requestParamSchemas["status"].parse(vars.status, {
+          path: ["request", "status"],
+        }),
       },
 
       validateStatus: () => true,
@@ -625,7 +631,9 @@ export namespace FindPetsByTags {
       url: `/pet/findByTags`,
       headers: {},
       params: {
-        tags: requestParamSchemas["tags"].parse(vars.tags),
+        tags: requestParamSchemas["tags"].parse(vars.tags, {
+          path: ["request", "tags"],
+        }),
       },
 
       validateStatus: () => true,
@@ -824,8 +832,12 @@ export namespace UpdatePetWithForm {
       url: `/pet/${vars.petId}`,
       headers: {},
       params: {
-        name: requestParamSchemas["name"].parse(vars.name),
-        status: requestParamSchemas["status"].parse(vars.status),
+        name: requestParamSchemas["name"].parse(vars.name, {
+          path: ["request", "name"],
+        }),
+        status: requestParamSchemas["status"].parse(vars.status, {
+          path: ["request", "status"],
+        }),
       },
 
       validateStatus: () => true,
@@ -899,7 +911,9 @@ export namespace DeletePet {
       method: "delete",
       url: `/pet/${vars.petId}`,
       headers: {
-        api_key: requestParamSchemas["apiKey"].parse(vars.apiKey),
+        api_key: requestParamSchemas["apiKey"].parse(vars.apiKey, {
+          path: ["request", "apiKey"],
+        }),
       },
       params: {},
 
@@ -997,9 +1011,12 @@ export namespace UploadFile {
       params: {
         additionalMetadata: requestParamSchemas["additionalMetadata"].parse(
           vars.additionalMetadata,
+          { path: ["request", "additionalMetadata"] },
         ),
       },
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -1195,7 +1212,9 @@ export namespace PlaceOrder {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -1509,7 +1528,9 @@ export namespace CreateUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -1625,7 +1646,9 @@ export namespace CreateUsersWithListInput {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
@@ -1711,8 +1734,12 @@ export namespace LoginUser {
       url: `/user/login`,
       headers: {},
       params: {
-        username: requestParamSchemas["username"].parse(vars.username),
-        password: requestParamSchemas["password"].parse(vars.password),
+        username: requestParamSchemas["username"].parse(vars.username, {
+          path: ["request", "username"],
+        }),
+        password: requestParamSchemas["password"].parse(vars.password, {
+          path: ["request", "password"],
+        }),
       },
 
       validateStatus: () => true,
@@ -2001,7 +2028,9 @@ export namespace UpdateUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.contentType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body, {
+        path: ["request", "body"],
+      }),
       validateStatus: () => true,
       ...config,
     });
