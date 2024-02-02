@@ -15,7 +15,7 @@ export namespace GetUser {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({ id: z.number().int(), name: z.string() }),
       headerSchema: z.never(),
     },
@@ -49,14 +49,14 @@ export namespace PostUser {
     "application/json": z.object({ id: z.number().int(), name: z.string() }),
   };
   export type RequestBody = {
-    applicationType: "application/json";
+    contentType: "application/json";
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "text/plain",
+      contentType: "text/plain",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -82,7 +82,7 @@ export namespace PostUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -94,7 +94,7 @@ export namespace GetUserId {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({ id: z.number().int(), name: z.string() }),
       headerSchema: z.never(),
     },
@@ -134,7 +134,7 @@ export namespace GetCookie {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "text/plain",
+      contentType: "text/plain",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -176,7 +176,7 @@ export namespace GetHeader {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "text/plain",
+      contentType: "text/plain",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -229,7 +229,7 @@ export namespace GetQuery {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "text/plain",
+      contentType: "text/plain",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -274,7 +274,7 @@ export namespace GetError {
   export const responseSchemas = [
     {
       statusCode: "500",
-      applicationType: "text/plain",
+      contentType: "text/plain",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -317,12 +317,12 @@ export class Client {
   }
 
   public async postUser(
-    variables: Omit<PostUser.Variables, "applicationType">,
+    variables: Omit<PostUser.Variables, "contentType">,
     config?: AxiosRequestConfig<Pick<PostUser.RequestBody, "body">>,
   ) {
     return PostUser.request(
       this.axiosInstance,
-      { applicationType: "application/json", ...variables },
+      { contentType: "application/json", ...variables },
       config,
     );
   }

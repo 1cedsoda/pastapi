@@ -15,7 +15,7 @@ const operationNamespace = (o: Operation) => {
           ? o.requestBodies
               .map(
                 (rb) =>
-                  `{ applicationType: "${rb.applicationType}", body: z.infer<typeof requestBodySchemas["${rb.applicationType}"]> }`
+                  `{ contentType: "${rb.applicationType}", body: z.infer<typeof requestBodySchemas["${rb.applicationType}"]> }`
               )
               .join(` | `)
           : `{}`
@@ -25,7 +25,7 @@ const operationNamespace = (o: Operation) => {
       ${o.responses.map(
         (res) => `{
           statusCode: "${res.statusCode}",
-          applicationType: "${res.applicationType}",
+          contentType: "${res.applicationType}",
           bodySchema: ${toZod(res.bodySchema)},
           headerSchema: ${toZod(res.headerSchema)}
         }`
@@ -63,7 +63,7 @@ const operationNamespace = (o: Operation) => {
           .map((p) => `"${p.name}": requestParamSchemas["${camelCase(p.name)}"].parse(vars.${camelCase(p.name)})`)
           .join(",")}
       },
-      ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.applicationType].parse(vars.body),` : ``}
+      ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.contentType].parse(vars.body),` : ``}
       ...config
     })
   }

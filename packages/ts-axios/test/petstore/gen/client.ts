@@ -73,15 +73,15 @@ export namespace UpdatePet {
   };
   export type RequestBody =
     | {
-        applicationType: "application/json";
+        contentType: "application/json";
         body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
-        applicationType: "application/xml";
+        contentType: "application/xml";
         body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
-        applicationType: "application/x-www-form-urlencoded";
+        contentType: "application/x-www-form-urlencoded";
         body: z.infer<
           (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
@@ -90,7 +90,7 @@ export namespace UpdatePet {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -115,7 +115,7 @@ export namespace UpdatePet {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -160,7 +160,7 @@ export namespace UpdatePet {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -230,15 +230,15 @@ export namespace AddPet {
   };
   export type RequestBody =
     | {
-        applicationType: "application/json";
+        contentType: "application/json";
         body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
-        applicationType: "application/xml";
+        contentType: "application/xml";
         body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
-        applicationType: "application/x-www-form-urlencoded";
+        contentType: "application/x-www-form-urlencoded";
         body: z.infer<
           (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
@@ -247,7 +247,7 @@ export namespace AddPet {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -272,7 +272,7 @@ export namespace AddPet {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -317,7 +317,7 @@ export namespace AddPet {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -329,7 +329,7 @@ export namespace FindPetsByStatus {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.array(
         z.object({
           id: z.number().int().optional(),
@@ -356,7 +356,7 @@ export namespace FindPetsByStatus {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.array(
         z.object({
           id: z.number().int().optional(),
@@ -422,7 +422,7 @@ export namespace FindPetsByTags {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.array(
         z.object({
           id: z.number().int().optional(),
@@ -449,7 +449,7 @@ export namespace FindPetsByTags {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.array(
         z.object({
           id: z.number().int().optional(),
@@ -512,7 +512,7 @@ export namespace GetPetById {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -537,7 +537,7 @@ export namespace GetPetById {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         name: z.string(),
@@ -671,14 +671,14 @@ export namespace UploadFile {
     "application/octet-stream": z.string(),
   };
   export type RequestBody = {
-    applicationType: "application/octet-stream";
+    contentType: "application/octet-stream";
     body: z.infer<(typeof requestBodySchemas)["application/octet-stream"]>;
   };
 
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         code: z.number().int().optional(),
         type: z.string().optional(),
@@ -720,7 +720,7 @@ export namespace UploadFile {
           vars.additionalMetadata,
         ),
       },
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -732,7 +732,7 @@ export namespace GetInventory {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.record(z.number().int()),
       headerSchema: z.never(),
     },
@@ -790,15 +790,15 @@ export namespace PlaceOrder {
   };
   export type RequestBody =
     | {
-        applicationType: "application/json";
+        contentType: "application/json";
         body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
-        applicationType: "application/xml";
+        contentType: "application/xml";
         body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
-        applicationType: "application/x-www-form-urlencoded";
+        contentType: "application/x-www-form-urlencoded";
         body: z.infer<
           (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
@@ -807,7 +807,7 @@ export namespace PlaceOrder {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         petId: z.number().int().optional(),
@@ -840,7 +840,7 @@ export namespace PlaceOrder {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -852,7 +852,7 @@ export namespace GetOrderById {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         petId: z.number().int().optional(),
@@ -865,7 +865,7 @@ export namespace GetOrderById {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         petId: z.number().int().optional(),
@@ -973,15 +973,15 @@ export namespace CreateUser {
   };
   export type RequestBody =
     | {
-        applicationType: "application/json";
+        contentType: "application/json";
         body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
-        applicationType: "application/xml";
+        contentType: "application/xml";
         body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
-        applicationType: "application/x-www-form-urlencoded";
+        contentType: "application/x-www-form-urlencoded";
         body: z.infer<
           (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
@@ -990,7 +990,7 @@ export namespace CreateUser {
   export const responseSchemas = [
     {
       statusCode: "default",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1005,7 +1005,7 @@ export namespace CreateUser {
     },
     {
       statusCode: "default",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1040,7 +1040,7 @@ export namespace CreateUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -1061,14 +1061,14 @@ export namespace CreateUsersWithListInput {
     ),
   };
   export type RequestBody = {
-    applicationType: "application/json";
+    contentType: "application/json";
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1083,7 +1083,7 @@ export namespace CreateUsersWithListInput {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1118,7 +1118,7 @@ export namespace CreateUsersWithListInput {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -1130,13 +1130,13 @@ export namespace LoginUser {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.string(),
       headerSchema: z.never(),
     },
@@ -1210,7 +1210,7 @@ export namespace GetUserByName {
   export const responseSchemas = [
     {
       statusCode: "200",
-      applicationType: "application/json",
+      contentType: "application/json",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1225,7 +1225,7 @@ export namespace GetUserByName {
     },
     {
       statusCode: "200",
-      applicationType: "application/xml",
+      contentType: "application/xml",
       bodySchema: z.object({
         id: z.number().int().optional(),
         username: z.string().optional(),
@@ -1302,15 +1302,15 @@ export namespace UpdateUser {
   };
   export type RequestBody =
     | {
-        applicationType: "application/json";
+        contentType: "application/json";
         body: z.infer<(typeof requestBodySchemas)["application/json"]>;
       }
     | {
-        applicationType: "application/xml";
+        contentType: "application/xml";
         body: z.infer<(typeof requestBodySchemas)["application/xml"]>;
       }
     | {
-        applicationType: "application/x-www-form-urlencoded";
+        contentType: "application/x-www-form-urlencoded";
         body: z.infer<
           (typeof requestBodySchemas)["application/x-www-form-urlencoded"]
         >;
@@ -1342,7 +1342,7 @@ export namespace UpdateUser {
         "Content-Type": "application/json",
       },
       params: {},
-      data: requestBodySchemas[vars.applicationType].parse(vars.body),
+      data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
     });
 }
@@ -1436,12 +1436,12 @@ export class Client {
   }
 
   public async uploadFile(
-    variables: Omit<UploadFile.Variables, "applicationType">,
+    variables: Omit<UploadFile.Variables, "contentType">,
     config?: AxiosRequestConfig<Pick<UploadFile.RequestBody, "body">>,
   ) {
     return UploadFile.request(
       this.axiosInstance,
-      { applicationType: "application/octet-stream", ...variables },
+      { contentType: "application/octet-stream", ...variables },
       config,
     );
   }
@@ -1482,14 +1482,14 @@ export class Client {
   }
 
   public async createUsersWithListInput(
-    variables: Omit<CreateUsersWithListInput.Variables, "applicationType">,
+    variables: Omit<CreateUsersWithListInput.Variables, "contentType">,
     config?: AxiosRequestConfig<
       Pick<CreateUsersWithListInput.RequestBody, "body">
     >,
   ) {
     return CreateUsersWithListInput.request(
       this.axiosInstance,
-      { applicationType: "application/json", ...variables },
+      { contentType: "application/json", ...variables },
       config,
     );
   }
