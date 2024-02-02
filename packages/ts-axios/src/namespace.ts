@@ -100,23 +100,24 @@ const operationNamespace = (o: Operation) => {
           ? `data: requestBodySchemas[vars.contentType].parse(vars.body, { path: ["request", "body"] }),`
           : ``
       }
-      validateStatus: () => true,
       ...config
     })
 
-    export const requestOk = async <REQ_B = RequestBody, RES_B_OK = ResponseBodyOk, RES_B_ERROR = ResponseBodyError>(axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
+    export const requestSafe = async <REQ_B = RequestBody, RES_B_OK = ResponseBodyOk, RES_B_ERROR = ResponseBodyError>(axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
       o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
     }>) => {
       const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
         ...config,
-        validateStatus: (s) => s >= 200 && s < 300, // default
+        validateStatus: () => true
       })
-      return res.config.validateStatus!(res.status) == true ? {
+      return res.status >= 200 && res.status < 300 ? {
         ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
-        error: null
+        error: null,
+        any: res as unknown as AxiosResponse<RES_B_OK, REQ_B>
       } : {
         ok: null,
         error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
+        any: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>
       }
     }
   }

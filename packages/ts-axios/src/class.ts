@@ -36,14 +36,14 @@ const operationMethod = (o: Operation) => {
 
 const operationMethodOk = (o: Operation) => {
   return `
-  public async ${o.operationId}Ok(variables: ${
+  public async ${o.operationId}Safe(variables: ${
     o.requestBodies.length == 1
       ? `Omit<${fuck(o.operationId)}.Variables, "contentType">`
       : `${fuck(o.operationId)}.Variables`
   }, config?: AxiosRequestConfig<${
     o.requestBodies.length > 0 ? `Pick<${fuck(o.operationId)}.RequestBody, "body">` : `undefined`
   }>) {
-    return ${fuck(o.operationId)}.requestOk(this.axiosInstance, ${
+    return ${fuck(o.operationId)}.requestSafe(this.axiosInstance, ${
       o.requestBodies.length == 1
         ? `{"contentType": "${o.requestBodies[0].applicationType}", ...variables}`
         : `variables`

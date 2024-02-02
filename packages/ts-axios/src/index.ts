@@ -6,7 +6,7 @@ import { apiClass } from "./class";
 
 export const generate = (ops: Operation[], prettierConfig?: Options | undefined): string => {
   const code = generateRaw(ops);
-  return format(code, { parser: "typescript", ...prettierConfig });
+  // return format(code, { parser: "typescript", ...prettierConfig });
   return code;
 };
 
