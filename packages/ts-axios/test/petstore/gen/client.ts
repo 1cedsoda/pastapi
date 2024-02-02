@@ -174,8 +174,8 @@ export namespace UpdatePet {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -369,8 +369,8 @@ export namespace AddPet {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -500,8 +500,8 @@ export namespace FindPetsByStatus {
         status: requestParamSchemas["status"].parse(vars.status),
       },
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -628,8 +628,8 @@ export namespace FindPetsByTags {
         tags: requestParamSchemas["tags"].parse(vars.tags),
       },
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -750,8 +750,8 @@ export namespace GetPetById {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -828,8 +828,8 @@ export namespace UpdatePetWithForm {
         status: requestParamSchemas["status"].parse(vars.status),
       },
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -903,8 +903,8 @@ export namespace DeletePet {
       },
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1000,8 +1000,8 @@ export namespace UploadFile {
         ),
       },
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1074,8 +1074,8 @@ export namespace GetInventory {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1196,8 +1196,8 @@ export namespace PlaceOrder {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1294,8 +1294,8 @@ export namespace GetOrderById {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1365,8 +1365,8 @@ export namespace DeleteOrder {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1510,8 +1510,8 @@ export namespace CreateUser {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1626,8 +1626,8 @@ export namespace CreateUsersWithListInput {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1715,8 +1715,8 @@ export namespace LoginUser {
         password: requestParamSchemas["password"].parse(vars.password),
       },
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1782,8 +1782,8 @@ export namespace LogoutUser {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -1884,8 +1884,8 @@ export namespace GetUserByName {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -2002,8 +2002,8 @@ export namespace UpdateUser {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -2073,8 +2073,8 @@ export namespace DeleteUser {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <

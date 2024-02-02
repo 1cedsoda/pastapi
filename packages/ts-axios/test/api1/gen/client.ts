@@ -53,8 +53,8 @@ export namespace GetUser {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -134,8 +134,8 @@ export namespace PostUser {
       },
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -212,8 +212,8 @@ export namespace GetUserId {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -292,8 +292,8 @@ export namespace GetCookie {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -383,8 +383,8 @@ export namespace GetHeader {
       },
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -466,8 +466,8 @@ export namespace GetQuery {
         b: requestParamSchemas["b"].parse(vars.b),
       },
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <
@@ -540,8 +540,8 @@ export namespace GetError {
       headers: {},
       params: {},
 
-      ...config,
       validateStatus: () => true,
+      ...config,
     });
 
   export const requestOk = async <

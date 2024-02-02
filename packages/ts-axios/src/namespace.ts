@@ -86,8 +86,8 @@ const operationNamespace = (o: Operation) => {
           .join(",")}
       },
       ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.contentType].parse(vars.body),` : ``}
-      validateStatus: () => true
-      ...config,
+      validateStatus: () => true,
+      ...config
     })
 
     export const requestOk = async <REQ_B = RequestBody, RES_B_OK = ResponseBodyOk, RES_B_ERROR = ResponseBodyError>(axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
