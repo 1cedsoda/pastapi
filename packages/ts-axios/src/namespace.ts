@@ -56,11 +56,6 @@ const operationNamespace = (o: Operation) => {
     export type ResponseBodyError = z.infer<(typeof responseSchemasError[number]["bodySchema"])>
     export type ResponseBody = z.infer<(typeof responseSchemas[number]["bodySchema"])>
 
-    export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-      successful: OK | null
-      unsuccessful: ERROR | null
-    }
-
     export const requestParamSchemas = {
        ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
     }
@@ -103,11 +98,11 @@ const operationNamespace = (o: Operation) => {
         validateStatus: (s) => s >= 200 && s < 300, // default
       })
       return res.config.validateStatus!(res.status) == true ? {
-        ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+        ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
         error: null
       } : {
         ok: null,
-        error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
       }
     }
   }

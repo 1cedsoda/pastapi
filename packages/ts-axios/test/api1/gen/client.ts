@@ -38,11 +38,6 @@ export namespace GetUser {
     (typeof responseSchemas)[number]["bodySchema"]
   >;
 
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
-
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
@@ -77,12 +72,12 @@ export namespace GetUser {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -122,11 +117,6 @@ export namespace PostUser {
     (typeof responseSchemas)[number]["bodySchema"]
   >;
 
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
-
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
@@ -163,12 +153,12 @@ export namespace PostUser {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -202,11 +192,6 @@ export namespace GetUserId {
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
-
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
 
   export const requestParamSchemas = {
     id: z.number().int(),
@@ -246,12 +231,12 @@ export namespace GetUserId {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -285,11 +270,6 @@ export namespace GetCookie {
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
-
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
 
   export const requestParamSchemas = {
     myRequiredCookie: z.number(),
@@ -331,12 +311,12 @@ export namespace GetCookie {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -370,11 +350,6 @@ export namespace GetHeader {
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
-
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
 
   export const requestParamSchemas = {
     xMyRequiredHeader: z.number(),
@@ -427,12 +402,12 @@ export namespace GetHeader {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -466,11 +441,6 @@ export namespace GetQuery {
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
-
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
 
   export const requestParamSchemas = {
     a: z.number(),
@@ -515,12 +485,12 @@ export namespace GetQuery {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
@@ -554,11 +524,6 @@ export namespace GetError {
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
-
-  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
-    successful: OK | null;
-    unsuccessful: ERROR | null;
-  };
 
   export const requestParamSchemas = {};
 
@@ -594,12 +559,12 @@ export namespace GetError {
     });
     return res.config.validateStatus!(res.status) == true
       ? {
-          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
           error: null,
         }
       : {
           ok: null,
-          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+          error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
         };
   };
 }
