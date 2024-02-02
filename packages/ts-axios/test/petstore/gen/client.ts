@@ -87,7 +87,7 @@ export namespace UpdatePet {
         >;
       };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -140,20 +140,38 @@ export namespace UpdatePet {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "put",
       url: `/pet`,
       headers: {
@@ -162,7 +180,32 @@ export namespace UpdatePet {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace AddPet {
@@ -244,7 +287,7 @@ export namespace AddPet {
         >;
       };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -297,20 +340,38 @@ export namespace AddPet {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/pet`,
       headers: {
@@ -319,14 +380,39 @@ export namespace AddPet {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace FindPetsByStatus {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -383,9 +469,27 @@ export namespace FindPetsByStatus {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     status: z
@@ -398,12 +502,12 @@ export namespace FindPetsByStatus {
     status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/pet/findByStatus`,
       headers: {},
@@ -412,14 +516,39 @@ export namespace FindPetsByStatus {
       },
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace FindPetsByTags {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -476,9 +605,27 @@ export namespace FindPetsByTags {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     tags: z.array(z.string()).optional(),
@@ -488,12 +635,12 @@ export namespace FindPetsByTags {
     tags: z.infer<(typeof requestParamSchemas)["tags"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/pet/findByTags`,
       headers: {},
@@ -502,14 +649,39 @@ export namespace FindPetsByTags {
       },
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetPetById {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -562,9 +734,27 @@ export namespace GetPetById {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -574,30 +764,73 @@ export namespace GetPetById {
     petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/pet/${vars.petId}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace UpdatePetWithForm {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -611,12 +844,12 @@ export namespace UpdatePetWithForm {
     status: z.infer<(typeof requestParamSchemas)["status"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/pet/${vars.petId}`,
       headers: {},
@@ -626,18 +859,61 @@ export namespace UpdatePetWithForm {
       },
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace DeletePet {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     apiKey: z.string().optional(),
@@ -649,12 +925,12 @@ export namespace DeletePet {
     petId: z.infer<(typeof requestParamSchemas)["petId"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "delete",
       url: `/pet/${vars.petId}`,
       headers: {
@@ -663,7 +939,32 @@ export namespace DeletePet {
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace UploadFile {
@@ -675,7 +976,7 @@ export namespace UploadFile {
     body: z.infer<(typeof requestBodySchemas)["application/octet-stream"]>;
   };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -688,9 +989,27 @@ export namespace UploadFile {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -704,12 +1023,12 @@ export namespace UploadFile {
     >;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/pet/${vars.petId}/uploadImage`,
       headers: {
@@ -722,14 +1041,39 @@ export namespace UploadFile {
       },
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetInventory {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -738,27 +1082,70 @@ export namespace GetInventory {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/store/inventory`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace PlaceOrder {
@@ -804,7 +1191,7 @@ export namespace PlaceOrder {
         >;
       };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -820,20 +1207,38 @@ export namespace PlaceOrder {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/store/order`,
       headers: {
@@ -842,14 +1247,39 @@ export namespace PlaceOrder {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetOrderById {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -878,9 +1308,27 @@ export namespace GetOrderById {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -890,30 +1338,73 @@ export namespace GetOrderById {
     orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/store/order/${vars.orderId}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace DeleteOrder {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -923,19 +1414,44 @@ export namespace DeleteOrder {
     orderId: z.infer<(typeof requestParamSchemas)["orderId"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "delete",
       url: `/store/order/${vars.orderId}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace CreateUser {
@@ -987,7 +1503,9 @@ export namespace CreateUser {
         >;
       };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [];
+
+  export const responseSchemasError = [
     {
       statusCode: "default",
       contentType: "application/json",
@@ -1020,20 +1538,36 @@ export namespace CreateUser {
     },
   ];
 
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/user`,
       headers: {
@@ -1042,7 +1576,32 @@ export namespace CreateUser {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace CreateUsersWithListInput {
@@ -1065,7 +1624,7 @@ export namespace CreateUsersWithListInput {
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -1098,20 +1657,38 @@ export namespace CreateUsersWithListInput {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/user/createWithList`,
       headers: {
@@ -1120,14 +1697,39 @@ export namespace CreateUsersWithListInput {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace LoginUser {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/xml",
@@ -1142,9 +1744,27 @@ export namespace LoginUser {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string().optional(),
@@ -1156,12 +1776,12 @@ export namespace LoginUser {
     password: z.infer<(typeof requestParamSchemas)["password"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/user/login`,
       headers: {},
@@ -1171,43 +1791,111 @@ export namespace LoginUser {
       },
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace LogoutUser {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/user/logout`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetUserByName {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -1240,9 +1928,27 @@ export namespace GetUserByName {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1252,19 +1958,44 @@ export namespace GetUserByName {
     username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/user/${vars.username}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace UpdateUser {
@@ -1316,11 +2047,29 @@ export namespace UpdateUser {
         >;
       };
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1330,12 +2079,12 @@ export namespace UpdateUser {
     username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "put",
       url: `/user/${vars.username}`,
       headers: {
@@ -1344,18 +2093,61 @@ export namespace UpdateUser {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace DeleteUser {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [];
+  export const responseSchemasOk = [];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1365,19 +2157,44 @@ export namespace DeleteUser {
     username: z.infer<(typeof requestParamSchemas)["username"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "delete",
       url: `/user/${vars.username}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export class Client {
@@ -1393,11 +2210,25 @@ export class Client {
     return UpdatePet.request(this.axiosInstance, variables, config);
   }
 
+  public async updatePetOk(
+    variables: UpdatePet.Variables,
+    config?: AxiosRequestConfig<Pick<UpdatePet.RequestBody, "body">>,
+  ) {
+    return UpdatePet.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async addPet(
     variables: AddPet.Variables,
     config?: AxiosRequestConfig<Pick<AddPet.RequestBody, "body">>,
   ) {
     return AddPet.request(this.axiosInstance, variables, config);
+  }
+
+  public async addPetOk(
+    variables: AddPet.Variables,
+    config?: AxiosRequestConfig<Pick<AddPet.RequestBody, "body">>,
+  ) {
+    return AddPet.requestOk(this.axiosInstance, variables, config);
   }
 
   public async findPetsByStatus(
@@ -1407,11 +2238,25 @@ export class Client {
     return FindPetsByStatus.request(this.axiosInstance, variables, config);
   }
 
+  public async findPetsByStatusOk(
+    variables: FindPetsByStatus.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return FindPetsByStatus.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async findPetsByTags(
     variables: FindPetsByTags.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return FindPetsByTags.request(this.axiosInstance, variables, config);
+  }
+
+  public async findPetsByTagsOk(
+    variables: FindPetsByTags.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return FindPetsByTags.requestOk(this.axiosInstance, variables, config);
   }
 
   public async getPetById(
@@ -1421,6 +2266,13 @@ export class Client {
     return GetPetById.request(this.axiosInstance, variables, config);
   }
 
+  public async getPetByIdOk(
+    variables: GetPetById.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetPetById.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async updatePetWithForm(
     variables: UpdatePetWithForm.Variables,
     config?: AxiosRequestConfig<undefined>,
@@ -1428,11 +2280,25 @@ export class Client {
     return UpdatePetWithForm.request(this.axiosInstance, variables, config);
   }
 
+  public async updatePetWithFormOk(
+    variables: UpdatePetWithForm.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return UpdatePetWithForm.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async deletePet(
     variables: DeletePet.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return DeletePet.request(this.axiosInstance, variables, config);
+  }
+
+  public async deletePetOk(
+    variables: DeletePet.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return DeletePet.requestOk(this.axiosInstance, variables, config);
   }
 
   public async uploadFile(
@@ -1446,11 +2312,29 @@ export class Client {
     );
   }
 
+  public async uploadFileOk(
+    variables: Omit<UploadFile.Variables, "contentType">,
+    config?: AxiosRequestConfig<Pick<UploadFile.RequestBody, "body">>,
+  ) {
+    return UploadFile.requestOk(
+      this.axiosInstance,
+      { contentType: "application/octet-stream", ...variables },
+      config,
+    );
+  }
+
   public async getInventory(
     variables: GetInventory.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return GetInventory.request(this.axiosInstance, variables, config);
+  }
+
+  public async getInventoryOk(
+    variables: GetInventory.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetInventory.requestOk(this.axiosInstance, variables, config);
   }
 
   public async placeOrder(
@@ -1460,11 +2344,25 @@ export class Client {
     return PlaceOrder.request(this.axiosInstance, variables, config);
   }
 
+  public async placeOrderOk(
+    variables: PlaceOrder.Variables,
+    config?: AxiosRequestConfig<Pick<PlaceOrder.RequestBody, "body">>,
+  ) {
+    return PlaceOrder.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async getOrderById(
     variables: GetOrderById.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return GetOrderById.request(this.axiosInstance, variables, config);
+  }
+
+  public async getOrderByIdOk(
+    variables: GetOrderById.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetOrderById.requestOk(this.axiosInstance, variables, config);
   }
 
   public async deleteOrder(
@@ -1474,11 +2372,25 @@ export class Client {
     return DeleteOrder.request(this.axiosInstance, variables, config);
   }
 
+  public async deleteOrderOk(
+    variables: DeleteOrder.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return DeleteOrder.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async createUser(
     variables: CreateUser.Variables,
     config?: AxiosRequestConfig<Pick<CreateUser.RequestBody, "body">>,
   ) {
     return CreateUser.request(this.axiosInstance, variables, config);
+  }
+
+  public async createUserOk(
+    variables: CreateUser.Variables,
+    config?: AxiosRequestConfig<Pick<CreateUser.RequestBody, "body">>,
+  ) {
+    return CreateUser.requestOk(this.axiosInstance, variables, config);
   }
 
   public async createUsersWithListInput(
@@ -1494,11 +2406,31 @@ export class Client {
     );
   }
 
+  public async createUsersWithListInputOk(
+    variables: Omit<CreateUsersWithListInput.Variables, "contentType">,
+    config?: AxiosRequestConfig<
+      Pick<CreateUsersWithListInput.RequestBody, "body">
+    >,
+  ) {
+    return CreateUsersWithListInput.requestOk(
+      this.axiosInstance,
+      { contentType: "application/json", ...variables },
+      config,
+    );
+  }
+
   public async loginUser(
     variables: LoginUser.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return LoginUser.request(this.axiosInstance, variables, config);
+  }
+
+  public async loginUserOk(
+    variables: LoginUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return LoginUser.requestOk(this.axiosInstance, variables, config);
   }
 
   public async logoutUser(
@@ -1508,11 +2440,25 @@ export class Client {
     return LogoutUser.request(this.axiosInstance, variables, config);
   }
 
+  public async logoutUserOk(
+    variables: LogoutUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return LogoutUser.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async getUserByName(
     variables: GetUserByName.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return GetUserByName.request(this.axiosInstance, variables, config);
+  }
+
+  public async getUserByNameOk(
+    variables: GetUserByName.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetUserByName.requestOk(this.axiosInstance, variables, config);
   }
 
   public async updateUser(
@@ -1522,10 +2468,24 @@ export class Client {
     return UpdateUser.request(this.axiosInstance, variables, config);
   }
 
+  public async updateUserOk(
+    variables: UpdateUser.Variables,
+    config?: AxiosRequestConfig<Pick<UpdateUser.RequestBody, "body">>,
+  ) {
+    return UpdateUser.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async deleteUser(
     variables: DeleteUser.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return DeleteUser.request(this.axiosInstance, variables, config);
+  }
+
+  public async deleteUserOk(
+    variables: DeleteUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return DeleteUser.requestOk(this.axiosInstance, variables, config);
   }
 }

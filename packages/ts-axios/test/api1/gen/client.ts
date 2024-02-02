@@ -12,7 +12,7 @@ export namespace GetUser {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -21,27 +21,70 @@ export namespace GetUser {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/user`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace PostUser {
@@ -53,7 +96,7 @@ export namespace PostUser {
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "text/plain",
@@ -62,20 +105,38 @@ export namespace PostUser {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "post",
       url: `/user`,
       headers: {
@@ -84,14 +145,39 @@ export namespace PostUser {
       params: {},
       data: requestBodySchemas[vars.contentType].parse(vars.body),
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<Pick<RequestBody, "body">>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetUserId {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "application/json",
@@ -100,9 +186,27 @@ export namespace GetUserId {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     id: z.number().int(),
@@ -112,26 +216,51 @@ export namespace GetUserId {
     id: z.infer<(typeof requestParamSchemas)["id"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/user/${vars.id}`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetCookie {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "text/plain",
@@ -140,9 +269,27 @@ export namespace GetCookie {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     myRequiredCookie: z.number(),
@@ -154,26 +301,51 @@ export namespace GetCookie {
     myOptionalCookie: z.infer<(typeof requestParamSchemas)["myOptionalCookie"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/cookie`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetHeader {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "text/plain",
@@ -182,9 +354,27 @@ export namespace GetHeader {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     xMyRequiredHeader: z.number(),
@@ -200,12 +390,12 @@ export namespace GetHeader {
     >;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/header`,
       headers: {
@@ -219,14 +409,39 @@ export namespace GetHeader {
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetQuery {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [
     {
       statusCode: "200",
       contentType: "text/plain",
@@ -235,9 +450,27 @@ export namespace GetQuery {
     },
   ];
 
+  export const responseSchemasError = [];
+
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {
     a: z.number(),
@@ -249,12 +482,12 @@ export namespace GetQuery {
     b: z.infer<(typeof requestParamSchemas)["b"]>;
   };
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/query`,
       headers: {},
@@ -264,14 +497,41 @@ export namespace GetQuery {
       },
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export namespace GetError {
   export const requestBodySchemas = {};
   export type RequestBody = {};
 
-  export const responseSchemas = [
+  export const responseSchemasOk = [];
+
+  export const responseSchemasError = [
     {
       statusCode: "500",
       contentType: "text/plain",
@@ -280,27 +540,68 @@ export namespace GetError {
     },
   ];
 
+  export const responseSchemas = [
+    ...responseSchemasOk,
+    ...responseSchemasError,
+  ];
+
+  export type ResponseBodyOk = z.infer<
+    (typeof responseSchemasOk)[number]["bodySchema"]
+  >;
+  export type ResponseBodyError = z.infer<
+    (typeof responseSchemasError)[number]["bodySchema"]
+  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+    successful: OK | null;
+    unsuccessful: ERROR | null;
+  };
 
   export const requestParamSchemas = {};
 
   export type Variables = RequestBody & {};
 
-  export const request = async (
+  export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(
     axios: AxiosInstance,
     vars: Variables,
     config?: AxiosRequestConfig<undefined>,
   ) =>
-    axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "get",
       url: `/error`,
       headers: {},
       params: {},
 
       ...config,
+      validateStatus: () => true,
     });
+
+  export const requestOk = async <
+    REQ_B = RequestBody,
+    RES_B_OK = ResponseBodyOk,
+    RES_B_ERROR = ResponseBodyError,
+  >(
+    axios: AxiosInstance,
+    vars: Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) => {
+    const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+      ...config,
+      validateStatus: (s) => s >= 200 && s < 300, // default
+    });
+    return res.config.validateStatus!(res.status) == true
+      ? {
+          ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+          error: null,
+        }
+      : {
+          ok: null,
+          error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+        };
+  };
 }
 
 export class Client {
@@ -316,11 +617,29 @@ export class Client {
     return GetUser.request(this.axiosInstance, variables, config);
   }
 
+  public async getUserOk(
+    variables: GetUser.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetUser.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async postUser(
     variables: Omit<PostUser.Variables, "contentType">,
     config?: AxiosRequestConfig<Pick<PostUser.RequestBody, "body">>,
   ) {
     return PostUser.request(
+      this.axiosInstance,
+      { contentType: "application/json", ...variables },
+      config,
+    );
+  }
+
+  public async postUserOk(
+    variables: Omit<PostUser.Variables, "contentType">,
+    config?: AxiosRequestConfig<Pick<PostUser.RequestBody, "body">>,
+  ) {
+    return PostUser.requestOk(
       this.axiosInstance,
       { contentType: "application/json", ...variables },
       config,
@@ -334,11 +653,25 @@ export class Client {
     return GetUserId.request(this.axiosInstance, variables, config);
   }
 
+  public async getUserIdOk(
+    variables: GetUserId.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetUserId.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async getCookie(
     variables: GetCookie.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return GetCookie.request(this.axiosInstance, variables, config);
+  }
+
+  public async getCookieOk(
+    variables: GetCookie.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetCookie.requestOk(this.axiosInstance, variables, config);
   }
 
   public async getHeader(
@@ -348,6 +681,13 @@ export class Client {
     return GetHeader.request(this.axiosInstance, variables, config);
   }
 
+  public async getHeaderOk(
+    variables: GetHeader.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetHeader.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async getQuery(
     variables: GetQuery.Variables,
     config?: AxiosRequestConfig<undefined>,
@@ -355,10 +695,24 @@ export class Client {
     return GetQuery.request(this.axiosInstance, variables, config);
   }
 
+  public async getQueryOk(
+    variables: GetQuery.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetQuery.requestOk(this.axiosInstance, variables, config);
+  }
+
   public async getError(
     variables: GetError.Variables,
     config?: AxiosRequestConfig<undefined>,
   ) {
     return GetError.request(this.axiosInstance, variables, config);
+  }
+
+  public async getErrorOk(
+    variables: GetError.Variables,
+    config?: AxiosRequestConfig<undefined>,
+  ) {
+    return GetError.requestOk(this.axiosInstance, variables, config);
   }
 }

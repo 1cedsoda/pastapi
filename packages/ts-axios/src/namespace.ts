@@ -21,18 +21,45 @@ const operationNamespace = (o: Operation) => {
           : `{}`
       }
 
-    export const responseSchemas = [
-      ${o.responses.map(
-        (res) => `{
+    export const responseSchemasOk = [
+      ${o.responses
+        .filter((res) => res.statusCode.startsWith("2"))
+        .map(
+          (res) => `{
           statusCode: "${res.statusCode}",
           contentType: "${res.applicationType}",
           bodySchema: ${toZod(res.bodySchema)},
           headerSchema: ${toZod(res.headerSchema)}
         }`
-      )}
+        )}
+    ]
+
+    export const responseSchemasError = [
+      ${o.responses
+        .filter((res) => !res.statusCode.startsWith("2"))
+        .map(
+          (res) => `{
+          statusCode: "${res.statusCode}",
+          contentType: "${res.applicationType}",
+          bodySchema: ${toZod(res.bodySchema)},
+          headerSchema: ${toZod(res.headerSchema)}
+        }`
+        )}
+    ]
+
+    export const responseSchemas = [
+      ...responseSchemasOk,
+      ...responseSchemasError
     ]
   
+    export type ResponseBodyOk = z.infer<(typeof responseSchemasOk[number]["bodySchema"])>
+    export type ResponseBodyError = z.infer<(typeof responseSchemasError[number]["bodySchema"])>
     export type ResponseBody = z.infer<(typeof responseSchemas[number]["bodySchema"])>
+
+    export type OkResponse<OK = ResponseBodyOk, ERROR = ResponseBodyError> = {
+      successful: OK | null
+      unsuccessful: ERROR | null
+    }
 
     export const requestParamSchemas = {
        ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
@@ -44,9 +71,9 @@ const operationNamespace = (o: Operation) => {
       )}
     }
 
-    export const request = async (axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
+    export const request = async <REQ_B = RequestBody, RES_B = ResponseBody>(axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
       o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
-    }>) => axios.request<RequestBody, AxiosResponse<ResponseBody, RequestBody>>({
+    }>) => axios.request<REQ_B, AxiosResponse<RES_B, REQ_B>>({
       method: "${o.method}",
       url: \`${o.path.replace(/{/g, "${vars.")}\`,
       headers: {
@@ -64,8 +91,25 @@ const operationNamespace = (o: Operation) => {
           .join(",")}
       },
       ${o.requestBodies.length > 0 ? `data: requestBodySchemas[vars.contentType].parse(vars.body),` : ``}
-      ...config
+      ...config,
+      validateStatus: () => true
     })
+
+    export const requestOk = async <REQ_B = RequestBody, RES_B_OK = ResponseBodyOk, RES_B_ERROR = ResponseBodyError>(axios: AxiosInstance, vars: Variables, config?: AxiosRequestConfig<${
+      o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
+    }>) => {
+      const res = await request<REQ_B, RES_B_OK & RES_B_ERROR>(axios, vars, {
+        ...config,
+        validateStatus: (s) => s >= 200 && s < 300, // default
+      })
+      return res.config.validateStatus!(res.status) == true ? {
+        ok: res as unknown as AxiosResponse<REQ_B, RES_B_OK>,
+        error: null
+      } : {
+        ok: null,
+        error: res as unknown as AxiosResponse<REQ_B, RES_B_ERROR>,
+      }
+    }
   }
   `;
 };
