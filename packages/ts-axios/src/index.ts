@@ -3,10 +3,11 @@ import { format } from "@prettier/sync";
 import { Options } from "prettier";
 import { operationNamespaces } from "./namespace";
 import { apiClass } from "./class";
+import { boilerplate } from "./boilerplate";
 
 export const generate = (ops: Operation[], prettierConfig?: Options | undefined): string => {
   const code = generateRaw(ops);
-  // return format(code, { parser: "typescript", ...prettierConfig });
+  return format(code, { parser: "typescript", ...prettierConfig });
   return code;
 };
 
@@ -17,6 +18,7 @@ import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
 
 ${operationNamespaces(ops)}
 ${apiClass(ops)}
+${boilerplate()}
 `;
 
 const buildHeader = () => `
