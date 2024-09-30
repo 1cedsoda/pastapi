@@ -1,5 +1,5 @@
 import { Operation } from "pastapi-core";
-import { camelCase, fuck, toZod } from "./helpers";
+import { camelCase, fuck, groupResponsesByStatusCode, statusCodeRegex, toZod } from "./helpers";
 
 export const operationNamespaces = (ast: Operation[]) => `
 ${ast.map(operationNamespace).join("\n")}`;
@@ -7,54 +7,90 @@ ${ast.map(operationNamespace).join("\n")}`;
 const operationNamespace = (o: Operation) => {
   return `export namespace ${fuck(o.operationId)} {
     export const requestBodySchemas = {
-       ${o.requestBodies.map((rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`)}
-     }
-    export type RequestBody =
-      ${
-        o.requestBodies.length > 0
-          ? o.requestBodies
-              .map(
-                (rb) =>
-                  `{ contentType: "${rb.applicationType}", body: z.infer<typeof requestBodySchemas["${rb.applicationType}"]> }`
-              )
-              .join(` | `)
-          : `{}`
-      }
+      ${o.requestBodies.map((rb) => `"${rb.applicationType}" : ${toZod(rb.bodySchema)}`)}
+    }
 
-    export const responseSchemasOk = [
-      ${o.responses
-        .filter((res) => res.statusCode.startsWith("2"))
-        .map(
-          (res) => `{
-          statusCode: "${res.statusCode}",
-          contentType: "${res.applicationType}",
-          bodySchema: ${toZod(res.bodySchema)},
-          headerSchema: ${toZod(res.headerSchema)}
-        }`
-        )}
-    ]
+    export type RequestBody = ${
+      o.requestBodies.length > 0
+        ? o.requestBodies
+            .map(
+              (rb) =>
+                `{ contentType: "${rb.applicationType}", body: z.infer<typeof requestBodySchemas["${rb.applicationType}"]> }`
+            )
+            .join(` | `)
+        : `{}`
+    }
 
-    export const responseSchemasError = [
-      ${o.responses
-        .filter((res) => !res.statusCode.startsWith("2"))
-        .map(
-          (res) => `{
-          statusCode: "${res.statusCode}",
-          contentType: "${res.applicationType}",
-          bodySchema: ${toZod(res.bodySchema)},
-          headerSchema: ${toZod(res.headerSchema)}
-        }`
-        )}
-    ]
+    ${groupResponsesByStatusCode(o.responses)
+      .map(
+        ([statusCode, o]) =>
+          `${o
+            .map(
+              (res) => `export const responseSchema${statusCode}${fuck(camelCase(res.applicationType))} = {
+        contentType: "${res.applicationType}",
+        bodySchema: ${toZod(res.bodySchema)},
+        headerSchema: ${toZod(res.headerSchema)}
+      }\n`
+            )
+            .join("\n")}
+
+      export const responseSchemas${statusCode} = [
+      ${o.map((res) => `responseSchema${statusCode}${fuck(camelCase(res.applicationType))}`).join(",\n")}
+]`
+      )
+      .join("\n")}
 
     export const responseSchemas = [
-      ...responseSchemasOk,
-      ...responseSchemasError
+        ${o.responses.map((res) => `...responseSchemas${res.statusCode}`).join(",\n")}
     ]
   
-    export type ResponseBodyOk = z.infer<(typeof responseSchemasOk[number]["bodySchema"])>
-    export type ResponseBodyError = z.infer<(typeof responseSchemasError[number]["bodySchema"])>
+    ${groupResponsesByStatusCode(o.responses)
+      .map(
+        ([statusCode, o]) =>
+          `${o
+            .map(
+              (res) =>
+                `export type ResponseBody${statusCode}${fuck(
+                  camelCase(res.applicationType)
+                )} = z.infer<(typeof responseSchema${statusCode}${fuck(camelCase(res.applicationType))}["bodySchema"])>`
+            )
+            .join("\n")}
+
+            export type ResponseBody${statusCode} = ${o
+              .map((res) => `ResponseBody${statusCode}${fuck(camelCase(res.applicationType))}`)
+              .join(" | ")}
+      `
+      )
+      .join("\n,")}
+
     export type ResponseBody = z.infer<(typeof responseSchemas[number]["bodySchema"])>
+
+    export type ResponseBodySafe = {
+      /** All responses */
+      any: any, 
+      /** All responses with status code and content-type included in the OpenAPI spec */
+      all: ResponseBody | null, 
+      ${groupResponsesByStatusCode(o.responses)
+        .map(
+          ([statusCode, o]) => `/** Any ${statusCode} response */
+          any${statusCode}: ResponseBody${statusCode} | null,
+          /** All ${statusCode} responses with content types included in the OpenAPI spec */
+          all${statusCode}: ResponseBody${statusCode} | null, 
+        ${o
+          .map(
+            (res) => `/** ${statusCode} response with content-type ${res.applicationType} */
+            ${camelCase(res.applicationType)}${statusCode}: ResponseBody${statusCode}${fuck(
+              camelCase(res.applicationType)
+            )} | null,`
+          )
+          .join("")}
+        /** All ${statusCode} responses with content types not included in the OpenAPI spec */
+        other${statusCode}: any | null,`
+        )
+        .join("")}
+      /** If status isn't included in the OpenAPI spec */
+      other: any | null, 
+    }
 
     export const requestParamSchemas = {
        ${o.requestParameters.map((p) => `${camelCase(p.name)} : ${toZod(p.schema)}${p.required ? "" : ".optional()"}`)}
@@ -107,7 +143,47 @@ const operationNamespace = (o: Operation) => {
       o.requestBodies.length > 0 ? `Pick<RequestBody, "body">` : `undefined`
     }>
 
-    export const requestSafe = async <REQ_B = RequestBody, RES_B_OK = ResponseBodyOk, RES_B_ERROR = ResponseBodyError>(axiosInstance: AxiosInstance, vars: Variables, config?: AxiosConfig) => safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(axiosInstance, vars, config, request)
-  }
-  `;
+    export const requestSafe = async (axiosInstance: AxiosInstance, vars: Variables, config?: AxiosConfig): Promise<ResponseBodySafe> => {
+      const res = await request(axiosInstance, vars, {
+        ...config,
+        validateStatus: () => true,
+      });
+      let safeRes: ResponseBodySafe = {
+        any: res.data,
+        all: null,
+        ${groupResponsesByStatusCode(o.responses)
+          .map(
+            ([statusCode, o]) => `any${statusCode}: null,
+        all${statusCode}: null,
+        ${o.map((res) => `${camelCase(res.applicationType)}${statusCode}: null,`).join("")}
+        other${statusCode}: null,`
+          )
+          .join("")}
+        other: null,
+      }
+        
+      ${groupResponsesByStatusCode(o.responses)
+        .map(
+          ([statusCode, o]) =>
+            `if (${statusCodeRegex(statusCode)}.test(res.status.toString())) {
+              safeRes.any${statusCode} = res.data
+              ${o
+                .map(
+                  (res) =>
+                    `if (res.headers["content-type"] == "${res.applicationType}") {
+                  safeRes.${camelCase(res.applicationType)}${statusCode} = res.data 
+                  safeRes.all${statusCode} = res.data
+                  safeRes.all = res.data
+                  }
+                  `
+                )
+                .join(" else ")} 
+                ${o.length > 0 ? ` else safeRes.other${statusCode} = res.data` : ""}
+            }`
+        )
+        .join(" else ")}
+        ${groupResponsesByStatusCode(o.responses).length > 0 ? ` else safeRes.other = res.data` : ""}
+        return safeRes
+    }
+  }`;
 };

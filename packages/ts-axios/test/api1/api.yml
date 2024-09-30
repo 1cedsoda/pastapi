@@ -45,7 +45,7 @@ paths:
   /cookie:
     get:
       responses:
-        "200":
+        "20X":
           description: "OK"
           content:
             text/plain:

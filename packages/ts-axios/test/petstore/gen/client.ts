@@ -71,6 +71,7 @@ export namespace UpdatePet {
       status: z.enum(["available", "pending", "sold"]).optional(),
     }),
   };
+
   export type RequestBody =
     | {
         contentType: "application/json";
@@ -87,75 +88,95 @@ export namespace UpdatePet {
         >;
       };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -181,23 +202,41 @@ export namespace UpdatePet {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace AddPet {
   export const requestBodySchemas = {
     "application/json": z.object({
@@ -261,6 +300,7 @@ export namespace AddPet {
       status: z.enum(["available", "pending", "sold"]).optional(),
     }),
   };
+
   export type RequestBody =
     | {
         contentType: "application/json";
@@ -277,75 +317,95 @@ export namespace AddPet {
         >;
       };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -371,100 +431,139 @@ export namespace AddPet {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace FindPetsByStatus {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.array(
-        z.object({
-          id: z.number().int().optional(),
-          name: z.string(),
-          category: z
-            .object({
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.array(
+      z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
-            .optional(),
-          photoUrls: z.array(z.string()),
-          tags: z
-            .array(
-              z.object({
-                id: z.number().int().optional(),
-                name: z.string().optional(),
-              }),
-            )
-            .optional(),
-          status: z.enum(["available", "pending", "sold"]).optional(),
-        }),
-      ),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.array(
-        z.object({
-          id: z.number().int().optional(),
-          name: z.string(),
-          category: z
-            .object({
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+    ),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.array(
+      z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
-            .optional(),
-          photoUrls: z.array(z.string()),
-          tags: z
-            .array(
-              z.object({
-                id: z.number().int().optional(),
-                name: z.string().optional(),
-              }),
-            )
-            .optional(),
-          status: z.enum(["available", "pending", "sold"]).optional(),
-        }),
-      ),
-      headerSchema: z.never(),
-    },
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+    ),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     status: z
@@ -498,100 +597,139 @@ export namespace FindPetsByStatus {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace FindPetsByTags {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.array(
-        z.object({
-          id: z.number().int().optional(),
-          name: z.string(),
-          category: z
-            .object({
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.array(
+      z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
-            .optional(),
-          photoUrls: z.array(z.string()),
-          tags: z
-            .array(
-              z.object({
-                id: z.number().int().optional(),
-                name: z.string().optional(),
-              }),
-            )
-            .optional(),
-          status: z.enum(["available", "pending", "sold"]).optional(),
-        }),
-      ),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.array(
-        z.object({
-          id: z.number().int().optional(),
-          name: z.string(),
-          category: z
-            .object({
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+    ),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.array(
+      z.object({
+        id: z.number().int().optional(),
+        name: z.string(),
+        category: z
+          .object({
+            id: z.number().int().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
+        photoUrls: z.array(z.string()),
+        tags: z
+          .array(
+            z.object({
               id: z.number().int().optional(),
               name: z.string().optional(),
-            })
-            .optional(),
-          photoUrls: z.array(z.string()),
-          tags: z
-            .array(
-              z.object({
-                id: z.number().int().optional(),
-                name: z.string().optional(),
-              }),
-            )
-            .optional(),
-          status: z.enum(["available", "pending", "sold"]).optional(),
-        }),
-      ),
-      headerSchema: z.never(),
-    },
+            }),
+          )
+          .optional(),
+        status: z.enum(["available", "pending", "sold"]).optional(),
+      }),
+    ),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     tags: z.array(z.string()).optional(),
@@ -622,96 +760,135 @@ export namespace FindPetsByTags {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetPetById {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        name: z.string(),
-        category: z
-          .object({
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      name: z.string(),
+      category: z
+        .object({
+          id: z.number().int().optional(),
+          name: z.string().optional(),
+        })
+        .optional(),
+      photoUrls: z.array(z.string()),
+      tags: z
+        .array(
+          z.object({
             id: z.number().int().optional(),
             name: z.string().optional(),
-          })
-          .optional(),
-        photoUrls: z.array(z.string()),
-        tags: z
-          .array(
-            z.object({
-              id: z.number().int().optional(),
-              name: z.string().optional(),
-            }),
-          )
-          .optional(),
-        status: z.enum(["available", "pending", "sold"]).optional(),
-      }),
-      headerSchema: z.never(),
-    },
+          }),
+        )
+        .optional(),
+      status: z.enum(["available", "pending", "sold"]).optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -738,45 +915,61 @@ export namespace GetPetById {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace UpdatePetWithForm {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -814,45 +1007,45 @@ export namespace UpdatePetWithForm {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
 
+      other: null,
+    };
+
+    return safeRes;
+  };
+}
 export namespace DeletePet {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     apiKey: z.string().optional(),
@@ -885,61 +1078,75 @@ export namespace DeletePet {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
 
+      other: null,
+    };
+
+    return safeRes;
+  };
+}
 export namespace UploadFile {
   export const requestBodySchemas = {
     "application/octet-stream": z.string(),
   };
+
   export type RequestBody = {
     contentType: "application/octet-stream";
     body: z.infer<(typeof requestBodySchemas)["application/octet-stream"]>;
   };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        code: z.number().int().optional(),
-        type: z.string().optional(),
-        message: z.string().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      code: z.number().int().optional(),
+      type: z.string().optional(),
+      message: z.string().optional(),
+    }),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200ApplicationJson];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     petId: z.number().int(),
@@ -979,52 +1186,77 @@ export namespace UploadFile {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetInventory {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.record(z.number().int()),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.record(z.number().int()),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200ApplicationJson];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -1046,23 +1278,36 @@ export namespace GetInventory {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace PlaceOrder {
   export const requestBodySchemas = {
     "application/json": z.object({
@@ -1090,6 +1335,7 @@ export namespace PlaceOrder {
       complete: z.boolean().optional(),
     }),
   };
+
   export type RequestBody =
     | {
         contentType: "application/json";
@@ -1106,38 +1352,49 @@ export namespace PlaceOrder {
         >;
       };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        petId: z.number().int().optional(),
-        quantity: z.number().int().optional(),
-        shipDate: z.string().datetime().optional(),
-        status: z.enum(["placed", "approved", "delivered"]).optional(),
-        complete: z.boolean().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      petId: z.number().int().optional(),
+      quantity: z.number().int().optional(),
+      shipDate: z.string().datetime().optional(),
+      status: z.enum(["placed", "approved", "delivered"]).optional(),
+      complete: z.boolean().optional(),
+    }),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200ApplicationJson];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -1163,72 +1420,106 @@ export namespace PlaceOrder {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetOrderById {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        petId: z.number().int().optional(),
-        quantity: z.number().int().optional(),
-        shipDate: z.string().datetime().optional(),
-        status: z.enum(["placed", "approved", "delivered"]).optional(),
-        complete: z.boolean().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        petId: z.number().int().optional(),
-        quantity: z.number().int().optional(),
-        shipDate: z.string().datetime().optional(),
-        status: z.enum(["placed", "approved", "delivered"]).optional(),
-        complete: z.boolean().optional(),
-      }),
-      headerSchema: z.never(),
-    },
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      petId: z.number().int().optional(),
+      quantity: z.number().int().optional(),
+      shipDate: z.string().datetime().optional(),
+      status: z.enum(["placed", "approved", "delivered"]).optional(),
+      complete: z.boolean().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      petId: z.number().int().optional(),
+      quantity: z.number().int().optional(),
+      shipDate: z.string().datetime().optional(),
+      status: z.enum(["placed", "approved", "delivered"]).optional(),
+      complete: z.boolean().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -1255,45 +1546,61 @@ export namespace GetOrderById {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace DeleteOrder {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     orderId: z.number().int(),
@@ -1320,23 +1627,25 @@ export namespace DeleteOrder {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
 
+      other: null,
+    };
+
+    return safeRes;
+  };
+}
 export namespace CreateUser {
   export const requestBodySchemas = {
     "application/json": z.object({
@@ -1370,6 +1679,7 @@ export namespace CreateUser {
       userStatus: z.number().int().optional(),
     }),
   };
+
   export type RequestBody =
     | {
         contentType: "application/json";
@@ -1386,55 +1696,78 @@ export namespace CreateUser {
         >;
       };
 
-  export const responseSchemasOk = [];
+  export const responseSchemadefaultApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [
-    {
-      statusCode: "default",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "default",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
+  export const responseSchemadefaultApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemasdefault = [
+    responseSchemadefaultApplicationJson,
+    responseSchemadefaultApplicationXml,
   ];
 
   export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
+    ...responseSchemasdefault,
+    ...responseSchemasdefault,
   ];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBodydefaultApplicationJson = z.infer<
+    (typeof responseSchemadefaultApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
+  export type ResponseBodydefaultApplicationXml = z.infer<
+    (typeof responseSchemadefaultApplicationXml)["bodySchema"]
   >;
+
+  export type ResponseBodydefault =
+    | ResponseBodydefaultApplicationJson
+    | ResponseBodydefaultApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any default response */
+    anydefault: ResponseBodydefault | null;
+    /** All default responses with content types included in the OpenAPI spec */
+    alldefault: ResponseBodydefault | null;
+    /** default response with content-type application/json */
+    applicationJsondefault: ResponseBodydefaultApplicationJson | null /** default response with content-type application/xml */;
+    applicationXmldefault: ResponseBodydefaultApplicationXml | null;
+    /** All default responses with content types not included in the OpenAPI spec */
+    otherdefault: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -1460,23 +1793,41 @@ export namespace CreateUser {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      anydefault: null,
+      alldefault: null,
+      applicationJsondefault: null,
+      applicationXmldefault: null,
+      otherdefault: null,
+      other: null,
+    };
 
+    if (/^default$/.test(res.status.toString())) {
+      safeRes.anydefault = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJsondefault = res.data;
+        safeRes.alldefault = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXmldefault = res.data;
+        safeRes.alldefault = res.data;
+        safeRes.all = res.data;
+      } else safeRes.otherdefault = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace CreateUsersWithListInput {
   export const requestBodySchemas = {
     "application/json": z.array(
@@ -1492,60 +1843,81 @@ export namespace CreateUsersWithListInput {
       }),
     ),
   };
+
   export type RequestBody = {
     contentType: "application/json";
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -1571,58 +1943,97 @@ export namespace CreateUsersWithListInput {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace LoginUser {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationXml,
+    responseSchema200ApplicationJson,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationXml
+    | ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/xml */
+    applicationXml200: ResponseBody200ApplicationXml | null /** 200 response with content-type application/json */;
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string().optional(),
@@ -1658,45 +2069,61 @@ export namespace LoginUser {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationXml200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace LogoutUser {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -1718,76 +2145,99 @@ export namespace LogoutUser {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
 
+      other: null,
+    };
+
+    return safeRes;
+  };
+}
 export namespace GetUserByName {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
-    {
-      statusCode: "200",
-      contentType: "application/xml",
-      bodySchema: z.object({
-        id: z.number().int().optional(),
-        username: z.string().optional(),
-        firstName: z.string().optional(),
-        lastName: z.string().optional(),
-        email: z.string().optional(),
-        password: z.string().optional(),
-        phone: z.string().optional(),
-        userStatus: z.number().int().optional(),
-      }),
-      headerSchema: z.never(),
-    },
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchema200ApplicationXml = {
+    contentType: "application/xml",
+    bodySchema: z.object({
+      id: z.number().int().optional(),
+      username: z.string().optional(),
+      firstName: z.string().optional(),
+      lastName: z.string().optional(),
+      email: z.string().optional(),
+      password: z.string().optional(),
+      phone: z.string().optional(),
+      userStatus: z.number().int().optional(),
+    }),
+    headerSchema: z.never(),
+  };
+
+  export const responseSchemas200 = [
+    responseSchema200ApplicationJson,
+    responseSchema200ApplicationXml,
   ];
 
-  export const responseSchemasError = [];
+  export const responseSchemas = [...responseSchemas200, ...responseSchemas200];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
+  >;
+  export type ResponseBody200ApplicationXml = z.infer<
+    (typeof responseSchema200ApplicationXml)["bodySchema"]
+  >;
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+  export type ResponseBody200 =
+    | ResponseBody200ApplicationJson
+    | ResponseBody200ApplicationXml;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
+    applicationXml200: ResponseBody200ApplicationXml | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1814,23 +2264,41 @@ export namespace GetUserByName {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      applicationXml200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else if (res.headers["content-type"] == "application/xml") {
+        safeRes.applicationXml200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace UpdateUser {
   export const requestBodySchemas = {
     "application/json": z.object({
@@ -1864,6 +2332,7 @@ export namespace UpdateUser {
       userStatus: z.number().int().optional(),
     }),
   };
+
   export type RequestBody =
     | {
         contentType: "application/json";
@@ -1880,24 +2349,21 @@ export namespace UpdateUser {
         >;
       };
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1928,45 +2394,45 @@ export namespace UpdateUser {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
 
+      other: null,
+    };
+
+    return safeRes;
+  };
+}
 export namespace DeleteUser {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchemas = [];
 
-  export const responseSchemasError = [];
-
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
-
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
-  >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     username: z.string(),
@@ -1993,21 +2459,24 @@ export namespace DeleteUser {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+
+      other: null,
+    };
+
+    return safeRes;
+  };
 }
 
 export class Client {
@@ -2310,26 +2779,3 @@ type UndefinedProps<T extends object> = {
 // Combine with rest of the reuiqred properties
 type OptionalUndefined<T extends object> = UndefinedProps<T> &
   Omit<T, keyof UndefinedProps<T>>;
-
-const safeifyRequest = async <REQ_B, RES_B_OK, RES_B_ERROR>(
-  axiosInstance,
-  vars,
-  config,
-  request: CallableFunction,
-) => {
-  const res = await request(axiosInstance, vars, {
-    ...config,
-    validateStatus: () => true,
-  });
-  return res.status >= 200 && res.status < 300
-    ? {
-        ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
-        error: null,
-        any: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
-      }
-    : {
-        ok: null,
-        error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
-        any: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
-      };
-};

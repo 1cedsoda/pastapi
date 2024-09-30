@@ -1,6 +1,6 @@
 import { loadYaml, parseOperations } from "pastapi-core";
 import * as fs from "fs";
-import { generate as _generate } from "../src";
+import { generate as _generate, generateRaw } from "../src";
 import { join } from "path";
 
 export async function generate(basePath: string) {
@@ -20,7 +20,12 @@ export async function generate(basePath: string) {
       fs.writeFileSync(join(basePath, "gen/api-operations.json"), JSON.stringify(operations, null, 2));
 
       // generate
-      const ts = _generate(operations);
+      let ts = generateRaw(operations);
+      try {
+        ts = _generate(operations);
+      } catch (e) {
+        console.error(e);
+      }
 
       // save
       fs.writeFileSync(join(basePath, "gen/client.ts"), ts);

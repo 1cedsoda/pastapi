@@ -109,7 +109,7 @@
     "operationId": "getCookie",
     "responses": [
       {
-        "statusCode": "200",
+        "statusCode": "20X",
         "applicationType": "text/plain",
         "bodySchema": {
           "type": "string"

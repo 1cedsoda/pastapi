@@ -10,33 +10,45 @@ import axios, { AxiosRequestConfig, AxiosInstance, AxiosResponse } from "axios";
 
 export namespace GetUser {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({ id: z.number().int(), name: z.string() }),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({ id: z.number().int(), name: z.string() }),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200ApplicationJson];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -58,57 +70,82 @@ export namespace GetUser {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace PostUser {
   export const requestBodySchemas = {
     "application/json": z.object({ id: z.number().int(), name: z.string() }),
   };
+
   export type RequestBody = {
     contentType: "application/json";
     body: z.infer<(typeof requestBodySchemas)["application/json"]>;
   };
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "text/plain",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200TextPlain = {
+    contentType: "text/plain",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200TextPlain];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200TextPlain = z.infer<
+    (typeof responseSchema200TextPlain)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200TextPlain;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type text/plain */
+    textPlain200: ResponseBody200TextPlain | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -134,52 +171,77 @@ export namespace PostUser {
 
   export type AxiosConfig = AxiosRequestConfig<Pick<RequestBody, "body">>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      textPlain200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "text/plain") {
+        safeRes.textPlain200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetUserId {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "application/json",
-      bodySchema: z.object({ id: z.number().int(), name: z.string() }),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200ApplicationJson = {
+    contentType: "application/json",
+    bodySchema: z.object({ id: z.number().int(), name: z.string() }),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200ApplicationJson];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200ApplicationJson = z.infer<
+    (typeof responseSchema200ApplicationJson)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200ApplicationJson;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type application/json */
+    applicationJson200: ResponseBody200ApplicationJson | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     id: z.number().int(),
@@ -206,52 +268,77 @@ export namespace GetUserId {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      applicationJson200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "application/json") {
+        safeRes.applicationJson200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetCookie {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "text/plain",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema20XTextPlain = {
+    contentType: "text/plain",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas20X = [responseSchema20XTextPlain];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas20X];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody20XTextPlain = z.infer<
+    (typeof responseSchema20XTextPlain)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody20X = ResponseBody20XTextPlain;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 20X response */
+    any20X: ResponseBody20X | null;
+    /** All 20X responses with content types included in the OpenAPI spec */
+    all20X: ResponseBody20X | null;
+    /** 20X response with content-type text/plain */
+    textPlain20X: ResponseBody20XTextPlain | null;
+    /** All 20X responses with content types not included in the OpenAPI spec */
+    other20X: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     myRequiredCookie: z.number(),
@@ -284,52 +371,77 @@ export namespace GetCookie {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any20X: null,
+      all20X: null,
+      textPlain20X: null,
+      other20X: null,
+      other: null,
+    };
 
+    if (/^20\d$/.test(res.status.toString())) {
+      safeRes.any20X = res.data;
+      if (res.headers["content-type"] == "text/plain") {
+        safeRes.textPlain20X = res.data;
+        safeRes.all20X = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other20X = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetHeader {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "text/plain",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200TextPlain = {
+    contentType: "text/plain",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200TextPlain];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200TextPlain = z.infer<
+    (typeof responseSchema200TextPlain)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200TextPlain;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type text/plain */
+    textPlain200: ResponseBody200TextPlain | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     xMyRequiredHeader: z.number(),
@@ -371,52 +483,77 @@ export namespace GetHeader {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      textPlain200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "text/plain") {
+        safeRes.textPlain200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetQuery {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [
-    {
-      statusCode: "200",
-      contentType: "text/plain",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchema200TextPlain = {
+    contentType: "text/plain",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [];
+  export const responseSchemas200 = [responseSchema200TextPlain];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas200];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody200TextPlain = z.infer<
+    (typeof responseSchema200TextPlain)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody200 = ResponseBody200TextPlain;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 200 response */
+    any200: ResponseBody200 | null;
+    /** All 200 responses with content types included in the OpenAPI spec */
+    all200: ResponseBody200 | null;
+    /** 200 response with content-type text/plain */
+    textPlain200: ResponseBody200TextPlain | null;
+    /** All 200 responses with content types not included in the OpenAPI spec */
+    other200: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {
     a: z.number(),
@@ -448,52 +585,77 @@ export namespace GetQuery {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
-}
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any200: null,
+      all200: null,
+      textPlain200: null,
+      other200: null,
+      other: null,
+    };
 
+    if (/^200$/.test(res.status.toString())) {
+      safeRes.any200 = res.data;
+      if (res.headers["content-type"] == "text/plain") {
+        safeRes.textPlain200 = res.data;
+        safeRes.all200 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other200 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
+}
 export namespace GetError {
   export const requestBodySchemas = {};
+
   export type RequestBody = {};
 
-  export const responseSchemasOk = [];
+  export const responseSchema500TextPlain = {
+    contentType: "text/plain",
+    bodySchema: z.string(),
+    headerSchema: z.never(),
+  };
 
-  export const responseSchemasError = [
-    {
-      statusCode: "500",
-      contentType: "text/plain",
-      bodySchema: z.string(),
-      headerSchema: z.never(),
-    },
-  ];
+  export const responseSchemas500 = [responseSchema500TextPlain];
 
-  export const responseSchemas = [
-    ...responseSchemasOk,
-    ...responseSchemasError,
-  ];
+  export const responseSchemas = [...responseSchemas500];
 
-  export type ResponseBodyOk = z.infer<
-    (typeof responseSchemasOk)[number]["bodySchema"]
+  export type ResponseBody500TextPlain = z.infer<
+    (typeof responseSchema500TextPlain)["bodySchema"]
   >;
-  export type ResponseBodyError = z.infer<
-    (typeof responseSchemasError)[number]["bodySchema"]
-  >;
+
+  export type ResponseBody500 = ResponseBody500TextPlain;
+
   export type ResponseBody = z.infer<
     (typeof responseSchemas)[number]["bodySchema"]
   >;
+
+  export type ResponseBodySafe = {
+    /** All responses */
+    any: any;
+    /** All responses with status code and content-type included in the OpenAPI spec */
+    all: ResponseBody | null;
+    /** Any 500 response */
+    any500: ResponseBody500 | null;
+    /** All 500 responses with content types included in the OpenAPI spec */
+    all500: ResponseBody500 | null;
+    /** 500 response with content-type text/plain */
+    textPlain500: ResponseBody500TextPlain | null;
+    /** All 500 responses with content types not included in the OpenAPI spec */
+    other500: any | null;
+    /** If status isn't included in the OpenAPI spec */
+    other: any | null;
+  };
 
   export const requestParamSchemas = {};
 
@@ -515,21 +677,35 @@ export namespace GetError {
 
   export type AxiosConfig = AxiosRequestConfig<undefined>;
 
-  export const requestSafe = async <
-    REQ_B = RequestBody,
-    RES_B_OK = ResponseBodyOk,
-    RES_B_ERROR = ResponseBodyError,
-  >(
+  export const requestSafe = async (
     axiosInstance: AxiosInstance,
     vars: Variables,
     config?: AxiosConfig,
-  ) =>
-    safeifyRequest<REQ_B, RES_B_OK, RES_B_ERROR>(
-      axiosInstance,
-      vars,
-      config,
-      request,
-    );
+  ): Promise<ResponseBodySafe> => {
+    const res = await request(axiosInstance, vars, {
+      ...config,
+      validateStatus: () => true,
+    });
+    let safeRes: ResponseBodySafe = {
+      any: res.data,
+      all: null,
+      any500: null,
+      all500: null,
+      textPlain500: null,
+      other500: null,
+      other: null,
+    };
+
+    if (/^500$/.test(res.status.toString())) {
+      safeRes.any500 = res.data;
+      if (res.headers["content-type"] == "text/plain") {
+        safeRes.textPlain500 = res.data;
+        safeRes.all500 = res.data;
+        safeRes.all = res.data;
+      } else safeRes.other500 = res.data;
+    } else safeRes.other = res.data;
+    return safeRes;
+  };
 }
 
 export class Client {
@@ -652,26 +828,3 @@ type UndefinedProps<T extends object> = {
 // Combine with rest of the reuiqred properties
 type OptionalUndefined<T extends object> = UndefinedProps<T> &
   Omit<T, keyof UndefinedProps<T>>;
-
-const safeifyRequest = async <REQ_B, RES_B_OK, RES_B_ERROR>(
-  axiosInstance,
-  vars,
-  config,
-  request: CallableFunction,
-) => {
-  const res = await request(axiosInstance, vars, {
-    ...config,
-    validateStatus: () => true,
-  });
-  return res.status >= 200 && res.status < 300
-    ? {
-        ok: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
-        error: null,
-        any: res as unknown as AxiosResponse<RES_B_OK, REQ_B>,
-      }
-    : {
-        ok: null,
-        error: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
-        any: res as unknown as AxiosResponse<RES_B_ERROR, REQ_B>,
-      };
-};

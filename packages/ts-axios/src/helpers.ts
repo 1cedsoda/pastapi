@@ -1,4 +1,5 @@
 import { parseSchema } from "json-schema-to-zod";
+import { Operation, OperationResponse } from "pastapi-core";
 
 // fist uppercase key
 export function fuck(a: string): string {
@@ -53,4 +54,21 @@ export function camelCase(_s: string): string {
 
 export function cloneString(s: string): string {
   return (" " + s).slice(1);
+}
+
+export function statusCodeRegex(statusCode: string): RegExp {
+  // replace all X with \d
+  const regex = statusCode.replace(/X/g, "\\d");
+  return new RegExp(`^${regex}$`);
+}
+
+export function groupResponsesByStatusCode(responses: OperationResponse[]): [string, OperationResponse[]][] {
+  const groups: { [key: string]: OperationResponse[] } = {};
+  responses.forEach((res) => {
+    if (!groups[res.statusCode]) {
+      groups[res.statusCode] = [];
+    }
+    groups[res.statusCode].push(res);
+  });
+  return Object.entries(groups);
 }
