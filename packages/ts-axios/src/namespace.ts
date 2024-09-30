@@ -67,29 +67,29 @@ const operationNamespace = (o: Operation) => {
 
     export type ResponseBodySafe = {
       /** All responses */
-      any: any, 
+      any: AxiosResponse<any, RequestBody>, 
       /** All responses with status code and content-type included in the OpenAPI spec */
-      all: ResponseBody | null, 
+      all: AxiosResponse<ResponseBody, RequestBody> | null, 
       ${groupResponsesByStatusCode(o.responses)
         .map(
           ([statusCode, o]) => `/** Any ${statusCode} response */
-          any${statusCode}: any | null,
+          any${statusCode}: AxiosResponse<any, RequestBody> | null,
           /** All ${statusCode} responses with content types included in the OpenAPI spec */
-          all${statusCode}: ResponseBody${statusCode} | null, 
+          all${statusCode}: AxiosResponse<ResponseBody${statusCode}, RequestBody> | null, 
         ${o
           .map(
             (res) => `/** ${statusCode} response with content-type ${res.applicationType} */
-            ${camelCase(res.applicationType)}${statusCode}: ResponseBody${statusCode}${fuck(
+            ${camelCase(res.applicationType)}${statusCode}: AxiosResponse<ResponseBody${statusCode}${fuck(
               camelCase(res.applicationType)
-            )} | null,`
+            )}, RequestBody> | null,`
           )
           .join("")}
         /** All ${statusCode} responses with content types not included in the OpenAPI spec */
-        other${statusCode}: any | null,`
+        other${statusCode}: AxiosResponse<any, RequestBody> | null,`
         )
         .join("")}
       /** If status isn't included in the OpenAPI spec */
-      other: any | null, 
+      other: AxiosResponse<any, RequestBody> | null, 
     }
 
     export const requestParamSchemas = {
@@ -149,7 +149,7 @@ const operationNamespace = (o: Operation) => {
         validateStatus: () => true,
       });
       let safeRes: ResponseBodySafe = {
-        any: res.data,
+        any: res as AxiosResponse<any, RequestBody>,
         all: null,
         ${groupResponsesByStatusCode(o.responses)
           .map(
@@ -166,25 +166,27 @@ const operationNamespace = (o: Operation) => {
         .map(
           ([statusCode, o]) =>
             `if (${statusCodeRegex(statusCode)}.test(res.status.toString())) {
-              safeRes.any${statusCode} = res.data
+              safeRes.any${statusCode} = res as unknown as AxiosResponse<RequestBody, any>
               ${o
                 .map(
                   (res) =>
                     `if (res.headers["content-type"] == "${res.applicationType}") {
-                  safeRes.${camelCase(res.applicationType)}${statusCode} = res.data as ResponseBody${statusCode}${fuck(
+                  safeRes.${camelCase(
+                    res.applicationType
+                  )}${statusCode} = res as unknown as AxiosResponse<ResponseBody${statusCode}${fuck(
                     camelCase(res.applicationType)
-                  )}
-                  safeRes.all${statusCode} = res.data as ResponseBody${statusCode}
-                  safeRes.all = res.data as ResponseBody
+                  )}, RequestBody>
+                  safeRes.all${statusCode} = res as unknown as AxiosResponse<ResponseBody${statusCode}, RequestBody>
+                  safeRes.all = res as unknown as AxiosResponse<ResponseBody, RequestBody>
                   }
                   `
                 )
                 .join(" else ")} 
-                ${o.length > 0 ? ` else safeRes.other${statusCode} = res.data` : ""}
+                ${o.length > 0 ? ` else safeRes.other${statusCode} = res` : ""}
             }`
         )
         .join(" else ")}
-        ${groupResponsesByStatusCode(o.responses).length > 0 ? ` else safeRes.other = res.data` : ""}
+        ${groupResponsesByStatusCode(o.responses).length > 0 ? ` else safeRes.other = res` : ""}
         return safeRes
     }
   }`;

@@ -162,20 +162,26 @@ export namespace UpdatePet {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -212,7 +218,7 @@ export namespace UpdatePet {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -223,17 +229,35 @@ export namespace UpdatePet {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -391,20 +415,26 @@ export namespace AddPet {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -441,7 +471,7 @@ export namespace AddPet {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -452,17 +482,35 @@ export namespace AddPet {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -549,20 +597,26 @@ export namespace FindPetsByStatus {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -607,7 +661,7 @@ export namespace FindPetsByStatus {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -618,17 +672,35 @@ export namespace FindPetsByStatus {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -715,20 +787,26 @@ export namespace FindPetsByTags {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -770,7 +848,7 @@ export namespace FindPetsByTags {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -781,17 +859,35 @@ export namespace FindPetsByTags {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -874,20 +970,26 @@ export namespace GetPetById {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -925,7 +1027,7 @@ export namespace GetPetById {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -936,17 +1038,35 @@ export namespace GetPetById {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -963,12 +1083,12 @@ export namespace UpdatePetWithForm {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -1017,7 +1137,7 @@ export namespace UpdatePetWithForm {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
@@ -1039,12 +1159,12 @@ export namespace DeletePet {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -1088,7 +1208,7 @@ export namespace DeletePet {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
@@ -1133,19 +1253,22 @@ export namespace UploadFile {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -1196,7 +1319,7 @@ export namespace UploadFile {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -1206,13 +1329,22 @@ export namespace UploadFile {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -1243,19 +1375,22 @@ export namespace GetInventory {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -1288,7 +1423,7 @@ export namespace GetInventory {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -1298,13 +1433,22 @@ export namespace GetInventory {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -1381,19 +1525,22 @@ export namespace PlaceOrder {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -1430,7 +1577,7 @@ export namespace PlaceOrder {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -1440,13 +1587,22 @@ export namespace PlaceOrder {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -1505,20 +1661,26 @@ export namespace GetOrderById {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -1556,7 +1718,7 @@ export namespace GetOrderById {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -1567,17 +1729,35 @@ export namespace GetOrderById {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -1594,12 +1774,12 @@ export namespace DeleteOrder {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -1637,7 +1817,7 @@ export namespace DeleteOrder {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
@@ -1753,20 +1933,26 @@ export namespace CreateUser {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any default response */
-    anydefault: any | null;
+    anydefault: AxiosResponse<any, RequestBody> | null;
     /** All default responses with content types included in the OpenAPI spec */
-    alldefault: ResponseBodydefault | null;
+    alldefault: AxiosResponse<ResponseBodydefault, RequestBody> | null;
     /** default response with content-type application/json */
-    applicationJsondefault: ResponseBodydefaultApplicationJson | null /** default response with content-type application/xml */;
-    applicationXmldefault: ResponseBodydefaultApplicationXml | null;
+    applicationJsondefault: AxiosResponse<
+      ResponseBodydefaultApplicationJson,
+      RequestBody
+    > | null /** default response with content-type application/xml */;
+    applicationXmldefault: AxiosResponse<
+      ResponseBodydefaultApplicationXml,
+      RequestBody
+    > | null;
     /** All default responses with content types not included in the OpenAPI spec */
-    otherdefault: any | null;
+    otherdefault: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -1803,7 +1989,7 @@ export namespace CreateUser {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       anydefault: null,
       alldefault: null,
@@ -1814,19 +2000,35 @@ export namespace CreateUser {
     };
 
     if (/^default$/.test(res.status.toString())) {
-      safeRes.anydefault = res.data;
+      safeRes.anydefault = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJsondefault =
-          res.data as ResponseBodydefaultApplicationJson;
-        safeRes.alldefault = res.data as ResponseBodydefault;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJsondefault = res as unknown as AxiosResponse<
+          ResponseBodydefaultApplicationJson,
+          RequestBody
+        >;
+        safeRes.alldefault = res as unknown as AxiosResponse<
+          ResponseBodydefault,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXmldefault =
-          res.data as ResponseBodydefaultApplicationXml;
-        safeRes.alldefault = res.data as ResponseBodydefault;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.otherdefault = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXmldefault = res as unknown as AxiosResponse<
+          ResponseBodydefaultApplicationXml,
+          RequestBody
+        >;
+        safeRes.alldefault = res as unknown as AxiosResponse<
+          ResponseBodydefault,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.otherdefault = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -1905,20 +2107,26 @@ export namespace CreateUsersWithListInput {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -1955,7 +2163,7 @@ export namespace CreateUsersWithListInput {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -1966,17 +2174,35 @@ export namespace CreateUsersWithListInput {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -2021,20 +2247,26 @@ export namespace LoginUser {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/xml */
-    applicationXml200: ResponseBody200ApplicationXml | null /** 200 response with content-type application/json */;
-    applicationJson200: ResponseBody200ApplicationJson | null;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null /** 200 response with content-type application/json */;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -2081,7 +2313,7 @@ export namespace LoginUser {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -2092,17 +2324,35 @@ export namespace LoginUser {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -2119,12 +2369,12 @@ export namespace LogoutUser {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {};
@@ -2157,7 +2407,7 @@ export namespace LogoutUser {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
@@ -2225,20 +2475,26 @@ export namespace GetUserByName {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
     /** Any 200 response */
-    any200: any | null;
+    any200: AxiosResponse<any, RequestBody> | null;
     /** All 200 responses with content types included in the OpenAPI spec */
-    all200: ResponseBody200 | null;
+    all200: AxiosResponse<ResponseBody200, RequestBody> | null;
     /** 200 response with content-type application/json */
-    applicationJson200: ResponseBody200ApplicationJson | null /** 200 response with content-type application/xml */;
-    applicationXml200: ResponseBody200ApplicationXml | null;
+    applicationJson200: AxiosResponse<
+      ResponseBody200ApplicationJson,
+      RequestBody
+    > | null /** 200 response with content-type application/xml */;
+    applicationXml200: AxiosResponse<
+      ResponseBody200ApplicationXml,
+      RequestBody
+    > | null;
     /** All 200 responses with content types not included in the OpenAPI spec */
-    other200: any | null;
+    other200: AxiosResponse<any, RequestBody> | null;
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -2276,7 +2532,7 @@ export namespace GetUserByName {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
       any200: null,
       all200: null,
@@ -2287,17 +2543,35 @@ export namespace GetUserByName {
     };
 
     if (/^200$/.test(res.status.toString())) {
-      safeRes.any200 = res.data;
+      safeRes.any200 = res as unknown as AxiosResponse<RequestBody, any>;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
+        safeRes.applicationJson200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationJson,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
-        safeRes.all200 = res.data as ResponseBody200;
-        safeRes.all = res.data as ResponseBody;
-      } else safeRes.other200 = res.data;
-    } else safeRes.other = res.data;
+        safeRes.applicationXml200 = res as unknown as AxiosResponse<
+          ResponseBody200ApplicationXml,
+          RequestBody
+        >;
+        safeRes.all200 = res as unknown as AxiosResponse<
+          ResponseBody200,
+          RequestBody
+        >;
+        safeRes.all = res as unknown as AxiosResponse<
+          ResponseBody,
+          RequestBody
+        >;
+      } else safeRes.other200 = res;
+    } else safeRes.other = res;
     return safeRes;
   };
 }
@@ -2359,12 +2633,12 @@ export namespace UpdateUser {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -2406,7 +2680,7 @@ export namespace UpdateUser {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
@@ -2428,12 +2702,12 @@ export namespace DeleteUser {
 
   export type ResponseBodySafe = {
     /** All responses */
-    any: any;
+    any: AxiosResponse<any, RequestBody>;
     /** All responses with status code and content-type included in the OpenAPI spec */
-    all: ResponseBody | null;
+    all: AxiosResponse<ResponseBody, RequestBody> | null;
 
     /** If status isn't included in the OpenAPI spec */
-    other: any | null;
+    other: AxiosResponse<any, RequestBody> | null;
   };
 
   export const requestParamSchemas = {
@@ -2471,7 +2745,7 @@ export namespace DeleteUser {
       validateStatus: () => true,
     });
     let safeRes: ResponseBodySafe = {
-      any: res.data,
+      any: res as AxiosResponse<any, RequestBody>,
       all: null,
 
       other: null,
