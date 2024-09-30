@@ -20,12 +20,7 @@ export async function generate(basePath: string) {
       fs.writeFileSync(join(basePath, "gen/api-operations.json"), JSON.stringify(operations, null, 2));
 
       // generate
-      let ts = generateRaw(operations);
-      try {
-        ts = _generate(operations);
-      } catch (e) {
-        console.error(e);
-      }
+      let ts = _generate(operations);
 
       // save
       fs.writeFileSync(join(basePath, "gen/client.ts"), ts);

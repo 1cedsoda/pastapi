@@ -61,7 +61,7 @@ const operationNamespace = (o: Operation) => {
               .join(" | ")}
       `
       )
-      .join("\n,")}
+      .join("\n")}
 
     export type ResponseBody = z.infer<(typeof responseSchemas[number]["bodySchema"])>
 
@@ -73,7 +73,7 @@ const operationNamespace = (o: Operation) => {
       ${groupResponsesByStatusCode(o.responses)
         .map(
           ([statusCode, o]) => `/** Any ${statusCode} response */
-          any${statusCode}: ResponseBody${statusCode} | null,
+          any${statusCode}: any | null,
           /** All ${statusCode} responses with content types included in the OpenAPI spec */
           all${statusCode}: ResponseBody${statusCode} | null, 
         ${o
@@ -171,9 +171,11 @@ const operationNamespace = (o: Operation) => {
                 .map(
                   (res) =>
                     `if (res.headers["content-type"] == "${res.applicationType}") {
-                  safeRes.${camelCase(res.applicationType)}${statusCode} = res.data 
-                  safeRes.all${statusCode} = res.data
-                  safeRes.all = res.data
+                  safeRes.${camelCase(res.applicationType)}${statusCode} = res.data as ResponseBody${statusCode}${fuck(
+                    camelCase(res.applicationType)
+                  )}
+                  safeRes.all${statusCode} = res.data as ResponseBody${statusCode}
+                  safeRes.all = res.data as ResponseBody
                   }
                   `
                 )

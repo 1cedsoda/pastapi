@@ -166,7 +166,7 @@ export namespace UpdatePet {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -225,13 +225,13 @@ export namespace UpdatePet {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -395,7 +395,7 @@ export namespace AddPet {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -454,13 +454,13 @@ export namespace AddPet {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -553,7 +553,7 @@ export namespace FindPetsByStatus {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -620,13 +620,13 @@ export namespace FindPetsByStatus {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -719,7 +719,7 @@ export namespace FindPetsByTags {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -783,13 +783,13 @@ export namespace FindPetsByTags {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -878,7 +878,7 @@ export namespace GetPetById {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -938,13 +938,13 @@ export namespace GetPetById {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1137,7 +1137,7 @@ export namespace UploadFile {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -1208,9 +1208,9 @@ export namespace UploadFile {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1247,7 +1247,7 @@ export namespace GetInventory {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -1300,9 +1300,9 @@ export namespace GetInventory {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1385,7 +1385,7 @@ export namespace PlaceOrder {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -1442,9 +1442,9 @@ export namespace PlaceOrder {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1509,7 +1509,7 @@ export namespace GetOrderById {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -1569,13 +1569,13 @@ export namespace GetOrderById {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1757,7 +1757,7 @@ export namespace CreateUser {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any default response */
-    anydefault: ResponseBodydefault | null;
+    anydefault: any | null;
     /** All default responses with content types included in the OpenAPI spec */
     alldefault: ResponseBodydefault | null;
     /** default response with content-type application/json */
@@ -1816,13 +1816,15 @@ export namespace CreateUser {
     if (/^default$/.test(res.status.toString())) {
       safeRes.anydefault = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJsondefault = res.data;
-        safeRes.alldefault = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJsondefault =
+          res.data as ResponseBodydefaultApplicationJson;
+        safeRes.alldefault = res.data as ResponseBodydefault;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXmldefault = res.data;
-        safeRes.alldefault = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXmldefault =
+          res.data as ResponseBodydefaultApplicationXml;
+        safeRes.alldefault = res.data as ResponseBodydefault;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.otherdefault = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -1907,7 +1909,7 @@ export namespace CreateUsersWithListInput {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -1966,13 +1968,13 @@ export namespace CreateUsersWithListInput {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -2023,7 +2025,7 @@ export namespace LoginUser {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/xml */
@@ -2092,13 +2094,13 @@ export namespace LoginUser {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -2227,7 +2229,7 @@ export namespace GetUserByName {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -2287,13 +2289,13 @@ export namespace GetUserByName {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else if (res.headers["content-type"] == "application/xml") {
-        safeRes.applicationXml200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationXml200 = res.data as ResponseBody200ApplicationXml;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;

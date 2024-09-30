@@ -39,7 +39,7 @@ export namespace GetUser {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -92,9 +92,9 @@ export namespace GetUser {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -136,7 +136,7 @@ export namespace PostUser {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type text/plain */
@@ -193,9 +193,9 @@ export namespace PostUser {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "text/plain") {
-        safeRes.textPlain200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.textPlain200 = res.data as ResponseBody200TextPlain;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -232,7 +232,7 @@ export namespace GetUserId {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type application/json */
@@ -290,9 +290,9 @@ export namespace GetUserId {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "application/json") {
-        safeRes.applicationJson200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.applicationJson200 = res.data as ResponseBody200ApplicationJson;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -329,7 +329,7 @@ export namespace GetCookie {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 20X response */
-    any20X: ResponseBody20X | null;
+    any20X: any | null;
     /** All 20X responses with content types included in the OpenAPI spec */
     all20X: ResponseBody20X | null;
     /** 20X response with content-type text/plain */
@@ -393,9 +393,9 @@ export namespace GetCookie {
     if (/^20\d$/.test(res.status.toString())) {
       safeRes.any20X = res.data;
       if (res.headers["content-type"] == "text/plain") {
-        safeRes.textPlain20X = res.data;
-        safeRes.all20X = res.data;
-        safeRes.all = res.data;
+        safeRes.textPlain20X = res.data as ResponseBody20XTextPlain;
+        safeRes.all20X = res.data as ResponseBody20X;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other20X = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -432,7 +432,7 @@ export namespace GetHeader {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type text/plain */
@@ -505,9 +505,9 @@ export namespace GetHeader {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "text/plain") {
-        safeRes.textPlain200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.textPlain200 = res.data as ResponseBody200TextPlain;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -544,7 +544,7 @@ export namespace GetQuery {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 200 response */
-    any200: ResponseBody200 | null;
+    any200: any | null;
     /** All 200 responses with content types included in the OpenAPI spec */
     all200: ResponseBody200 | null;
     /** 200 response with content-type text/plain */
@@ -607,9 +607,9 @@ export namespace GetQuery {
     if (/^200$/.test(res.status.toString())) {
       safeRes.any200 = res.data;
       if (res.headers["content-type"] == "text/plain") {
-        safeRes.textPlain200 = res.data;
-        safeRes.all200 = res.data;
-        safeRes.all = res.data;
+        safeRes.textPlain200 = res.data as ResponseBody200TextPlain;
+        safeRes.all200 = res.data as ResponseBody200;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other200 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
@@ -646,7 +646,7 @@ export namespace GetError {
     /** All responses with status code and content-type included in the OpenAPI spec */
     all: ResponseBody | null;
     /** Any 500 response */
-    any500: ResponseBody500 | null;
+    any500: any | null;
     /** All 500 responses with content types included in the OpenAPI spec */
     all500: ResponseBody500 | null;
     /** 500 response with content-type text/plain */
@@ -699,9 +699,9 @@ export namespace GetError {
     if (/^500$/.test(res.status.toString())) {
       safeRes.any500 = res.data;
       if (res.headers["content-type"] == "text/plain") {
-        safeRes.textPlain500 = res.data;
-        safeRes.all500 = res.data;
-        safeRes.all = res.data;
+        safeRes.textPlain500 = res.data as ResponseBody500TextPlain;
+        safeRes.all500 = res.data as ResponseBody500;
+        safeRes.all = res.data as ResponseBody;
       } else safeRes.other500 = res.data;
     } else safeRes.other = res.data;
     return safeRes;
