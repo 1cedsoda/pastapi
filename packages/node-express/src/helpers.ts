@@ -44,6 +44,8 @@ export function concatIfNotEmpty<T>(arr: T[], item: T): T[] {
 export function camelCase(_s: string): string {
   // deep clone string
   let s = cloneString(_s);
+  // replace * with Any
+  s = s.replace(/\*/g, "any");
   // remove all non alphanumeric characters and capitalize letters after them
   s = s.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
   // lowercase first character

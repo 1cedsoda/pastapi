@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { expressPath, fuck, includes, concatIfNotEmpty, toZod } from "./helpers";
+import { expressPath, fuck, includes, concatIfNotEmpty, toZod, camelCase } from "./helpers";
 
 describe("helpers", () => {
   describe("fuck", () => {
@@ -70,6 +70,18 @@ describe("helpers", () => {
       const arr: number[] = [];
       const new_arr = concatIfNotEmpty(arr, 4);
       expect(new_arr).to.not.contain(4);
+    });
+  });
+
+  describe("camelCase", () => {
+    it("should application/json to applicationJson", () => {
+      const result = camelCase("application/json");
+      expect(result).to.equal("applicationJson");
+    });
+    // image/* -> image
+    it("should image/* to imageAny", () => {
+      const result = camelCase("image/*");
+      expect(result).to.equal("imageAny");
     });
   });
 });
